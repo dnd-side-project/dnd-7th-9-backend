@@ -17,12 +17,12 @@ public class JasyptConfig {
     @Bean(name = "jasyptStringEncryptor")
     public StringEncryptor stringEncryptor() throws IOException {
 
-        BufferedReader jasyptKey = new BufferedReader(new FileReader("jasyptKey.txt"));
-
-        String key = jasyptKey.readLine(); //암호화 키
+        // BufferedReader jasyptKey = new BufferedReader(new FileReader("jasyptKey.txt"));
+        //
+        // String key = jasyptKey.readLine(); //암호화 키
         PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();
-        config.setPassword(key);
+        config.setPassword("dnd_jasypt_key");
         config.setAlgorithm("PBEWithMD5AndDES"); // 암호화 알고리즘
         config.setKeyObtentionIterations("1000"); // 반복할 해싱 회수
         config.setPoolSize("2"); // 인스턴스 pool

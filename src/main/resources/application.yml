@@ -4,6 +4,17 @@ spring:
     url: ENC(s35mqU/nqF072GnjW4RgoWivdpvF2ax4Tz+BcJ4wRi2Ay8PNvPs6stC9SJFR9+6XskBv3DwLcBspNp03oY3dxNqHRC9dhlO7ztyu8lBUF59IvIdU2cdzDmgmkG2hmO7E)
     username: ENC(bvODKY6arVl8NYstRGmyGHKduPrQFgQB)
     password: ENC(/3+pxmHYEpCS5cG1DaWhOGf8ojfr4SWY)
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
 
 jasypt:
   encryptor:
