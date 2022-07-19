@@ -37,3 +37,4 @@ out/
 .vscode/
 
 jasyptKey.txt
+/src/main/java/dnd/studyplanner/config/SecretConstant.java
