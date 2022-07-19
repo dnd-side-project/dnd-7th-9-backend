@@ -1,10 +1,6 @@
 package dnd.studyplanner.auth;
 
 import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.servlet.http.HttpSession;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -18,7 +14,6 @@ import org.springframework.stereotype.Service;
 import dnd.studyplanner.auth.dto.AuthEntity;
 import dnd.studyplanner.auth.dto.AuthRepository;
 import dnd.studyplanner.auth.dto.OAuthAttributes;
-import dnd.studyplanner.auth.dto.SessionUser;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.member.model.Member;
 import dnd.studyplanner.member.model.MemberRepository;
@@ -33,6 +28,9 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 	private final JwtService jwtService;
 	private final AuthRepository authRepository;
 
+	// OAuth2UserService
+	// Application.yml 의 설정 값에 맞게
+	// OAuth 요청 -> 인가 코드 발급 -> Access Token 발급 -> 사용자 정보 요청 과정이 이루어짐
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
@@ -43,6 +41,8 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 		log.debug("[OAuthUserRequest] : {}", oAuth2User.getAttributes());
 
 
+		// Social Service
+		// ex) Google, kakao, naver, ...
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		String userNameAttributeName = userRequest.getClientRegistration()
 			.getProviderDetails()
@@ -50,13 +50,13 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 			.getUserNameAttributeName();
 
 		OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
-		Member member = saveOrUpdate(attributes);
+		Member member = saveOrUpdate(attributes); // email로 Member 조회 후 업데이트 || 회원가입
 
 		//로그인 시 토큰 생성
 		saveOrUpdateAuthEntity(member);
 
 		return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())),
-			attributes.getAttributes(), attributes.getNameAttributeKey());
+			attributes.getAttributes(), attributes.getNameAttributeKey()); // 이 부분은 자세히 모르겠어요...
 	}
 
 	private Member saveOrUpdate(OAuthAttributes attributes) {

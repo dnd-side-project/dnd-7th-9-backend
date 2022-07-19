@@ -1,6 +1,5 @@
 package dnd.studyplanner.auth.dto;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import dnd.studyplanner.member.model.Member;
@@ -55,6 +54,7 @@ public class OAuthAttributes {
 			.build();
 	}
 
+	//Kakao Login User 정보 요청
 	private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
 		// kakao는 kakao_account에 유저정보가 있다. (email)
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");

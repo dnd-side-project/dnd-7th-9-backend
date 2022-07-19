@@ -2,9 +2,6 @@ package dnd.studyplanner.config;
 
 import static dnd.studyplanner.config.SecretConstant.*;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
 import org.jasypt.encryption.StringEncryptor;
