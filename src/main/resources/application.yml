@@ -1,4 +1,25 @@
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ENC(UDOiM9ZrQ2b9j+dxL9xIFG31dHe8gvulPzGr7kTkuyfNQ33wrI19TFC9XPkVlkhl)
+            redirect-uri: ENC(MSRd4Kt8jHFbFuZSMEqBD8WRqTthNQFwmtkZJFYBSf553kn1Kf3+nwsbNXb7rFSSRiDTw//10nE=)
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
+            client-name: Kakao
+            scope:
+              - profile_nickname
+              - account_email
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ENC(s35mqU/nqF072GnjW4RgoWivdpvF2ax4Tz+BcJ4wRi2Ay8PNvPs6stC9SJFR9+6XskBv3DwLcBspNp03oY3dxNqHRC9dhlO7ztyu8lBUF59IvIdU2cdzDmgmkG2hmO7E)
@@ -13,6 +34,7 @@ spring:
 
 logging:
   level:
+    dnd.studyplanner: debug
     org.hibernate.SQL: debug
     org.hibernate.type: trace
 
