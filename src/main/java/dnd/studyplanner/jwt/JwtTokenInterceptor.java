@@ -31,7 +31,7 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 		String refreshToken = jwtService.getRefreshToken(); //Header에 있는 Refresh Token 추출
 		log.debug("[Refresh Token] : {}", refreshToken);
 
-		if (accessToken != null) { //Token이 있고,
+		if (accessToken != null) { // Token이 있고,
 			if (jwtService.isExpired(accessToken)) { //JWT가 만료된 경우
 				log.warn("[JWT TOKEN EXCEPTION] : {} is expired", accessToken);
 				response.setStatus(401);
