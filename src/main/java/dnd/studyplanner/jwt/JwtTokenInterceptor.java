@@ -20,39 +20,41 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 	private final JwtService jwtService;
 
 	// Jwt Token Interceptor
-	// WebMvcConfig에서 설정한 uri에 대해 Token 확인
+	// WebMvcConfig 에서 설정한 uri 에 대해 Token 확인
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-		throws IOException {
+	public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) {
 
 		log.debug("[JWT Token Interceptor]");
-		String accessToken = jwtService.getJwt(); //Header에 있는 Token 추출
+		String accessToken = jwtService.getJwt(); // Header 에 있는 Token 추출
 		log.debug("[JWT] : {}", accessToken);
-		String refreshToken = jwtService.getRefreshToken(); //Header에 있는 Refresh Token 추출
+		String refreshToken = jwtService.getRefreshToken(); // Header 에 있는 Refresh Token 추출
 		log.debug("[Refresh Token] : {}", refreshToken);
 
-		if (accessToken != null) { //Token이 있고,
-			if (jwtService.isExpired(accessToken)) { //JWT가 만료된 경우
+		if (accessToken == null) {
+			log.warn("[JWT TOKEN EXCEPTION] : {} is not found", accessToken);
+			httpServletResponse.setStatus(401);
+			httpServletResponse.setHeader("ACCESS_TOKEN", accessToken);
+			httpServletResponse.setHeader("REFRESH_TOKEN", refreshToken);
+			httpServletResponse.setHeader("msg", "Check the tokens.");
+			return false;
+
+		} else {
+			if (jwtService.isExpired(accessToken)) {     // jwt 토큰이 만료된 경우
 				log.warn("[JWT TOKEN EXCEPTION] : {} is expired", accessToken);
-				response.setStatus(401);
-				response.setHeader("ACCESS_TOKEN", accessToken);
-				response.setHeader("msg", "ACCESS TOKEN EXPIRED");
+				httpServletResponse.setStatus(401);
+				httpServletResponse.setHeader("ACCESS_TOKEN", accessToken);
+				httpServletResponse.setHeader("msg", "ACCESS TOKEN EXPIRED");
 				return false;
-			} else if (jwtService.isNotValid(accessToken)) { //옳바른 JWT가 아닌 경우
+
+			} else if (jwtService.isNotValid(accessToken)) {   // jwt 토큰이 유효하지 않은 경우
 				log.warn("[JWT TOKEN EXCEPTION] : {} is invalid", accessToken);
-				response.setStatus(401);
-				response.setHeader("ACCESS_TOKEN", accessToken);
-				response.setHeader("msg", "INVALID TOKEN");
+				httpServletResponse.setStatus(401);
+				httpServletResponse.setHeader("ACCESS_TOKEN", accessToken);
+				httpServletResponse.setHeader("msg", "INVALID TOKEN");
+
 				return false;
 			}
 			return true;
 		}
-
-		log.warn("[JWT TOKEN EXCEPTION] : {} is not found");
-		response.setStatus(401);
-		response.setHeader("ACCESS_TOKEN", accessToken);
-		response.setHeader("REFRESH_TOKEN", refreshToken);
-		response.setHeader("msg", "Check the tokens.");
-		return false;
 	}
 }
