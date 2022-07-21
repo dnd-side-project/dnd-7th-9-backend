@@ -13,6 +13,7 @@ import lombok.ToString;
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
 public class OAuthAttributes {
+
 	private Map<String, Object> attributes;
 	private String nameAttributeKey;
 	private String name;
@@ -27,16 +28,19 @@ public class OAuthAttributes {
 	}
 
 	public static OAuthAttributes of(String registrationId, String userNameAttributeName,
-		Map<String, Object> attributes) {
+									 Map<String, Object> attributes) {
 
-		if ("kakao".equals(registrationId)) {
-			return ofKakao("id", attributes);
+		switch (AuthProvider.valueOf(registrationId.toLowerCase())) {
+			case naver:
+				return ofNaver(userNameAttributeName, attributes);
+			case kakao:
+				return ofKakao("id", attributes);
 		}
-
-		return ofGoogle(userNameAttributeName, attributes);
+		return ofGoogle("sub", attributes);
 	}
 
 	private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
+
 		return OAuthAttributes.builder()
 			.name((String)attributes.get("name"))
 			.email((String)attributes.get("email"))
@@ -46,6 +50,9 @@ public class OAuthAttributes {
 	}
 
 	private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
+
+		Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+
 		return OAuthAttributes.builder()
 			.name((String)attributes.get("name"))
 			.email((String)attributes.get("email"))
@@ -68,7 +75,6 @@ public class OAuthAttributes {
 			.nameAttributeKey(userNameAttributeName)
 			.build();
 	}
-
 
 	public Member toEntity() {
 		return Member.builder()
