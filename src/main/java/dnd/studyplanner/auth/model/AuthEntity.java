@@ -1,4 +1,4 @@
-package dnd.studyplanner.auth.dto;
+package dnd.studyplanner.auth.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,9 +31,5 @@ public class AuthEntity {
 		this.jwt = jwt;
 		this.refreshToken = refreshToken;
 		this.memberId = memberId;
-	}
-
-	public void refreshUpdate(String refreshToken) {
-		this.refreshToken = refreshToken;
 	}
 }

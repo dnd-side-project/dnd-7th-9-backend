@@ -1,4 +1,4 @@
-package dnd.studyplanner.auth;
+package dnd.studyplanner.config;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,7 +18,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.headers().frameOptions().disable()
 			.and()
 			.authorizeRequests()
-			.antMatchers("/index","/css/**","/images/**","/js/**","/h2-console/**", "/profile", "/oauth/**").permitAll()
+			.antMatchers("/index","/css/**","/images/**","/js/**","/h2-console/**", "/profile", "/**").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.logout()
