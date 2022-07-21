@@ -2,6 +2,7 @@ package dnd.studyplanner.auth;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dnd.studyplanner.auth.dto.TokenResponseDto;
@@ -11,7 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-@RestController("/auth")
+@RequestMapping("/auth")
+@RestController
 public class AuthController {
 
 	private final AuthService authService;
