@@ -35,23 +35,19 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 			if (jwtService.isExpired(accessToken)) { //JWT가 만료된 경우
 				log.warn("[JWT TOKEN EXCEPTION] : {} is expired", accessToken);
 				response.setStatus(401);
-				response.setHeader("ACCESS_TOKEN", accessToken);
 				response.setHeader("msg", "ACCESS TOKEN EXPIRED");
 				return false;
 			} else if (jwtService.isNotValid(accessToken)) { //옳바른 JWT가 아닌 경우
 				log.warn("[JWT TOKEN EXCEPTION] : {} is invalid", accessToken);
 				response.setStatus(401);
-				response.setHeader("ACCESS_TOKEN", accessToken);
 				response.setHeader("msg", "INVALID TOKEN");
 				return false;
 			}
 			return true;
 		}
 
-		log.warn("[JWT TOKEN EXCEPTION] : {} is not found");
+		log.warn("[JWT TOKEN EXCEPTION] : ACCESS_TOKEN is not found");
 		response.setStatus(401);
-		response.setHeader("ACCESS_TOKEN", accessToken);
-		response.setHeader("REFRESH_TOKEN", refreshToken);
 		response.setHeader("msg", "Check the tokens.");
 		return false;
 	}

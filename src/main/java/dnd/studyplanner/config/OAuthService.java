@@ -1,4 +1,4 @@
-package dnd.studyplanner.auth;
+package dnd.studyplanner.config;
 
 import java.util.Collections;
 
@@ -11,9 +11,9 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import dnd.studyplanner.auth.dto.AuthEntity;
-import dnd.studyplanner.auth.dto.AuthRepository;
-import dnd.studyplanner.auth.dto.OAuthAttributes;
+import dnd.studyplanner.auth.model.AuthEntity;
+import dnd.studyplanner.auth.model.AuthRepository;
+import dnd.studyplanner.config.dto.OAuthAttributes;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.member.model.Member;
 import dnd.studyplanner.member.model.MemberRepository;

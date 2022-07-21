@@ -1,4 +1,4 @@
-package dnd.studyplanner.auth.dto;
+package dnd.studyplanner.config.dto;
 
 import java.util.Map;
 

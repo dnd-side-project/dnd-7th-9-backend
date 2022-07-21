@@ -1,4 +1,4 @@
-package dnd.studyplanner.auth.dto;
+package dnd.studyplanner.auth.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
