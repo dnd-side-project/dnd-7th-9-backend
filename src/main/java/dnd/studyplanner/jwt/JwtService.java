@@ -1,14 +1,10 @@
 package dnd.studyplanner.jwt;
 
-import static dnd.studyplanner.config.SecretConstant.*;
-
-import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.DatatypeConverter;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -19,12 +15,19 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 
 @Service
 public class JwtService {
+
+	private static String JWT_SECRET_KEY;
 	private static final int JWT_EXPIRATION = 1000 * 60 * 60 * 2; //2시간
 	private static final int REFRESH_EXPIRATION = 1000 * 60 * 60 * 24 * 7 * 2 ; //14일 (2주)
 	private static final int WEEKS = 1000 * 60 * 60 * 24 * 7; // 7일
+
+	public JwtService(@Value("${jwt.secret}") String secretKey) {
+		JWT_SECRET_KEY = secretKey;
+	}
 
 	// JWT 생성
 	// by MemberId
@@ -35,7 +38,7 @@ public class JwtService {
 			.claim("memberId", memberId) //memberId로 저장
 			.setIssuedAt(now)
 			.setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION)) //
-			.signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY) //gitignore에 등록된 KEY
+			.signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
 			.compact();
 	}
 
@@ -46,7 +49,7 @@ public class JwtService {
 			.claim("memberId", memberId)
 			.setIssuedAt(now)
 			.setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION))
-			.signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY) //gitignore에 등록된 KEY
+			.signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
 			.compact();
 	}
 

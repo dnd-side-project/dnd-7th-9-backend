@@ -1,5 +1,4 @@
 spring:
-  port: 9100
   profiles:
     include: oauth, dev
   jpa:
@@ -14,7 +13,3 @@ logging:
     dnd.studyplanner: debug
     org.hibernate.SQL: debug
     org.hibernate.type: trace
-
-jasypt:
-  encryptor:
-    bean: jasyptStringEncryptor
