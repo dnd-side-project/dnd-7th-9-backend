@@ -2,6 +2,7 @@ package dnd.studyplanner.config.dto;
 
 import java.util.Map;
 
+import dnd.studyplanner.auth.dto.AuthProvider;
 import dnd.studyplanner.member.model.Member;
 import dnd.studyplanner.member.model.Role;
 import lombok.AccessLevel;
