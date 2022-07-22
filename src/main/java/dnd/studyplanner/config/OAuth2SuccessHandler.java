@@ -2,6 +2,8 @@ package dnd.studyplanner.config;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.token.TokenService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -38,11 +41,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
 		Map<String, Object> attributes = oAuth2User.getAttributes();
 
-		Map<String, Object> kakao_account = (Map<String, Object>)attributes.get("kakao_account");
-		String email = (String)kakao_account.get("email");
+		// registrationId 추출이 어려워 정규표현식으로 email 파싱 -> 서비스마다 email이 담겨있는 형식이 달라서..
+		String email = findEmailByRegex(attributes.toString());
 
 		log.debug("[USER EMAIL] : {}", email);
-		log.debug("[USER ATTRIBUTES] : {}", attributes);
 
 		Long memberId = memberRepository.findByEmail(email).get().getId();
 
@@ -59,5 +61,21 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/auth/after/login")
 			.build().toUriString();
 		getRedirectStrategy().sendRedirect(request, response, targetUrl);
+	}
+
+	// 정규표현식을 통한 이메일 추출 메서드
+	// is_email_valid=true, is_email_verified=true, email=testM@kakao.com}
+	// return -> testM@kakao.com
+	private String findEmailByRegex(String attributes) {
+		Pattern p = Pattern.compile("([\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Za-z]{2,4})");
+		Matcher m = p.matcher(attributes);
+
+		while(m.find()) {
+			if (m.group(1) != null) {
+				break;
+			};
+		}
+
+		return m.group(1);
 	}
 }
