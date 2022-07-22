@@ -3,6 +3,7 @@ package dnd.studyplanner.auth;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dnd.studyplanner.auth.dto.TokenResponseDto;
@@ -32,4 +33,14 @@ public class AuthController {
 		log.debug("[NEW ACCESS TOKEN] : {}", tokenResponseDto.getAccessToken());
 		return tokenResponseDto;
 	}
+
+	@GetMapping("/after/login")
+	public void afterLoginTest(
+		@RequestHeader(value = "access_token") String access_token,
+		@RequestHeader(value = "refresh_token") String refresh_token
+	) {
+		log.debug("[ACCESS TOKEN] : {}", access_token);
+		log.debug("[REFRESH ACCESS TOKEN] : {}", refresh_token);
+	}
+
 }
