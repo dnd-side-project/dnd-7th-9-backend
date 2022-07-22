@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.token.TokenService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -19,9 +17,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dnd.studyplanner.auth.dto.TokenResponseDto;
 import dnd.studyplanner.auth.model.AuthEntity;
 import dnd.studyplanner.auth.model.AuthRepository;
-import dnd.studyplanner.config.dto.OAuthAttributes;
 import dnd.studyplanner.member.model.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +31,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 	private final MemberRepository memberRepository;
 	private final AuthRepository authRepository;
+	private final ObjectMapper objectMapper;
 
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+		Authentication authentication)
 		throws IOException, ServletException {
 
 		OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
@@ -52,14 +52,20 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String accessToken = authEntity.getJwt();
 		String refreshToken = authEntity.getRefreshToken();
 
-		// 최초 로그인이라면 회원가입 처리를 한다.
-		String targetUrl;
 		log.info("토큰 발행 시작");
+		response.setContentType("application/json");
+		response.setCharacterEncoding("utf-8");
 
-		response.addHeader("access_token", accessToken);
-		response.addHeader("refresh_token", refreshToken);
-		targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/auth/after/login")
+		TokenResponseDto tokenDto = new TokenResponseDto(accessToken, refreshToken);
+		// json 형태로 바꾸기
+		String result = objectMapper.writeValueAsString(tokenDto);
+		response.getWriter().write(result);
+
+		String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/auth/after/login")
+			.queryParam("access_token", accessToken)
+			.queryParam("refresh_token", refreshToken)
 			.build().toUriString();
+
 		getRedirectStrategy().sendRedirect(request, response, targetUrl);
 	}
 
@@ -70,10 +76,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		Pattern p = Pattern.compile("([\\w\\-]([\\.\\w])+[\\w]+@([\\w\\-]+\\.)+[A-Za-z]{2,4})");
 		Matcher m = p.matcher(attributes);
 
-		while(m.find()) {
+		while (m.find()) {
 			if (m.group(1) != null) {
 				break;
-			};
+			}
+			;
 		}
 
 		return m.group(1);

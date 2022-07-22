@@ -36,8 +36,8 @@ public class AuthController {
 
 	@GetMapping("/after/login")
 	public void afterLoginTest(
-		@RequestHeader(value = "access_token") String access_token,
-		@RequestHeader(value = "refresh_token") String refresh_token
+		@RequestParam(value = "access_token") String access_token,
+		@RequestParam(value = "refresh_token") String refresh_token
 	) {
 		log.debug("[ACCESS TOKEN] : {}", access_token);
 		log.debug("[REFRESH ACCESS TOKEN] : {}", refresh_token);
