@@ -36,7 +36,7 @@ jobs:
 
       ## create application-dev.yml
       -
-        name: make application-dev.properties
+        name: make application-dev.yml
         if: contains(github.ref, 'master') # branch 가 master 일 때
         run: |
           cd ./src/main/resources
@@ -47,7 +47,7 @@ jobs:
 
       ## create application-oauth.yml
       -
-        name: make application-prod.yml
+        name: make application-oauth.yml
         if: contains(github.ref, 'master') # branch 가 master 일 때
         run: |
           cd ./src/main/resources
