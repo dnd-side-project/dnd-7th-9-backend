@@ -1,7 +1,5 @@
 package dnd.studyplanner.auth;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 import dnd.studyplanner.auth.dto.TokenResponseDto;
@@ -19,17 +17,13 @@ public class AuthService {
 	private final AuthRepository authRepository;
 	private final JwtService jwtService;
 
-	public boolean isExpiredToken(String refreshToken) {
-		return jwtService.isExpired(refreshToken);
-	}
-
 
 	public TokenResponseDto reissueAccessToken(String refreshToken) {
-		Long memberId = jwtService.getMemberId(refreshToken);
+		Long memberId = jwtService.getMemberIdFromRefresh(refreshToken);
 		String newAccessToken = jwtService.createJwt(memberId); //새로운 Access-Token 생성
 		String newRefreshToken = refreshToken;
 		if (jwtService.isUpdatableRefreshToken(refreshToken)) { //Refresh-Token 만료 시간에 따라 재발급
-			log.debug("[REFRESH TOKEN REFRESH] : {} \n to {}", refreshToken, newRefreshToken);
+			log.debug("[REFRESH TOKEN REFRESH] : \n{} \n to {}", refreshToken, newRefreshToken);
 			newRefreshToken = jwtService.createRefreshToken(memberId);
 		};
 
