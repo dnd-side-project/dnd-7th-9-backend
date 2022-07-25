@@ -1,5 +1,7 @@
 package dnd.studyplanner.config;
 
+import static dnd.studyplanner.config.Constant.*;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -44,26 +46,21 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		// registrationId 추출이 어려워 정규표현식으로 email 파싱 -> 서비스마다 email이 담겨있는 형식이 달라서..
 		String email = findEmailByRegex(attributes.toString());
 
-		log.debug("[USER EMAIL] : {}", email);
-
 		Long memberId = memberRepository.findByEmail(email).get().getId();
 
 		AuthEntity authEntity = authRepository.findById(memberId).get();
 		String accessToken = authEntity.getJwt();
 		String refreshToken = authEntity.getRefreshToken();
 
-		log.info("토큰 발행 시작");
-		response.setContentType("application/json");
-		response.setCharacterEncoding("utf-8");
+		log.debug("[USER EMAIL] : {}", email);
+		log.debug("[TOKEN] : {}", accessToken);
+		log.debug("[REFRESH_TOKEN] : {}", refreshToken);
 
-		TokenResponseDto tokenDto = new TokenResponseDto(accessToken, refreshToken);
-		// json 형태로 바꾸기
-		String result = objectMapper.writeValueAsString(tokenDto);
-		response.getWriter().write(result);
 
-		String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/auth/after/login")
-			.queryParam("access_token", accessToken)
-			.queryParam("refresh_token", refreshToken)
+		String targetUrl = UriComponentsBuilder.fromUriString(CLIENT_DOMAIN + "/login")
+			.queryParam("success", true)
+			.queryParam("token", accessToken)
+			.queryParam("refresh", refreshToken)
 			.build().toUriString();
 
 		getRedirectStrategy().sendRedirect(request, response, targetUrl);
@@ -80,7 +77,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 			if (m.group(1) != null) {
 				break;
 			}
-			;
 		}
 
 		return m.group(1);
