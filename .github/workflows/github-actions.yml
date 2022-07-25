@@ -59,7 +59,7 @@ jobs:
       ## gradle build
       -
         name: Build with Gradle
-        run: ./gradlew build -x test -x
+        run: ./gradlew build -x test
 
       - name: Checkout
         uses: actions/checkout@v2
