@@ -1,5 +1,7 @@
 package dnd.studyplanner.config;
 
+import static dnd.studyplanner.config.Constant.*;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -21,7 +23,7 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
 		super.onAuthenticationFailure(request, response, exception);
 
 
-		String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/auth/after/login")
+		String targetUrl = UriComponentsBuilder.fromUriString(CLIENT_DOMAIN + "/login")
 			.queryParam("success", false)
 			.queryParam("error", exception.getLocalizedMessage())
 			.build().toUriString();

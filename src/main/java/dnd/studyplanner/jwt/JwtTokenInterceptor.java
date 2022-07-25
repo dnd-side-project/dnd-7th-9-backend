@@ -3,6 +3,7 @@ package dnd.studyplanner.jwt;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -25,8 +26,6 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 		log.debug("[JWT Token Interceptor]");
 		String accessToken = jwtService.getJwt(); // Header 에 있는 Token 추출
 		log.debug("[JWT] : {}", accessToken);
-		String refreshToken = jwtService.getRefreshToken(); // Header 에 있는 Refresh Token 추출
-		log.debug("[Refresh Token] : {}", refreshToken);
 
 		if (accessToken == null) {
 			log.warn("[JWT TOKEN EXCEPTION] : Token is not found");
@@ -36,7 +35,7 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 
 		} else {
 			if (jwtService.isExpired(accessToken)) {     // jwt 토큰이 만료된 경우
-				log.warn("[JWT TOKEN EXCEPTION] : {} is expired", accessToken);
+				log.warn("[JWT TOKEN EXPIRED] : {} is expired", accessToken);
 				httpServletResponse.setStatus(401);
 				httpServletResponse.setHeader("ACCESS_TOKEN", accessToken);
 				httpServletResponse.setHeader("msg", "ACCESS TOKEN EXPIRED");

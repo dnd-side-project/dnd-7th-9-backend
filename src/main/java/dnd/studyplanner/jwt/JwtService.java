@@ -6,7 +6,6 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -17,7 +16,6 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.RequiredArgsConstructor;
 
 @Service
 public class JwtService {
@@ -57,6 +55,8 @@ public class JwtService {
 		} catch (ExpiredJwtException e) {
 			// 만료된 Jwt 토큰인 경우
 			return true;
+		} catch (JwtException e) {
+			return false;
 		}
 	}
 
@@ -71,16 +71,31 @@ public class JwtService {
 		} catch (ExpiredJwtException e) {
 			// 만료된 Jwt 토큰인 경우
 			return true;
+		} catch (JwtException e) {
+			return false;
 		}
 	}
 
 	public boolean isNotValid(String jwt) {
 		try {
-			Claims claims = Jwts.parser()
+			Long memberId = Jwts.parser()
 				.setSigningKey(JWT_SECRET_KEY) //gitignore에 등록된 KEY
 				.parseClaimsJws(jwt)
-				.getBody();
-			claims.getExpiration();
+				.getBody()
+				.get("memberId", Long.class);
+			return false;
+		}  catch (JwtException | NullPointerException exception) {
+			return true;
+		}
+	}
+
+	public boolean isNotValidRefreshToken(String refresh) {
+		try {
+			Long memberId = Jwts.parser()
+				.setSigningKey(REFRESH_SECRET_KEY) //gitignore에 등록된 KEY
+				.parseClaimsJws(refresh)
+				.getBody()
+				.get("memberId", Long.class);
 			return false;
 		}  catch (JwtException | NullPointerException exception) {
 			return true;
@@ -109,6 +124,20 @@ public class JwtService {
 		claims = Jwts.parser()
 			.setSigningKey(JWT_SECRET_KEY)
 			.parseClaimsJws(accessToken);
+
+		return claims.getBody().get("memberId", Long.class); //memberId 추출
+	}
+
+	public Long getMemberIdFromRefresh(String refreshToken) {
+
+		//1. JWT 추출
+		// String accessToken = getJwt();
+
+		// 2. JWT parsing
+		Jws<Claims> claims;
+		claims = Jwts.parser()
+			.setSigningKey(REFRESH_SECRET_KEY)
+			.parseClaimsJws(refreshToken);
 
 		return claims.getBody().get("memberId", Long.class); //memberId 추출
 	}

@@ -1,5 +1,7 @@
 package dnd.studyplanner.config;
 
+import static dnd.studyplanner.config.Constant.*;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -55,7 +57,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		log.debug("[REFRESH_TOKEN] : {}", refreshToken);
 
 
-		String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/auth/after/login")
+		String targetUrl = UriComponentsBuilder.fromUriString(CLIENT_DOMAIN + "/login")
 			.queryParam("success", true)
 			.queryParam("token", accessToken)
 			.queryParam("refresh", refreshToken)
