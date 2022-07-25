@@ -1,5 +1,7 @@
 package dnd.studyplanner.jwt;
 
+import static dnd.studyplanner.config.Constant.*;
+
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,15 +22,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class JwtService {
 
-	private static String JWT_SECRET_KEY;
-	private static final int JWT_EXPIRATION = 1000 * 60 * 60 * 2; //2시간
-	private static final int REFRESH_EXPIRATION = 1000 * 60 * 60 * 24 * 7 * 2 ; //14일 (2주)
-	private static final int WEEKS = 1000 * 60 * 60 * 24 * 7; // 7일
-
-	public JwtService(@Value("${jwt.secret}") String secretKey) {
-		JWT_SECRET_KEY = secretKey;
-	}
-
 	// JWT 생성
 	// by MemberId
 	public String createJwt(Long memberId) {
@@ -45,19 +38,33 @@ public class JwtService {
 	public String createRefreshToken(Long memberId) {
 		Date now = new Date();
 		return Jwts.builder()
-			.setHeaderParam("type", "jwt")
+			.setHeaderParam("type", "refresh")
 			.claim("memberId", memberId)
 			.setIssuedAt(now)
 			.setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION))
-			.signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
+			.signWith(SignatureAlgorithm.HS256, REFRESH_SECRET_KEY)
 			.compact();
 	}
 
 	public boolean isExpired(String jwt) {
 		try {
 			Claims claims = Jwts.parser()
-				.setSigningKey(JWT_SECRET_KEY) //gitignore에 등록된 KEY
+				.setSigningKey(JWT_SECRET_KEY)
 				.parseClaimsJws(jwt)
+				.getBody();
+			claims.getExpiration();
+			return false;
+		} catch (ExpiredJwtException e) {
+			// 만료된 Jwt 토큰인 경우
+			return true;
+		}
+	}
+
+	public boolean isExpiredRefreshToken(String refresh) {
+		try {
+			Claims claims = Jwts.parser()
+				.setSigningKey(REFRESH_SECRET_KEY)
+				.parseClaimsJws(refresh)
 				.getBody();
 			claims.getExpiration();
 			return false;
@@ -112,7 +119,7 @@ public class JwtService {
 	public boolean isUpdatableRefreshToken (String refreshToken) {
 		Date oneWeekLater = new Date(System.currentTimeMillis() + WEEKS);
 		Date expiredAt = Jwts.parser()
-			.setSigningKey(JWT_SECRET_KEY) //gitignore에 등록된 KEY
+			.setSigningKey(REFRESH_SECRET_KEY) //gitignore에 등록된 KEY
 			.parseClaimsJws(refreshToken)
 			.getBody()
 			.getExpiration();

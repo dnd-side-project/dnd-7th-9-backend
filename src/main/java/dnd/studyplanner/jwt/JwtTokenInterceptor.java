@@ -1,7 +1,5 @@
 package dnd.studyplanner.jwt;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,10 +29,8 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 		log.debug("[Refresh Token] : {}", refreshToken);
 
 		if (accessToken == null) {
-			log.warn("[JWT TOKEN EXCEPTION] : {} is not found", accessToken);
+			log.warn("[JWT TOKEN EXCEPTION] : Token is not found");
 			httpServletResponse.setStatus(401);
-			httpServletResponse.setHeader("ACCESS_TOKEN", accessToken);
-			httpServletResponse.setHeader("REFRESH_TOKEN", refreshToken);
 			httpServletResponse.setHeader("msg", "Check the tokens.");
 			return false;
 
@@ -48,7 +44,7 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 
 			} else if (jwtService.isNotValid(accessToken)) {   // jwt 토큰이 유효하지 않은 경우
 				log.warn("[JWT TOKEN EXCEPTION] : {} is invalid", accessToken);
-				httpServletResponse.setStatus(401);
+				httpServletResponse.setStatus(409);
 				httpServletResponse.setHeader("ACCESS_TOKEN", accessToken);
 				httpServletResponse.setHeader("msg", "INVALID TOKEN");
 

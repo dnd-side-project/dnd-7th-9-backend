@@ -1,7 +1,5 @@
 package dnd.studyplanner.auth;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 import dnd.studyplanner.auth.dto.TokenResponseDto;
@@ -19,8 +17,8 @@ public class AuthService {
 	private final AuthRepository authRepository;
 	private final JwtService jwtService;
 
-	public boolean isExpiredToken(String refreshToken) {
-		return jwtService.isExpired(refreshToken);
+	public boolean isExpiredRefreshToken(String refreshToken) {
+		return jwtService.isExpiredRefreshToken(refreshToken);
 	}
 
 
