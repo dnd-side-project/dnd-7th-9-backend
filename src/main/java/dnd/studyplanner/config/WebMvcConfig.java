@@ -18,7 +18,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Value("${front-client.domain}")
 	public String DOMAIN_HOST;
 
-
 	public void addInterceptors(InterceptorRegistry registry) {
 		//Interceptor scope
 		registry.addInterceptor(jwtTokenInterceptor).addPathPatterns("/token/test/**");
@@ -28,12 +27,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry registry) {
 		registry
 			.addMapping("/**")
-			.allowedOrigins(DOMAIN_HOST)
-			.allowedMethods(
-				HttpMethod.GET.name(),
-				HttpMethod.POST.name(),
-				HttpMethod.PATCH.name(),
-				HttpMethod.DELETE.name()
-			);
+			.allowedOrigins("*")
+			.allowedMethods("*");
 	}
 }
