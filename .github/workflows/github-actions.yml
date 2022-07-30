@@ -15,6 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3   # 소스 가져오기
+
       ## JDK Setting
       - uses: actions/checkout@v3
       - name: Set up JDK 11
@@ -60,30 +63,17 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -x test
 
-      - name: Checkout
-        uses: actions/checkout@v2   # 소스 가져오기
-
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1   # buildx 설정
-        with:
-          version: v0.7.0
-
-      ## 전송할 파일을 담을 디렉토리 생성
-#      - name: Make Directory for deliver
-#        run: mkdir deploy
-
-      ## Jar 파일 Copy
-#      - name: Copy Jar
-#        run: cp ./build/libs/*.jar ./deploy/
+        uses: docker/setup-buildx-action@v2   # buildx 설정
 
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push
-        uses: docker/build-push-action@v2   # build-push-action 사용
+        uses: docker/build-push-action@v3   # build-push-action@v2 사용
         with:   # 동작에 대한 input 값 사용 선언
           context: .
           file: ./Dockerfile   # 빌드 시 사용할 Dockerfile 의 위치 지정
