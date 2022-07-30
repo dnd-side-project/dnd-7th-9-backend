@@ -26,17 +26,6 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      ## gradle caching
-      - name: Gradle Caching
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       ## create application-dev.yml
       -
         name: make application-dev.yml
@@ -82,22 +71,14 @@ jobs:
           cache-from: type=gha   # gha 는 Guthub Actions 용 캐시
           cache-to: type=gha,mode=max
 
-  ## deploy to develop
-  deploy:
-    needs: build-and-push-image
-    runs-on: ubuntu-latest
-    name: Deploy to dev
-    steps:
+      ## Deploy
       - name: deploy
         uses: appleboy/ssh-action@master
-        id: deploy-dev
-        if: contains(github.ref, 'master')
-
         with:
-          host: ${{ secrets.HOST_DEV }}
+          host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          run: |
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
             docker run -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
