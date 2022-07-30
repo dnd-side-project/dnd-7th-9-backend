@@ -77,8 +77,9 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
-          timeout: 50s
+          timeout-minutes: 2
           script: |
+            sudo ufw allow ssh
             echo "테스트 출력"
             docker system prune -a -f
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
