@@ -11,10 +11,10 @@ permissions:
 
 jobs:
   build-and-push-image:
-
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v3   # 소스 가져오기
 
@@ -26,20 +26,8 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      ## gradle caching
-      - name: Gradle Caching
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       ## create application-dev.yml
-      -
-        name: make application-dev.yml
+      - name: make application-dev.yml
         if: contains(github.ref, 'master')   # branch 가 master 일 때
         run: |
           cd ./src/main/resources
@@ -49,8 +37,7 @@ jobs:
         shell: bash
 
       ## create application-oauth.yml
-      -
-        name: make application-oauth.yml
+      - name: make application-oauth.yml
         if: contains(github.ref, 'master')   # branch 가 master 일 때
         run: |
           cd ./src/main/resources
@@ -82,22 +69,18 @@ jobs:
           cache-from: type=gha   # gha 는 Guthub Actions 용 캐시
           cache-to: type=gha,mode=max
 
-  ## deploy to develop
-  deploy:
-    needs: build-and-push-image
-    runs-on: ubuntu-latest
-    name: Deploy to dev
-    steps:
+      ## Deploy
       - name: deploy
         uses: appleboy/ssh-action@master
-        id: deploy-dev
-        if: contains(github.ref, 'master')
-
         with:
-          host: ${{ secrets.HOST_DEV }}
+          host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
-          run: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          timeout: 50s
+          script: |
+            sudo ufw allow ssh
+            echo "테스트 출력"
+            docker system prune -a -f
+            docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
             docker run -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
