@@ -1,4 +1,4 @@
-package dnd.studyplanner.member.model;
+package dnd.studyplanner.domain.member.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

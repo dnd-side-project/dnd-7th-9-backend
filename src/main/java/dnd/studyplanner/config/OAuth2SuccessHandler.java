@@ -19,10 +19,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import dnd.studyplanner.auth.dto.TokenResponseDto;
 import dnd.studyplanner.auth.model.AuthEntity;
 import dnd.studyplanner.auth.model.AuthRepository;
-import dnd.studyplanner.member.model.MemberRepository;
+import dnd.studyplanner.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
