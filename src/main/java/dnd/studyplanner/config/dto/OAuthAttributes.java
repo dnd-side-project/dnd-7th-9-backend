@@ -3,8 +3,8 @@ package dnd.studyplanner.config.dto;
 import java.util.Map;
 
 import dnd.studyplanner.auth.dto.AuthProvider;
-import dnd.studyplanner.member.model.Member;
-import dnd.studyplanner.member.model.Role;
+import dnd.studyplanner.domain.member.model.Member;
+import dnd.studyplanner.domain.member.model.Role;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

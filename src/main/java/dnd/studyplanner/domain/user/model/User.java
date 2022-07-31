@@ -1,4 +1,4 @@
-package dnd.studyplanner.user.model;
+package dnd.studyplanner.domain.user.model;
 
 import java.util.ArrayList;
 import java.util.List;

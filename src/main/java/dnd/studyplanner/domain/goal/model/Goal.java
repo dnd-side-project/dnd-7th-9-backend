@@ -1,4 +1,4 @@
-package dnd.studyplanner.goal.model;
+package dnd.studyplanner.domain.goal.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import dnd.studyplanner.studygroup.model.StudyGroup;
-import dnd.studyplanner.questionbook.model.QuestionBook;
-import dnd.studyplanner.user.model.User;
+import dnd.studyplanner.domain.studygroup.model.StudyGroup;
+import dnd.studyplanner.domain.questionbook.model.QuestionBook;
+import dnd.studyplanner.domain.user.model.User;
 import lombok.Getter;
 
 @Getter

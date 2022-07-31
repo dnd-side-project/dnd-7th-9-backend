@@ -1,4 +1,4 @@
-package dnd.studyplanner.member;
+package dnd.studyplanner.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

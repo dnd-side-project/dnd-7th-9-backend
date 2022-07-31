@@ -1,4 +1,4 @@
-package dnd.studyplanner.option.model;
+package dnd.studyplanner.domain.option.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import dnd.studyplanner.question.model.Question;
+import dnd.studyplanner.domain.question.model.Question;
 import lombok.Getter;
 
 @Getter

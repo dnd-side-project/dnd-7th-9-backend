@@ -1,4 +1,4 @@
-package dnd.studyplanner.user.model;
+package dnd.studyplanner.domain.user.model;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import dnd.studyplanner.questionbook.model.QuestionBook;
+import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import lombok.Getter;
 
 @Getter

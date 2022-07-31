@@ -1,4 +1,4 @@
-package dnd.studyplanner.question.model;
+package dnd.studyplanner.domain.question.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +14,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import dnd.studyplanner.option.model.Option;
-import dnd.studyplanner.questionbook.model.QuestionBook;
-import dnd.studyplanner.user.model.UserSolveQuestion;
+import dnd.studyplanner.domain.option.model.Option;
+import dnd.studyplanner.domain.questionbook.model.QuestionBook;
+import dnd.studyplanner.domain.user.model.UserSolveQuestion;
 import lombok.Getter;
 
 @Getter

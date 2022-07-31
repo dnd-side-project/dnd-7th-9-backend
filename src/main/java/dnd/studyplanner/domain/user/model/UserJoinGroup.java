@@ -1,4 +1,6 @@
-package dnd.studyplanner.user.model;
+package dnd.studyplanner.domain.user.model;
+
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,32 +11,26 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import dnd.studyplanner.question.model.Question;
-import dnd.studyplanner.questionbook.model.QuestionBook;
+import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import lombok.Getter;
 
 @Getter
 @Entity
-public class UserSolveQuestion {
+public class UserJoinGroup {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_solve_question_id")
+	@Column(name = "user_join_group_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
-	private User solveUser;
+	private User user;
+
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "question_book_id")
-	private QuestionBook solveQuestionBook;
+	@JoinColumn(name = "study_group_id")
+	private StudyGroup studyGroup;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "question_id")
-	private Question solveQuestion;
-
-	private int pickOption;
-	private int answerOption;
-	private boolean rightCheck;
+	private LocalDateTime joinDate;
 }

@@ -1,4 +1,4 @@
-package dnd.studyplanner.questionbook.model;
+package dnd.studyplanner.domain.questionbook.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,11 +16,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import dnd.studyplanner.goal.model.Goal;
-import dnd.studyplanner.question.model.Question;
-import dnd.studyplanner.user.model.User;
-import dnd.studyplanner.user.model.UserSolveQuestion;
-import dnd.studyplanner.user.model.UserSolveQuestionBook;
+import dnd.studyplanner.domain.goal.model.Goal;
+import dnd.studyplanner.domain.question.model.Question;
+import dnd.studyplanner.domain.user.model.User;
+import dnd.studyplanner.domain.user.model.UserSolveQuestion;
+import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
 import lombok.Getter;
 
 @Getter
