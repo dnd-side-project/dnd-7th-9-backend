@@ -79,8 +79,7 @@ jobs:
           port: ${{ secrets.PORT }}
           timeout: 50s
           script: |
-            sudo ufw allow ssh
-            echo "테스트 출력"
             docker system prune -a -f
+            docker stop ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
             docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
-            docker run -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+            docker run --name ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} -d --rm -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
