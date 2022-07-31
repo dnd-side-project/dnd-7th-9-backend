@@ -10,13 +10,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.question.model.Question;
 import lombok.Getter;
 
 @Getter
 @Entity
 @Table(name = "options")
-public class Option {
+public class Option extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

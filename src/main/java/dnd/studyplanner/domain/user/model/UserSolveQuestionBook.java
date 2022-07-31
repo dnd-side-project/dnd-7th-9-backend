@@ -11,12 +11,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import lombok.Getter;
 
 @Getter
 @Entity
-public class UserSolveQuestionBook {
+public class UserSolveQuestionBook extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +32,6 @@ public class UserSolveQuestionBook {
 	@JoinColumn(name = "question_book_id")
 	private QuestionBook solveQuestionBook;
 
-	private LocalDateTime solveDate;
 	private int answerNum;
 	private int answerRate;
 }

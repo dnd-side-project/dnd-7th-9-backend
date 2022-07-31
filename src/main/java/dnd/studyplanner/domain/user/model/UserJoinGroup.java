@@ -11,12 +11,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import lombok.Getter;
 
 @Getter
 @Entity
-public class UserJoinGroup {
+public class UserJoinGroup extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,5 +33,4 @@ public class UserJoinGroup {
 	@JoinColumn(name = "study_group_id")
 	private StudyGroup studyGroup;
 
-	private LocalDateTime joinDate;
 }

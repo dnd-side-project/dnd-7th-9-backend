@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.goal.model.Goal;
 import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.user.model.User;
@@ -25,7 +26,7 @@ import lombok.Getter;
 
 @Getter
 @Entity
-public class QuestionBook {
+public class QuestionBook extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,8 +40,6 @@ public class QuestionBook {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User questionBookCreateUser;
-
-	private LocalDateTime questionBookCreateDate;
 
 	private String questionBookName;
 	private int questionBookMinAchieveRate;

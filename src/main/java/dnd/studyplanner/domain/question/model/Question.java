@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.option.model.Option;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
@@ -21,7 +22,7 @@ import lombok.Getter;
 
 @Getter
 @Entity
-public class Question {
+public class Question extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "question_id")

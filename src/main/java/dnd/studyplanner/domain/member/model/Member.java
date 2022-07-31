@@ -12,6 +12,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * User Entity로 대체될 임시 클래스입니다.
+ */
 @Getter
 @NoArgsConstructor
 @Entity
