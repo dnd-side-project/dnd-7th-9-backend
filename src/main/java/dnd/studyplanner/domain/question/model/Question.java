@@ -18,9 +18,13 @@ import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.option.model.Option;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Question extends BaseEntity {
 	@Id
@@ -41,4 +45,14 @@ public class Question extends BaseEntity {
 
 	@OneToMany(mappedBy = "solveQuestion", cascade = CascadeType.ALL)
 	private List<UserSolveQuestion> userSolveQuestions = new ArrayList<>();
+
+	@Builder
+	public Question(QuestionBook questionBook, String questionContent, int questionAnswer, String questionOptionType) {
+		this.questionBook = questionBook;
+		this.questionContent = questionContent;
+		this.questionAnswer = questionAnswer;
+		this.questionOptionType = questionOptionType;
+
+		questionBook.getQuestions().add(this);
+	}
 }
