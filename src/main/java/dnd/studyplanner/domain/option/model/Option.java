@@ -12,9 +12,13 @@ import javax.persistence.Table;
 
 import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.question.model.Question;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "options")
 public class Option extends BaseEntity {
@@ -31,4 +35,14 @@ public class Option extends BaseEntity {
 	private String optionContent;
 	private boolean optionImageEnable;
 	private String optionImageUrl;
+
+	@Builder
+	public Option(Question question, String optionContent, boolean optionImageEnable, String optionImageUrl) {
+		this.question = question;
+		this.optionContent = optionContent;
+		this.optionImageEnable = optionImageEnable;
+		this.optionImageUrl = optionImageUrl;
+
+		question.getOptions().add(this);
+	}
 }
