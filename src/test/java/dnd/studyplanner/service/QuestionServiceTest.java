@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import dnd.studyplanner.DataUtil;
 import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.dto.question.request.QuestionSaveDto;
@@ -30,14 +31,15 @@ class QuestionServiceTest {
 	@Autowired
 	QuestionBookRepository questionBookRepository;
 
+	@Autowired
+	DataUtil dataUtil;
+
 	@Transactional
 	@DisplayName(value = "문제 저장 테스트")
 	@Test
 	public void saveQuestionTest() throws BaseException {
 		//given
-		QuestionBook questionBook = questionBookRepository.save(
-			QuestionBook.builder().build()
-		);
+		QuestionBook questionBook = dataUtil.saveQuestionBookData();
 
 		QuestionSaveDto saveDto = QuestionSaveDto.builder()
 			.questionAnswer(3)
@@ -56,7 +58,7 @@ class QuestionServiceTest {
 	}
 
 	@Transactional
-	@DisplayName(value = "존재하지 않는 문제집에 저장하는 경우")
+	@DisplayName(value = "문제집 예외 테스트")
 	@Test
 	public void saveAtNoQuestionBookTest() throws BaseException {
 		//given
