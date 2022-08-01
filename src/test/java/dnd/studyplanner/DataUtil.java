@@ -1,12 +1,19 @@
 package dnd.studyplanner;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import dnd.studyplanner.domain.question.model.Question;
+import dnd.studyplanner.domain.question.model.QuestionOptionType;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
+import dnd.studyplanner.dto.option.request.OptionSaveDto;
+import dnd.studyplanner.dto.question.request.QuestionListDto;
 import dnd.studyplanner.repository.QuestionBookRepository;
 import dnd.studyplanner.repository.QuestionRepository;
 
@@ -39,5 +46,46 @@ public class DataUtil {
 		);
 
 		return questionBook;
+	}
+
+	public List<QuestionListDto> getQuestionListDto() {
+
+		List<QuestionListDto> requestDto = new ArrayList<>();
+
+		List<OptionSaveDto> optionsA = new ArrayList<>();
+		for (int i = 1; i < 4; i++) {
+			optionsA.add(OptionSaveDto.builder()
+				.optionContent("Test OptionA : " + i)
+				.optionImageEnable(false)
+				.optionImageUrl("").build());
+		}
+
+		List<OptionSaveDto> optionsB = new ArrayList<>();
+		for (int i = 1; i < 5; i++) {
+			optionsB.add(OptionSaveDto.builder()
+				.optionContent("Test OptionB : " + i)
+				.optionImageEnable(true)
+				.optionImageUrl("testImg.com/" + i).build());
+		}
+
+		requestDto.add(
+			QuestionListDto.builder()
+				.questionContent("Test Question A")
+				.questionOptionType(QuestionOptionType.TEXT)
+				.questionAnswer(3)
+				.optionSaveDtoList(optionsA)
+				.build()
+		);
+
+		requestDto.add(
+			QuestionListDto.builder()
+				.questionContent("Test Question B")
+				.questionOptionType(QuestionOptionType.IMAGE)
+				.questionAnswer(3)
+				.optionSaveDtoList(optionsB)
+				.build()
+		);
+
+		return requestDto;
 	}
 }

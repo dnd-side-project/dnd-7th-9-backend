@@ -1,8 +1,12 @@
 package dnd.studyplanner.dto.question.request;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.question.model.QuestionOptionType;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
+import dnd.studyplanner.dto.option.request.OptionSaveDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,18 +14,20 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class QuestionSaveDto {
+public class QuestionListDto {
+
 	private int questionAnswer;
 	private String questionContent;
 	private QuestionOptionType questionOptionType;
-	private Long questionBookId;
+
+	private List<OptionSaveDto> optionSaveDtoList;
 
 	@Builder
-	public QuestionSaveDto(int questionAnswer, String questionContent, QuestionOptionType questionOptionType, Long questionBookId) {
+	public QuestionListDto(int questionAnswer, String questionContent, QuestionOptionType questionOptionType, List<OptionSaveDto> optionSaveDtoList) {
 		this.questionAnswer = questionAnswer;
 		this.questionContent = questionContent;
 		this.questionOptionType = questionOptionType;
-		this.questionBookId = questionBookId;
+		this.optionSaveDtoList = optionSaveDtoList;
 	}
 
 	public Question toEntity(QuestionBook questionBook) {
@@ -32,5 +38,4 @@ public class QuestionSaveDto {
 			.questionOptionType(this.questionOptionType)
 			.build();
 	}
-
 }

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import dnd.studyplanner.DataUtil;
 import dnd.studyplanner.domain.question.model.Question;
+import dnd.studyplanner.domain.question.model.QuestionOptionType;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.dto.question.request.QuestionSaveDto;
 import dnd.studyplanner.exception.BaseException;
@@ -44,7 +45,7 @@ class QuestionServiceTest {
 		QuestionSaveDto saveDto = QuestionSaveDto.builder()
 			.questionAnswer(3)
 			.questionContent("고양이는 귀엽나요?")
-			.questionOptionType("Image")
+			.questionOptionType(QuestionOptionType.IMAGE)
 			.questionBookId(questionBook.getId())
 			.build();
 
@@ -65,7 +66,7 @@ class QuestionServiceTest {
 		QuestionSaveDto saveDto = QuestionSaveDto.builder()
 			.questionAnswer(3)
 			.questionContent("고양이는 귀엽나요?")
-			.questionOptionType("Image")
+			.questionOptionType(QuestionOptionType.IMAGE)
 			.questionBookId(-1L) // 존재할 수 없는 문제집 Id
 			.build();
 

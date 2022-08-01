@@ -6,6 +6,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,7 +40,8 @@ public class Question extends BaseEntity {
 
 	private String questionContent;
 	private int questionAnswer;
-	private String questionOptionType;
+	@Enumerated(EnumType.STRING)
+	private QuestionOptionType questionOptionType;
 
 	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
 	private List<Option> options = new ArrayList<>();
@@ -47,7 +50,7 @@ public class Question extends BaseEntity {
 	private List<UserSolveQuestion> userSolveQuestions = new ArrayList<>();
 
 	@Builder
-	public Question(QuestionBook questionBook, String questionContent, int questionAnswer, String questionOptionType) {
+	public Question(QuestionBook questionBook, String questionContent, int questionAnswer, QuestionOptionType questionOptionType) {
 		this.questionBook = questionBook;
 		this.questionContent = questionContent;
 		this.questionAnswer = questionAnswer;
