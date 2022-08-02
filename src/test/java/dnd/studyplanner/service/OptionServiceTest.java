@@ -16,12 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 import dnd.studyplanner.DataUtil;
 import dnd.studyplanner.domain.option.model.Option;
 import dnd.studyplanner.domain.question.model.Question;
-import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.dto.option.request.OptionListSaveDto;
 import dnd.studyplanner.dto.option.request.OptionSaveDto;
 import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.repository.OptionRepository;
 import dnd.studyplanner.repository.QuestionRepository;
+import dnd.studyplanner.service.Impl.OptionService;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest

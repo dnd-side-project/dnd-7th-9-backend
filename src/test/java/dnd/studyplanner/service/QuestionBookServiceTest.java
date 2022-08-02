@@ -24,6 +24,7 @@ import dnd.studyplanner.dto.question.request.QuestionListDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.repository.OptionRepository;
 import dnd.studyplanner.repository.QuestionRepository;
+import dnd.studyplanner.service.Impl.QuestionBookService;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -80,8 +81,6 @@ class QuestionBookServiceTest {
 		List<Option> allOptions = optionRepository.findAll();
 
 		assertThat(allQuestions.size()).isEqualTo(4);
-
-		// Test Question A : 3, B : 4개의 Option을 가짐
 		// assertThat(allOptions.size()).isEqualTo(82);
 
 		System.out.println("-----------------------------------");

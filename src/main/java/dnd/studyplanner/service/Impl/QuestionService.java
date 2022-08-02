@@ -1,4 +1,4 @@
-package dnd.studyplanner.service;
+package dnd.studyplanner.service.Impl;
 
 import java.util.List;
 
@@ -11,12 +11,13 @@ import dnd.studyplanner.dto.question.request.QuestionSaveDto;
 import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.repository.QuestionBookRepository;
 import dnd.studyplanner.repository.QuestionRepository;
+import dnd.studyplanner.service.IQuestionService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class QuestionService {
+public class QuestionService implements IQuestionService {
 
 	private final QuestionRepository questionRepository;
 	private final QuestionBookRepository questionBookRepository;

@@ -1,5 +1,6 @@
-package dnd.studyplanner.service;
+package dnd.studyplanner.service.Impl;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,28 +21,33 @@ import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.repository.GoalRepository;
 import dnd.studyplanner.repository.QuestionBookRepository;
 import dnd.studyplanner.repository.UserRepository;
+import dnd.studyplanner.service.IOptionService;
+import dnd.studyplanner.service.IQuestionBookService;
+import dnd.studyplanner.service.IQuestionService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class QuestionBookService {
+public class QuestionBookService implements IQuestionBookService {
 
 	private final QuestionBookRepository questionBookRepository;
 
-	private final QuestionService questionService;
+	private final IQuestionService questionService;
 
-	private final OptionService optionService;
+	private final IOptionService optionService;
 
 	private final UserRepository userRepository;
 	private final GoalRepository goalRepository;
 
-	public void saveQuestionBook(QuestionBookDto saveDto) {
+	public List<String> saveQuestionBook(QuestionBookDto saveDto) {
+		List<String> questionContentList = new ArrayList<>();
 
 		// for Test
-		// ID가 1인 entity
+		// ID가 1인 entity 고정
 		User user = userRepository.save(new User());
 		Goal goal = goalRepository.save(new Goal());
+		// 추후 User, Goal Service에 의존하여 Id에 해당하는 Entity를 가져와야함
 
 		QuestionBook entity = saveDto.toEntity(goal, user);
 		QuestionBook questionBook = questionBookRepository.save(entity);
@@ -54,6 +60,7 @@ public class QuestionBookService {
 		for (QuestionListDto listDto : saveDto.getQuestionDtoList()) {
 			Question question = listDto.toEntity(questionBook);
 			questions.add(question);
+			questionContentList.add(question.getQuestionContent());
 
 			listDto.getOptionSaveDtoList()
 				.forEach(o -> optionBuffer.add(question, o));
@@ -72,5 +79,7 @@ public class QuestionBookService {
 		}
 
 		optionService.saveAllOptions(options);
+
+		return questionContentList;
 	}
 }

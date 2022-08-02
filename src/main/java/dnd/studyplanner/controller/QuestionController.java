@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dnd.studyplanner.dto.question.request.QuestionSaveDto;
 import dnd.studyplanner.exception.BaseException;
-import dnd.studyplanner.service.QuestionService;
+import dnd.studyplanner.service.Impl.QuestionService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

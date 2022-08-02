@@ -18,6 +18,7 @@ import dnd.studyplanner.dto.question.request.QuestionSaveDto;
 import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.repository.QuestionBookRepository;
 import dnd.studyplanner.repository.QuestionRepository;
+import dnd.studyplanner.service.Impl.QuestionService;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dnd.studyplanner.dto.option.request.OptionListSaveDto;
 import dnd.studyplanner.exception.BaseException;
-import dnd.studyplanner.service.OptionService;
+import dnd.studyplanner.service.Impl.OptionService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
