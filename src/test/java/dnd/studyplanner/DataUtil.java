@@ -14,6 +14,7 @@ import dnd.studyplanner.domain.question.model.QuestionOptionType;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.dto.option.request.OptionSaveDto;
 import dnd.studyplanner.dto.question.request.QuestionListDto;
+import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.repository.QuestionBookRepository;
 import dnd.studyplanner.repository.QuestionRepository;
 
@@ -61,7 +62,7 @@ public class DataUtil {
 		}
 
 		List<OptionSaveDto> optionsB = new ArrayList<>();
-		for (int i = 1; i < 80; i++) {
+		for (int i = 1; i < 5; i++) {
 			optionsB.add(OptionSaveDto.builder()
 				.optionContent("Test OptionB : " + i)
 				.optionImageEnable(true)
@@ -69,7 +70,7 @@ public class DataUtil {
 		}
 
 		List<OptionSaveDto> optionsC = new ArrayList<>();
-		for (int i = 1; i < 80; i++) {
+		for (int i = 1; i < 2; i++) {
 			optionsB.add(OptionSaveDto.builder()
 				.optionContent("Test OptionB : " + i)
 				.optionImageEnable(true)
@@ -77,7 +78,7 @@ public class DataUtil {
 		}
 
 		List<OptionSaveDto> optionsD = new ArrayList<>();
-		for (int i = 1; i < 80; i++) {
+		for (int i = 1; i < 3; i++) {
 			optionsB.add(OptionSaveDto.builder()
 				.optionContent("Test OptionB : " + i)
 				.optionImageEnable(true)
@@ -121,5 +122,18 @@ public class DataUtil {
 		);
 
 		return requestDto;
+	}
+
+	public QuestionBookDto getQuestionBookDto() {
+		List<QuestionListDto> questionListDto = getQuestionListDto();
+
+		return QuestionBookDto.builder()
+				.goalId(1L)
+				.createUserId(1L)
+				.questionBookName("고양이 문제")
+				.questionBookQuestionNum(3)
+				.questionBookMinAchieveRate(80)
+				.questionDtoList(questionListDto)
+				.build();
 	}
 }

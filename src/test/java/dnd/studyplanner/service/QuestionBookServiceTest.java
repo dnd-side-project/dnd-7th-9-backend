@@ -1,19 +1,17 @@
 package dnd.studyplanner.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -23,6 +21,7 @@ import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.dto.option.request.OptionSaveDto;
 import dnd.studyplanner.dto.question.request.QuestionListDto;
+import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.repository.OptionRepository;
 import dnd.studyplanner.repository.QuestionRepository;
 
@@ -33,6 +32,8 @@ class QuestionBookServiceTest {
 	@Autowired
 	DataUtil dataUtil;
 
+	@Autowired
+	QuestionBookService questionBookService;
 	@Autowired
 	QuestionRepository questionRepository;
 
@@ -47,40 +48,34 @@ class QuestionBookServiceTest {
 		List<QuestionListDto> questionListDto = dataUtil.getQuestionListDto();
 
 		//when
-		List<Question> questions = new ArrayList<>();
-
-		// MutiValueMap으로 Question-Options 저장
+		List<Option> options = new LinkedList<>();
 		MultiValueMap<Question, OptionSaveDto> optionBuffer = new LinkedMultiValueMap<>();
 
-		for (QuestionListDto listDto : questionListDto) { // 여러 문제(Question)을 순회하면서
-			Question entity = listDto.toEntity(questionBook);
+		List<Question> questions = new LinkedList<>();
 
+		for (QuestionListDto listDto : questionListDto) {
+			Question entity = listDto.toEntity(questionBook);
 			questions.add(entity);
 
-			// 하나의 Question에 저장되어있는 Option들을 MutiValueMap에 저장
-			List<OptionSaveDto> optionSaveDtoList = listDto.getOptionSaveDtoList();
-			for (OptionSaveDto optionSaveDto : optionSaveDtoList) {
-				optionBuffer.add(entity, optionSaveDto);
-			}
+			listDto.getOptionSaveDtoList()
+				.forEach(o -> optionBuffer.add(entity, o));
 		}
 
 		questionRepository.saveAll(questions); // 문제 List 저장
 
-		List<Option> options = new ArrayList<>(); // saveAll 할 option 리스트 초기화
-
-		// MutivalueMap에 저장되어있던 객체(Question)를 통해 DB조회 없이 관계를 찾을 수 있음
 		for (Question question : optionBuffer.keySet()) {
-			options.addAll(optionBuffer.get(question)
-				.stream()
-				.map(dto -> dto.toEntity(question))
-				.collect(Collectors.toList())
+			options.addAll(
+				optionBuffer.get(question)
+					.stream()
+					.map(o -> o.toEntity(question))
+					.collect(Collectors.toList())
 			);
 
-		} // N * M 연산이 이루어짐...
+		}
 
 		optionRepository.saveAll(options);
 
-	    //then
+		//then
 		List<Question> allQuestions = questionRepository.findAll();
 		List<Option> allOptions = optionRepository.findAll();
 
@@ -92,6 +87,23 @@ class QuestionBookServiceTest {
 		System.out.println("-----------------------------------");
 		System.out.println(System.currentTimeMillis() - a);
 		System.out.println("-----------------------------------");
+	}
+
+	@DisplayName(value = "Service 로직 사용")
+	@Test
+	void saveAsListTest() {
+		//given
+		QuestionBookDto questionBookDto = dataUtil.getQuestionBookDto();
+
+		//when
+		questionBookService.saveQuestionBook(questionBookDto);
+
+		List<Question> allQuestions = questionRepository.findAll();
+		List<Option> allOptions = optionRepository.findAll();
+
+		//then
+		assertThat(allQuestions.size()).isEqualTo(4);
+		assertThat(allOptions.size()).isEqualTo(10);
 	}
 
 }

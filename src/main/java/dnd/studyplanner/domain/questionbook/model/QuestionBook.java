@@ -66,5 +66,7 @@ public class QuestionBook extends BaseEntity {
 		this.questionBookName = questionBookName;
 		this.questionBookMinAchieveRate = questionBookMinAchieveRate;
 		this.questionBookQuestionNum = questionBookQuestionNum;
+
+		questionBookGoal.getQuestionBooks().add(this);
 	}
 }

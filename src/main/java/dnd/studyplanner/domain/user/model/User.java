@@ -25,10 +25,10 @@ public class User extends BaseEntity {
 	@Column(name = "user_id")
 	private Long id;
 
-	@Column(nullable = false)
+	// @Column(nullable = false)
 	private String userEmail;
 
-	@Column(nullable = false)
+	// @Column(nullable = false)
 	private String accessToken;
 
 	private String userName;

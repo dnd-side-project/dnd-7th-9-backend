@@ -35,5 +35,9 @@ public class OptionService {
 		optionRepository.saveAll(options);
 	}
 
+	public void saveAllOptions(List<Option> options) {
+		optionRepository.saveAll(options);
+	}
+
 
 }
