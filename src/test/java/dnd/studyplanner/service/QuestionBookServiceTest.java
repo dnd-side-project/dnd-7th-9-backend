@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -68,11 +69,12 @@ class QuestionBookServiceTest {
 
 		// MutivalueMap에 저장되어있던 객체(Question)를 통해 DB조회 없이 관계를 찾을 수 있음
 		for (Question question : optionBuffer.keySet()) {
-			for (OptionSaveDto optionSaveDto : optionBuffer.get(question)) {
-				options.add(
-					optionSaveDto.toEntity(question)
-				);
-			}
+			options.addAll(optionBuffer.get(question)
+				.stream()
+				.map(dto -> dto.toEntity(question))
+				.collect(Collectors.toList())
+			);
+
 		} // N * M 연산이 이루어짐...
 
 		optionRepository.saveAll(options);
