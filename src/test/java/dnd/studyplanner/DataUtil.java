@@ -61,7 +61,23 @@ public class DataUtil {
 		}
 
 		List<OptionSaveDto> optionsB = new ArrayList<>();
-		for (int i = 1; i < 5; i++) {
+		for (int i = 1; i < 80; i++) {
+			optionsB.add(OptionSaveDto.builder()
+				.optionContent("Test OptionB : " + i)
+				.optionImageEnable(true)
+				.optionImageUrl("testImg.com/" + i).build());
+		}
+
+		List<OptionSaveDto> optionsC = new ArrayList<>();
+		for (int i = 1; i < 80; i++) {
+			optionsB.add(OptionSaveDto.builder()
+				.optionContent("Test OptionB : " + i)
+				.optionImageEnable(true)
+				.optionImageUrl("testImg.com/" + i).build());
+		}
+
+		List<OptionSaveDto> optionsD = new ArrayList<>();
+		for (int i = 1; i < 80; i++) {
 			optionsB.add(OptionSaveDto.builder()
 				.optionContent("Test OptionB : " + i)
 				.optionImageEnable(true)
@@ -83,6 +99,24 @@ public class DataUtil {
 				.questionOptionType(QuestionOptionType.IMAGE)
 				.questionAnswer(3)
 				.optionSaveDtoList(optionsB)
+				.build()
+		);
+
+		requestDto.add(
+			QuestionListDto.builder()
+				.questionContent("Test Question C")
+				.questionOptionType(QuestionOptionType.IMAGE)
+				.questionAnswer(5)
+				.optionSaveDtoList(optionsC)
+				.build()
+		);
+
+		requestDto.add(
+			QuestionListDto.builder()
+				.questionContent("Test Question D")
+				.questionOptionType(QuestionOptionType.IMAGE)
+				.questionAnswer(1)
+				.optionSaveDtoList(optionsD)
 				.build()
 		);
 

@@ -41,7 +41,8 @@ class QuestionBookServiceTest {
 
 	@Test
 	public void saveQuestionsTest() {
-	    //given
+		long a = System.currentTimeMillis();
+		//given
 		QuestionBook questionBook = dataUtil.saveQuestionBookData();
 		List<QuestionListDto> questionListDto = dataUtil.getQuestionListDto();
 
@@ -83,10 +84,14 @@ class QuestionBookServiceTest {
 		List<Question> allQuestions = questionRepository.findAll();
 		List<Option> allOptions = optionRepository.findAll();
 
-		assertThat(allQuestions.size()).isEqualTo(2);
+		assertThat(allQuestions.size()).isEqualTo(4);
 
 		// Test Question A : 3, B : 4개의 Option을 가짐
-		assertThat(allOptions.size()).isEqualTo(7);
+		// assertThat(allOptions.size()).isEqualTo(82);
+
+		System.out.println("-----------------------------------");
+		System.out.println(System.currentTimeMillis() - a);
+		System.out.println("-----------------------------------");
 	}
 
 }
