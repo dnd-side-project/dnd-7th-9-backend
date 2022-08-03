@@ -25,10 +25,10 @@ public class User extends BaseEntity {
 	@Column(name = "user_id")
 	private Long id;
 
-	@Column(nullable = false)
+	// @Column(nullable = false) 테스트를 위해 임시로 미적용
 	private String userEmail;
 
-	@Column(nullable = false)
+	// @Column(nullable = false) 테스트를 위해 임시로 미적용
 	private String accessToken;
 
 	private String userName;

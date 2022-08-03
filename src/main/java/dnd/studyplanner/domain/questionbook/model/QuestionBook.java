@@ -22,9 +22,13 @@ import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
 import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class QuestionBook extends BaseEntity {
 
@@ -53,4 +57,16 @@ public class QuestionBook extends BaseEntity {
 
 	@OneToMany(mappedBy = "solveQuestionBook", cascade = CascadeType.ALL)
 	private List<UserSolveQuestion> userSolveQuestions = new ArrayList<>();
+
+	@Builder
+	public QuestionBook(Goal questionBookGoal, User questionBookCreateUser, String questionBookName,
+		int questionBookMinAchieveRate, int questionBookQuestionNum) {
+		this.questionBookGoal = questionBookGoal;
+		this.questionBookCreateUser = questionBookCreateUser;
+		this.questionBookName = questionBookName;
+		this.questionBookMinAchieveRate = questionBookMinAchieveRate;
+		this.questionBookQuestionNum = questionBookQuestionNum;
+
+		questionBookGoal.getQuestionBooks().add(this);
+	}
 }

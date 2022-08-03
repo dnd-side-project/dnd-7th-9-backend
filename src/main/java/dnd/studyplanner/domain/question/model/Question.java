@@ -6,6 +6,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,9 +20,13 @@ import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.option.model.Option;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Question extends BaseEntity {
 	@Id
@@ -34,11 +40,22 @@ public class Question extends BaseEntity {
 
 	private String questionContent;
 	private int questionAnswer;
-	private String questionOptionType;
+	@Enumerated(EnumType.STRING)
+	private QuestionOptionType questionOptionType;
 
 	@OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
 	private List<Option> options = new ArrayList<>();
 
 	@OneToMany(mappedBy = "solveQuestion", cascade = CascadeType.ALL)
 	private List<UserSolveQuestion> userSolveQuestions = new ArrayList<>();
+
+	@Builder
+	public Question(QuestionBook questionBook, String questionContent, int questionAnswer, QuestionOptionType questionOptionType) {
+		this.questionBook = questionBook;
+		this.questionContent = questionContent;
+		this.questionAnswer = questionAnswer;
+		this.questionOptionType = questionOptionType;
+
+		questionBook.getQuestions().add(this);
+	}
 }
