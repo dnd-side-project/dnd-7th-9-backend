@@ -60,17 +60,32 @@ jobs:
       - name: Copy Jar
         run: cp ./build/libs/*.jar ./deploy
 
+      # appspec.yml 파일 복사
+      - name: Copy appspec.yml
+        run: cp appspec.yml ./deploy
+
       # 파일 압축
       - name: Make zip file
         run: zip -r ./springboot.zip ./deploy
 
+      # S3 Bucket 으로 copy
+      - name: Upload to S3
+        run: |
+          aws s3 cp \
+          --region ap-northeast-2 \
+          --acl private \
+          ./springboot-with-githubaction-codedeploy.zip s3://springboot-with-githubaction-codedeploy/
+
       # Deploy
       - name: Deploy
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 --acl private ./springboot.zip s3://springboot-with-githubaction-codedeploy/
+#        uses: aws-actions/configure-aws-credentials@v1
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws deploy create-deployment \
+          --application-name dnd-springboot-codedeploy \
+          --deployment-group-name dnd-springboot-codedeploy-group \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=springboot-with-githubaction-codedeploy,bundleType=zip,key=springboot-with-githubaction-codedeploy.zip \
+          --region ap-northeast-2
