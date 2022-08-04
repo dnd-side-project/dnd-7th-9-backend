@@ -1,6 +1,6 @@
 package dnd.studyplanner.dto.response;
 
-import static dnd.studyplanner.dto.response.ApiResponseStatus.*;
+import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,39 +15,47 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@JsonPropertyOrder({"isSuccess", "code", "message", "result"})
-public class ApiResponse<T> {
+@JsonPropertyOrder({"isSuccess", "responseCode", "message", "result"})
+public class CustomResponse<T> {
 
 	@JsonProperty("isSuccess")
 	private final Boolean isSuccess;
 
-	private final int code;
+	private final int responseCode;
 	private final String message;
 	private final HttpStatus httpStatus;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private T result;
 
-	public ApiResponse(T result) {
+	public CustomResponse(T result) { //Response Body 포함
 		this.isSuccess = SUCCESS.isSuccess();
 		this.message = SUCCESS.getMessage();
-		this.code = SUCCESS.getCode();
+		this.responseCode = SUCCESS.getResponseCode();
 		this.result = result;
 		this.httpStatus = HttpStatus.OK;
 	}
 
-	public ApiResponse(ApiResponseStatus status) {
+	public CustomResponse(T result, CustomResponseStatus status) { //원하는 성공 메세지 추가하여 응답
 		this.isSuccess = status.isSuccess();
 		this.message = status.getMessage();
-		this.code = status.getCode();
+		this.responseCode = status.getResponseCode();
+		this.httpStatus = status.getHttpStatus();
+		this.result = result;
+	}
+
+	public CustomResponse(CustomResponseStatus status) {
+		this.isSuccess = status.isSuccess();
+		this.message = status.getMessage();
+		this.responseCode = status.getResponseCode();
 		this.httpStatus = status.getHttpStatus();
 	}
 
-	public ResponseEntity<ApiResponse> toResponseEntity() {
+	public ResponseEntity<CustomResponse> toResponseEntity() {
 		return new ResponseEntity<>(this, this.httpStatus);
 	}
 
-	public ResponseEntity<ApiResponse> toResponseEntity(HttpHeaders httpHeaders) {
+	public ResponseEntity<CustomResponse> toResponseEntity(HttpHeaders httpHeaders) {
 		return new ResponseEntity<>(this, httpHeaders, this.httpStatus);
 	}
 }
