@@ -49,8 +49,8 @@ jobs:
 
       # Build
       - name: Build with Gradle
-#        run: ./gradlew clean build
-        run: ./gradlew clean --debug build
+        run: ./gradlew clean build -x test
+#        run: ./gradlew clean --debug build
           
       # 디렉토리 생성
       - name: Make Directory
