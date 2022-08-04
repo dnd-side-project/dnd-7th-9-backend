@@ -74,7 +74,7 @@ jobs:
           aws s3 cp \
           --region ap-northeast-2 \
           --acl private \
-          ./springboot-with-githubaction-codedeploy.zip s3://springboot-with-githubaction-codedeploy/
+          ./springboot.zip s3://springboot-with-githubaction-codedeploy/
 
       # Deploy
       - name: Deploy
