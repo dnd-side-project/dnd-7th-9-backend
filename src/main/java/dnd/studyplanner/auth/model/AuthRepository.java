@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AuthRepository extends JpaRepository<AuthEntity, Long> {
 
-	boolean existsByMemberId(Long memberId);
+	boolean existsByUserId(Long userId);
 }

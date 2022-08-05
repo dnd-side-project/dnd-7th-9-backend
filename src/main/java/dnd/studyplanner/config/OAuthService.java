@@ -2,6 +2,8 @@ package dnd.studyplanner.config;
 
 import java.util.Collections;
 
+import dnd.studyplanner.domain.user.model.User;
+import dnd.studyplanner.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -24,9 +26,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
-	private final MemberRepository memberRepository;
+
+	private final UserRepository userRepository;
 	private final JwtService jwtService;
 	private final AuthRepository authRepository;
+
+	private String userAccessToken;
 
 	// OAuth2UserService
 	// Application.yml 의 설정 값에 맞게
@@ -50,27 +55,28 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 			.getUserNameAttributeName();
 
 		OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
-		Member member = saveOrUpdate(attributes); // email로 Member 조회 후 업데이트 || 회원가입
+		User user = saveOrUpdate(attributes); // email로 Member 조회 후 업데이트 || 회원가입
 
 		//로그인 시 토큰 생성
-		saveOrUpdateAuthEntity(member);
+		saveOrUpdateAuthEntity(user);
 
-		return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())),
+		return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
 			attributes.getAttributes(), attributes.getNameAttributeKey()); // 이 부분은 자세히 모르겠어요...
 	}
 
-	private Member saveOrUpdate(OAuthAttributes attributes) {
-		Member member = memberRepository.findByEmail(attributes.getEmail())
+	private User saveOrUpdate(OAuthAttributes attributes) {
+		User user = userRepository.findByUserEmail(attributes.getEmail())
 			.orElse(attributes.toEntity());
 
-		return memberRepository.save(member);
+		return userRepository.save(user);
 	}
 
-	private void saveOrUpdateAuthEntity(Member member) {
-		if (!authRepository.existsByMemberId(member.getId())) {
-			String jwt = jwtService.createJwt(member.getId());
-			String refreshToken = jwtService.createRefreshToken(member.getId());
-			authRepository.save(new AuthEntity(jwt, refreshToken, member.getId()));
+	private void saveOrUpdateAuthEntity(User user) {
+		if (!authRepository.existsByUserId(user.getId())) {
+			String jwt = jwtService.createJwt(user.getId());
+			String refreshToken = jwtService.createRefreshToken(user.getId());
+			authRepository.save(new AuthEntity(jwt, refreshToken, user.getId()));
+
 		}
 	}
 

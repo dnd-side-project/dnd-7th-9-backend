@@ -19,19 +19,19 @@ public class AuthService {
 
 
 	public TokenResponseDto reissueAccessToken(String refreshToken) {
-		Long memberId = jwtService.getMemberIdFromRefresh(refreshToken);
-		String newAccessToken = jwtService.createJwt(memberId); //새로운 Access-Token 생성
+		Long userId = jwtService.getMemberIdFromRefresh(refreshToken);
+		String newAccessToken = jwtService.createJwt(userId); //새로운 Access-Token 생성
 		String newRefreshToken = refreshToken;
 		if (jwtService.isUpdatableRefreshToken(refreshToken)) { //Refresh-Token 만료 시간에 따라 재발급
 			log.debug("[REFRESH TOKEN REFRESH] : \n{} \n to {}", refreshToken, newRefreshToken);
-			newRefreshToken = jwtService.createRefreshToken(memberId);
+			newRefreshToken = jwtService.createRefreshToken(userId);
 		};
 
-		AuthEntity authEntity = authRepository.findById(memberId).orElse(
+		AuthEntity authEntity = authRepository.findById(userId).orElse(
 			AuthEntity.builder()
 				.jwt(newAccessToken)
 				.refreshToken(newRefreshToken)
-				.memberId(memberId)
+				.userId(userId)
 				.build()
 		);
 

@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import dnd.studyplanner.repository.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -30,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-	private final MemberRepository memberRepository;
+	private final UserRepository userRepository;
 	private final AuthRepository authRepository;
 	private final ObjectMapper objectMapper;
 
@@ -45,9 +46,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		// registrationId 추출이 어려워 정규표현식으로 email 파싱 -> 서비스마다 email이 담겨있는 형식이 달라서..
 		String email = findEmailByRegex(attributes.toString());
 
-		Long memberId = memberRepository.findByEmail(email).get().getId();
+		Long userId = userRepository.findByUserEmail(email).get().getId();
 
-		AuthEntity authEntity = authRepository.findById(memberId).get();
+		AuthEntity authEntity = authRepository.findById(userId).get();
 		String accessToken = authEntity.getJwt();
 		String refreshToken = authEntity.getRefreshToken();
 

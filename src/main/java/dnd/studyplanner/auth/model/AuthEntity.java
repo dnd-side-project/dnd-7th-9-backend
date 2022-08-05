@@ -24,12 +24,12 @@ public class AuthEntity {
 
 	private String refreshToken;
 
-	private Long memberId;
+	private Long userId;
 
 	@Builder
-	public AuthEntity(String jwt, String refreshToken, Long memberId) {
+	public AuthEntity(String jwt, String refreshToken, Long userId) {
 		this.jwt = jwt;
 		this.refreshToken = refreshToken;
-		this.memberId = memberId;
+		this.userId = userId;
 	}
 }
