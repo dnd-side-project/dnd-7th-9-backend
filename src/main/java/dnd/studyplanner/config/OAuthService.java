@@ -31,8 +31,6 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 	private final JwtService jwtService;
 	private final AuthRepository authRepository;
 
-	private String userAccessToken;
-
 	// OAuth2UserService
 	// Application.yml 의 설정 값에 맞게
 	// OAuth 요청 -> 인가 코드 발급 -> Access Token 발급 -> 사용자 정보 요청 과정이 이루어짐
