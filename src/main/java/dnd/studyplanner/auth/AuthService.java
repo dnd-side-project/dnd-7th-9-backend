@@ -19,7 +19,7 @@ public class AuthService {
 
 
 	public TokenResponseDto reissueAccessToken(String refreshToken) {
-		Long userId = jwtService.getMemberIdFromRefresh(refreshToken);
+		Long userId = jwtService.getUserIdFromRefresh(refreshToken);
 		String newAccessToken = jwtService.createJwt(userId); //새로운 Access-Token 생성
 		String newRefreshToken = refreshToken;
 		if (jwtService.isUpdatableRefreshToken(refreshToken)) { //Refresh-Token 만료 시간에 따라 재발급
