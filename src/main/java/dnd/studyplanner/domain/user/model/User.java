@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.*;
 
 import dnd.studyplanner.domain.base.BaseEntity;
-import dnd.studyplanner.domain.member.model.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -63,7 +62,6 @@ public class User extends BaseEntity {
 	public String getRoleKey() {
 		return this.role.getKey();
 	}
-
 
 	public void update(String userName, int userAge, String userGender, String userRegion, String userProfileImageUrl) {
 		this.userName = userName;

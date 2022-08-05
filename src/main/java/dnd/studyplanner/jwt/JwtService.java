@@ -22,22 +22,22 @@ public class JwtService {
 
 	// JWT 생성
 	// by MemberId
-	public String createJwt(Long memberId) {
+	public String createJwt(Long userId) {
 		Date now = new Date();
 		return Jwts.builder()
 			.setHeaderParam("type", "jwt")
-			.claim("memberId", memberId) //memberId로 저장
+			.claim("userId", userId) //memberId로 저장
 			.setIssuedAt(now)
 			.setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION)) //
 			.signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
 			.compact();
 	}
 
-	public String createRefreshToken(Long memberId) {
+	public String createRefreshToken(Long userId) {
 		Date now = new Date();
 		return Jwts.builder()
 			.setHeaderParam("type", "refresh")
-			.claim("memberId", memberId)
+			.claim("userId", userId)
 			.setIssuedAt(now)
 			.setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION))
 			.signWith(SignatureAlgorithm.HS256, REFRESH_SECRET_KEY)
@@ -82,7 +82,7 @@ public class JwtService {
 				.setSigningKey(JWT_SECRET_KEY) //gitignore에 등록된 KEY
 				.parseClaimsJws(jwt)
 				.getBody()
-				.get("memberId", Long.class);
+				.get("userId", Long.class);
 			return false;
 		}  catch (JwtException | NullPointerException exception) {
 			return true;
@@ -95,7 +95,7 @@ public class JwtService {
 				.setSigningKey(REFRESH_SECRET_KEY) //gitignore에 등록된 KEY
 				.parseClaimsJws(refresh)
 				.getBody()
-				.get("memberId", Long.class);
+				.get("userId", Long.class);
 			return false;
 		}  catch (JwtException | NullPointerException exception) {
 			return true;
@@ -114,7 +114,7 @@ public class JwtService {
 		return request.getHeader("Refresh-Token");
 	}
 
-	public Long getMemberId(String accessToken) {
+	public Long getUserId(String accessToken) {
 
 		//1. JWT 추출
 		// String accessToken = getJwt();
@@ -125,10 +125,10 @@ public class JwtService {
 			.setSigningKey(JWT_SECRET_KEY)
 			.parseClaimsJws(accessToken);
 
-		return claims.getBody().get("memberId", Long.class); //memberId 추출
+		return claims.getBody().get("userId", Long.class); //memberId 추출
 	}
 
-	public Long getMemberIdFromRefresh(String refreshToken) {
+	public Long getUserIdFromRefresh(String refreshToken) {
 
 		//1. JWT 추출
 		// String accessToken = getJwt();
@@ -139,7 +139,7 @@ public class JwtService {
 			.setSigningKey(REFRESH_SECRET_KEY)
 			.parseClaimsJws(refreshToken);
 
-		return claims.getBody().get("memberId", Long.class); //memberId 추출
+		return claims.getBody().get("userId", Long.class); //memberId 추출
 	}
 
 
