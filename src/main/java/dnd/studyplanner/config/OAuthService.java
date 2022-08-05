@@ -17,8 +17,6 @@ import dnd.studyplanner.auth.model.AuthEntity;
 import dnd.studyplanner.auth.model.AuthRepository;
 import dnd.studyplanner.config.dto.OAuthAttributes;
 import dnd.studyplanner.jwt.JwtService;
-import dnd.studyplanner.domain.member.model.Member;
-import dnd.studyplanner.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

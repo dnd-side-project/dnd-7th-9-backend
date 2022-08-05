@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dnd.studyplanner.auth.model.AuthEntity;
 import dnd.studyplanner.auth.model.AuthRepository;
-import dnd.studyplanner.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
