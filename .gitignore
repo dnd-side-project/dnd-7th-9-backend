@@ -41,3 +41,4 @@ src/main/resources/application-oauth.yml
 
 jasyptKey.txt
 /src/main/java/dnd/studyplanner/config/SecretConstant.java
+.DS_Store
