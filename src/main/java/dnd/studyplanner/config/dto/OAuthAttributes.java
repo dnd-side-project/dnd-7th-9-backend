@@ -3,13 +3,15 @@ package dnd.studyplanner.config.dto;
 import java.util.Map;
 
 import dnd.studyplanner.auth.dto.AuthProvider;
-import dnd.studyplanner.domain.member.model.Member;
-import dnd.studyplanner.domain.member.model.Role;
+import dnd.studyplanner.domain.user.model.Role;
+import dnd.studyplanner.domain.user.model.User;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ToString
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
@@ -66,6 +68,7 @@ public class OAuthAttributes {
 	private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
 		// kakao는 kakao_account에 유저정보가 있다. (email)
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
+
 		// kakao_account안에 또 profile이라는 JSON객체가 있다. (nickname, profile_image)
 		Map<String, Object> kakaoProfile = (Map<String, Object>)kakaoAccount.get("profile");
 
@@ -77,10 +80,10 @@ public class OAuthAttributes {
 			.build();
 	}
 
-	public Member toEntity() {
-		return Member.builder()
-			.nickname(name)
-			.email(email)
+	public User toEntity() {
+		return User.builder()
+			.userNickName(name)
+			.userEmail(email)
 			.role(Role.USER)
 			.build();
 	}
