@@ -114,7 +114,7 @@ public class JwtService {
 		return request.getHeader("Refresh-Token");
 	}
 
-	public Long getMemberId(String accessToken) {
+	public Long getUserId(String accessToken) {
 
 		//1. JWT 추출
 		// String accessToken = getJwt();

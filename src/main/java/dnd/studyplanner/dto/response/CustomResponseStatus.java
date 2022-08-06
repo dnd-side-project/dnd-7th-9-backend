@@ -11,6 +11,9 @@ public enum CustomResponseStatus {
 	UPLOAD_IMAGE_SUCCESS(true, 1001, "이미지 업로드 성공", HttpStatus.OK),
 	DELETE_IMAGE_SUCCESS(true, 1001, "이미지 삭제 성공", HttpStatus.OK),
 	SAVE_QUESTION_BOOK_SUCCESS(true, 1100, "문제집 저장 성공", HttpStatus.OK),
+	SAVE_USER_SUCCESS(true, 1200, "사용자 정보 저장 성공", HttpStatus.OK),
+	SAVE_GROUP_SUCCESS(true, 1300, "그룹 정보 저장 성공", HttpStatus.OK),
+	SAVE_GOAL_SUCCESS(true, 1400, "목표 저장 성공", HttpStatus.OK),
 
 	//4000번 오류 응답코드
 	REQUEST_DATA_NULL(false, 4000, "필수 항목이 입력되지 않았습니다", HttpStatus.BAD_REQUEST),
