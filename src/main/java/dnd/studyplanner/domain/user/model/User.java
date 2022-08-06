@@ -3,10 +3,18 @@ package dnd.studyplanner.domain.user.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import dnd.studyplanner.domain.base.BaseEntity;
-import dnd.studyplanner.domain.member.model.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +47,6 @@ public class User extends BaseEntity {
 	private String userRegion;
 	private String userProfileImageUrl;
 
-
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<UserJoinGroup> userJoinGroups = new ArrayList<>();
 
@@ -48,7 +55,7 @@ public class User extends BaseEntity {
 
 	@Builder
 	public User(String userEmail, String accessToken, Role role, String userNickName, String userName, int userAge
-			, String userGender, String userRegion, String userProfileImageUrl) {
+		, String userGender, String userRegion, String userProfileImageUrl) {
 		this.userEmail = userEmail;
 		this.accessToken = accessToken;
 		this.role = role;
@@ -63,7 +70,6 @@ public class User extends BaseEntity {
 	public String getRoleKey() {
 		return this.role.getKey();
 	}
-
 
 	public void update(String userName, int userAge, String userGender, String userRegion, String userProfileImageUrl) {
 		this.userName = userName;
