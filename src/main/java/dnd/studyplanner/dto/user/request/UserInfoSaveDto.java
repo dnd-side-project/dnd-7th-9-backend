@@ -27,4 +27,9 @@ public class UserInfoSaveDto {
         this.userProfileImageUrl = userProfileImageUrl;
     }
 
+    public User toEntity() {
+        return User.builder()
+            .build();
+    }
+
 }
