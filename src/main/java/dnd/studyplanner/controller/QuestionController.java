@@ -2,6 +2,7 @@ package dnd.studyplanner.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,8 +31,10 @@ public class QuestionController {
 	@PostMapping("/solve")
 	public ResponseEntity<CustomResponse> checkIsAnswer(
 		@RequestHeader("Access-Token") String accessToken,
-		QuestionSolveDto solveDto) throws BaseException {
+		@RequestBody QuestionSolveDto solveDto) throws BaseException {
 		log.debug("[RequestHeader] : {}", accessToken);
+
+
 		boolean isCorrectAnswer = questionService.solveQuestion(solveDto, accessToken);
 
 		return new CustomResponse<>(isCorrectAnswer).toResponseEntity();
