@@ -19,9 +19,13 @@ import javax.persistence.OneToOne;
 import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class StudyGroup extends BaseEntity {
 
@@ -37,6 +41,7 @@ public class StudyGroup extends BaseEntity {
 	private User groupCreateUser;
 
 	private LocalDateTime groupStartDate;
+	private LocalDateTime groupEndDate;
 	private String groupGoal;
 	private String groupImageUrl;
 	private String groupCategory;
@@ -48,4 +53,16 @@ public class StudyGroup extends BaseEntity {
 	@OneToMany(mappedBy = "studyGroup")
 	private List<UserJoinGroup> userJoinGroups = new ArrayList<>();
 
+	@Builder
+	public StudyGroup(String groupName, User groupCreateUser, LocalDateTime groupStartDate, LocalDateTime groupEndDate,
+		String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
+		this.groupName = groupName;
+		this.groupCreateUser = groupCreateUser;
+		this.groupStartDate = groupStartDate;
+		this.groupEndDate = groupEndDate;
+		this.groupGoal = groupGoal;
+		this.groupImageUrl = groupImageUrl;
+		this.groupCategory = groupCategory;
+		this.groupStatus = groupStatus;
+	}
 }
