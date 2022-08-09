@@ -1,6 +1,6 @@
 package dnd.studyplanner.domain.studygroup.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +19,13 @@ import javax.persistence.OneToOne;
 import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class StudyGroup extends BaseEntity {
 
@@ -36,7 +40,8 @@ public class StudyGroup extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User groupCreateUser;
 
-	private LocalDateTime groupStartDate;
+	private LocalDate groupStartDate;
+	private LocalDate groupEndDate;
 	private String groupGoal;
 	private String groupImageUrl;
 	private String groupCategory;
@@ -44,8 +49,36 @@ public class StudyGroup extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private StudyGroupStatus groupStatus;
 
-
 	@OneToMany(mappedBy = "studyGroup")
 	private List<UserJoinGroup> userJoinGroups = new ArrayList<>();
+
+	@Builder
+	public StudyGroup(String groupName, User groupCreateUser, LocalDate groupStartDate, LocalDate groupEndDate,
+					  String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
+
+		this.groupName = groupName;
+		this.groupCreateUser = groupCreateUser;
+		this.groupStartDate = groupStartDate;
+		this.groupEndDate = groupEndDate;
+		this.groupGoal = groupGoal;
+		this.groupImageUrl = groupImageUrl;
+		this.groupCategory = groupCategory;
+		this.groupStatus = groupStatus;
+
+	}
+
+	public void update(String groupName, User groupCreateUser, LocalDate groupStartDate, LocalDate groupEndDate,
+					   String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
+
+		this.groupName = groupName;
+		this.groupCreateUser = groupCreateUser;
+		this.groupStartDate = groupStartDate;
+		this.groupEndDate = groupEndDate;
+		this.groupGoal = groupGoal;
+		this.groupImageUrl = groupImageUrl;
+		this.groupCategory = groupCategory;
+		this.groupStatus = groupStatus;
+
+	}
 
 }
