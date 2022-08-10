@@ -1,6 +1,6 @@
 package dnd.studyplanner.dto.studyGroup.request;
 
-import java.time.LocalDateTime;;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
@@ -15,10 +15,10 @@ public class StudyGroupSaveDto {
 	private Long createUserId;
 	private String groupName;
 
-	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-	private LocalDateTime groupStartDate;
-	@JsonFormat(pattern = "yyyy-MM-dd kk:mm:ss")
-	private LocalDateTime groupEndDate;
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private LocalDate groupStartDate;
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private LocalDate groupEndDate;
 
 	private String groupGoal;
 	private String groupImageUrl;
@@ -28,7 +28,7 @@ public class StudyGroupSaveDto {
 	private StudyGroupStatus groupStatus;
 
 	@Builder
-	public StudyGroupSaveDto(Long createUserId, String groupName, LocalDateTime groupStartDate, LocalDateTime groupEndDate,
+	public StudyGroupSaveDto(Long createUserId, String groupName, LocalDate groupStartDate, LocalDate groupEndDate,
 							 String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
 
 		this.createUserId = createUserId;
