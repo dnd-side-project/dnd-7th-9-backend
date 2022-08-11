@@ -4,6 +4,7 @@ import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
+import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.StudyGroupRepository;
 import dnd.studyplanner.repository.UserJoinGroupRepository;
@@ -34,7 +35,29 @@ public class StudyGroupService implements IStudyGroupService {
 	private final JwtService jwtService;
 
 	@Override
-	public StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String userAccessToken) {
+	public StudyGroup saveGroupAndInvite(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken) {
+
+		StudyGroup updateStudyGroup = saveStudyGroup(studyGroupSaveDto, accessToken);
+		Long updateGroupId = updateStudyGroup.getId();
+
+		List<UserJoinGroup> invitedPeopleList = new ArrayList<>();
+
+		for (String invitedPeople : studyGroupSaveDto.getInvitedUserEmailList()) {
+			User invitedUser = userRepository.findByUserEmail(invitedPeople).get();
+			StudyGroup joinStudyGroup = studyGroupRepository.findById(updateGroupId).get();
+
+			UserJoinGroup updateInvitedPeople = userJoinGroupSaveDto.toEntity(invitedUser, joinStudyGroup);
+			log.debug("[초대된 사용자] : {}", updateInvitedPeople.getUser().getId());
+			log.debug("[초대한 그룹] : {}", updateInvitedPeople.getStudyGroup().getId());
+			invitedPeopleList.add(updateInvitedPeople);
+		}
+
+		userJoinGroupRepository.saveAll(invitedPeopleList);
+
+		return updateStudyGroup;
+	}
+
+	private StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String userAccessToken) {
 
 		Long currentUserId = getCurrentUserId(userAccessToken);
 		Optional<User> user = userRepository.findById(currentUserId);
