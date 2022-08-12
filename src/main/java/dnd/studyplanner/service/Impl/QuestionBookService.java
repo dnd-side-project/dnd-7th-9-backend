@@ -21,6 +21,8 @@ import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
 import dnd.studyplanner.dto.option.request.OptionSaveDto;
 import dnd.studyplanner.dto.question.request.QuestionListDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
+import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
+import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.GoalRepository;
 import dnd.studyplanner.repository.QuestionBookRepository;
 import dnd.studyplanner.repository.UserRepository;
@@ -40,6 +42,7 @@ public class QuestionBookService implements IQuestionBookService {
 	private final IQuestionService questionService;
 
 	private final IOptionService optionService;
+	private final JwtService jwtService;
 
 	private final UserRepository userRepository;
 	private final GoalRepository goalRepository;
@@ -87,6 +90,23 @@ public class QuestionBookService implements IQuestionBookService {
 		saveUserQuestionBook(goal, questionBook);
 
 		return questionContentList;
+	}
+
+	@Override
+	public List<UserQuestionBookResponse> getAllUserQuestionBooks(String accessToken) {
+		Long userId = jwtService.getUserId(accessToken);
+		List<UserQuestionBookResponse> response = new LinkedList<>();
+
+		userSolveQuestionBookRepository.findAllBySolveUser_Id(userId)
+			.forEach(e -> response.add(
+				UserQuestionBookResponse.builder()
+					.user(e.getSolveUser())
+					.questionBook(e.getSolveQuestionBook())
+					.isSolved(e.isSolved())
+					.build()
+			));
+
+		return response;
 	}
 
 	/**

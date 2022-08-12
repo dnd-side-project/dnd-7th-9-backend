@@ -13,10 +13,14 @@ import javax.persistence.ManyToOne;
 
 import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
+import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class UserSolveQuestionBook extends BaseEntity {
 
