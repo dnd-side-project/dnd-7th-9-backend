@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,9 +39,9 @@ public class StudyGroupService implements IStudyGroupService {
 		Long currentUserId = getCurrentUserId(userAccessToken);
 		Optional<User> user = userRepository.findById(currentUserId);
 
-		LocalDateTime today = LocalDateTime.now();
-		LocalDateTime groupStartDate = studyGroupSaveDto.getGroupStartDate();
-		LocalDateTime groupEndDate = studyGroupSaveDto.getGroupEndDate();
+		LocalDate today = LocalDate.now();
+		LocalDate groupStartDate = studyGroupSaveDto.getGroupStartDate();
+		LocalDate groupEndDate = studyGroupSaveDto.getGroupEndDate();
 		int compareStatus = groupStartDate.compareTo(today);
 
 		if (groupEndDate.isBefore(today)) {  // COMPLETE 상태
@@ -63,4 +63,5 @@ public class StudyGroupService implements IStudyGroupService {
 		Long currentUserId = jwtService.getUserId(userAccessToken);
 		return currentUserId;
 	}
+
 }

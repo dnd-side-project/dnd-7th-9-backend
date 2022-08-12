@@ -1,6 +1,5 @@
 package dnd.studyplanner.dto.user.request;
 
-import dnd.studyplanner.domain.user.model.User;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
