@@ -14,13 +14,17 @@ import dnd.studyplanner.domain.goal.model.Goal;
 import dnd.studyplanner.domain.option.model.Option;
 import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
+import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.user.model.User;
+import dnd.studyplanner.domain.user.model.UserJoinGroup;
+import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
 import dnd.studyplanner.dto.option.request.OptionSaveDto;
 import dnd.studyplanner.dto.question.request.QuestionListDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.repository.GoalRepository;
 import dnd.studyplanner.repository.QuestionBookRepository;
 import dnd.studyplanner.repository.UserRepository;
+import dnd.studyplanner.repository.UserSolveQuestionBookRepository;
 import dnd.studyplanner.service.IOptionService;
 import dnd.studyplanner.service.IQuestionBookService;
 import dnd.studyplanner.service.IQuestionService;
@@ -39,6 +43,7 @@ public class QuestionBookService implements IQuestionBookService {
 
 	private final UserRepository userRepository;
 	private final GoalRepository goalRepository;
+	private final UserSolveQuestionBookRepository userSolveQuestionBookRepository;
 
 	public List<String> saveQuestionBook(QuestionBookDto saveDto) {
 		List<String> questionContentList = new ArrayList<>();
@@ -79,7 +84,27 @@ public class QuestionBookService implements IQuestionBookService {
 		}
 
 		optionService.saveAllOptions(options);
+		saveUserQuestionBook(goal, questionBook);
 
 		return questionContentList;
+	}
+
+	/**
+	 * 풀어야할 User와 새로 생성된 QuestionBook 의 관계 저장
+	 * @param goal
+	 * @param questionBook
+	 */
+	private void saveUserQuestionBook(Goal goal, QuestionBook questionBook) {
+		StudyGroup studyGroup = goal.getStudyGroup(); //현재 세부 목표를 포함하는 스터디 그룹
+
+		List<UserSolveQuestionBook> userSolveQuestionBooks = studyGroup.getUserJoinGroups().stream()
+			.map(UserJoinGroup::getUser) // 스터디 그룹원들을 조회
+			.map(solveUser -> UserSolveQuestionBook.builder() // 스터디원 - 문제집 저장
+				.solveUser(solveUser)
+				.solveQuestionBook(questionBook)
+				.questionNumber(questionBook.getQuestionBookQuestionNum())
+				.build())
+			.collect(Collectors.toList());
+		userSolveQuestionBookRepository.saveAll(userSolveQuestionBooks);
 	}
 }
