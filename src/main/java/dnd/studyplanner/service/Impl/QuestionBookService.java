@@ -22,12 +22,14 @@ import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
 import dnd.studyplanner.dto.option.request.OptionSaveDto;
 import dnd.studyplanner.dto.question.request.QuestionListDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
+import dnd.studyplanner.dto.questionbook.request.SolveQuestionBookDto;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.GoalRepository;
 import dnd.studyplanner.repository.QuestionBookRepository;
 import dnd.studyplanner.repository.UserRepository;
 import dnd.studyplanner.repository.UserSolveQuestionBookRepository;
+import dnd.studyplanner.repository.UserSolveQuestionRepository;
 import dnd.studyplanner.service.IOptionService;
 import dnd.studyplanner.service.IQuestionBookService;
 import dnd.studyplanner.service.IQuestionService;
@@ -47,6 +49,7 @@ public class QuestionBookService implements IQuestionBookService {
 
 	private final UserRepository userRepository;
 	private final GoalRepository goalRepository;
+	private final UserSolveQuestionRepository userSolveQuestionRepository;
 	private final UserSolveQuestionBookRepository userSolveQuestionBookRepository;
 
 	public List<String> saveQuestionBook(QuestionBookDto saveDto) {
@@ -109,6 +112,25 @@ public class QuestionBookService implements IQuestionBookService {
 			));
 
 		return response;
+	}
+
+	@Override
+	public boolean isPassQuestionBook(String accessToken, SolveQuestionBookDto requestDto) {
+		Long userId = jwtService.getUserId(accessToken);
+		Long questionBookId = requestDto.getQuestionBookId();
+
+		int answerCount = userSolveQuestionRepository.countBySolveUser_IdAndAndSolveQuestionBook_IdAndRightCheck(
+			userId, questionBookId, true
+		);
+
+		Optional<QuestionBook> questionBook = questionBookRepository.findById(questionBookId);
+		// Question Book이 포함된 목표의 최소 정답률과 비교
+		Goal goal = questionBook.get().getQuestionBookGoal();
+		// 문제집 Pass시 기존 달성률에 문제집의 비중을 더함.
+		if (answerCount >= goal.getMinAnswerCount()) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

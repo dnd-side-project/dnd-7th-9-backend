@@ -1,5 +1,7 @@
 package dnd.studyplanner.controller;
 
+import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,12 +33,15 @@ public class QuestionController {
 	@PostMapping("/solve")
 	public ResponseEntity<CustomResponse> checkIsAnswer(
 		@RequestHeader("Access-Token") String accessToken,
-		@RequestBody QuestionSolveDto solveDto) throws BaseException {
+		@RequestBody QuestionSolveDto solveDto) {
 		log.debug("[RequestHeader] : {}", accessToken);
 
-
-		boolean isCorrectAnswer = questionService.solveQuestion(solveDto, accessToken);
-
-		return new CustomResponse<>(isCorrectAnswer).toResponseEntity();
+		try {
+			boolean isCorrectAnswer = questionService.solveQuestion(solveDto, accessToken);
+			return new CustomResponse<>(isCorrectAnswer).toResponseEntity();
+		} catch (BaseException e) {
+			return new CustomResponse<>(NOT_EXIST_DATA).toResponseEntity();
+		}
 	}
+
 }

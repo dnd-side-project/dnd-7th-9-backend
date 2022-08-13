@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
+import dnd.studyplanner.dto.questionbook.request.SolveQuestionBookDto;
+import dnd.studyplanner.dto.questionbook.response.QuestionBookSolveResponse;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.service.IQuestionBookService;
@@ -43,5 +45,32 @@ public class QuestionBookController {
 		return new CustomResponse<>(response).toResponseEntity();
 	}
 
+	@PostMapping("/end")
+	public ResponseEntity<CustomResponse> finishQuestionBook(
+		@RequestHeader("Access-Token") String accessToken,
+		@RequestBody SolveQuestionBookDto requestDto
+	) {
+		boolean passQuestionBook = questionBookService.isPassQuestionBook(accessToken, requestDto);
+		if (!passQuestionBook) {
+			QuestionBookSolveResponse response = QuestionBookSolveResponse.builder()
+				.isPass(false)
+				.addedRate()
+				.questionBookPostRate()
+				.questionBookSolveRate()
+				.build();
+			return new CustomResponse<>(response).toResponseEntity();
+		}
+
+		QuestionBookSolveResponse response = QuestionBookSolveResponse.builder()
+			.isPass(true)
+			.addedRate()
+			.questionBookPostRate()
+			.questionBookSolveRate()
+			.build();
+
+		goalUserService.updateUserGoalRate();
+
+		return new CustomResponse<>(response).toResponseEntity();
+	}
 
 }
