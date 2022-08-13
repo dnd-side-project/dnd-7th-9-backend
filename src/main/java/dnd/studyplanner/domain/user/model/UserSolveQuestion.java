@@ -11,9 +11,13 @@ import javax.persistence.ManyToOne;
 
 import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class UserSolveQuestion {
 
@@ -37,4 +41,15 @@ public class UserSolveQuestion {
 	private int pickOption;
 	private int answerOption;
 	private boolean rightCheck;
+
+	@Builder
+	public UserSolveQuestion(User solveUser, Question solveQuestion, int pickOption) {
+		this.solveUser = solveUser;
+		this.solveQuestion = solveQuestion;
+		this.pickOption = pickOption;
+
+		this.solveQuestionBook = solveQuestion.getQuestionBook();
+		this.answerOption = solveQuestion.getQuestionAnswer();
+		this.rightCheck = (this.answerOption == this.pickOption);
+	}
 }

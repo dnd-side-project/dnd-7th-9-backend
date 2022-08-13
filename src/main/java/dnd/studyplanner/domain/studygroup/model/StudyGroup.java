@@ -54,8 +54,7 @@ public class StudyGroup extends BaseEntity {
 
 	@Builder
 	public StudyGroup(String groupName, User groupCreateUser, LocalDate groupStartDate, LocalDate groupEndDate,
-					  String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
-
+		String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
 		this.groupName = groupName;
 		this.groupCreateUser = groupCreateUser;
 		this.groupStartDate = groupStartDate;
@@ -64,11 +63,10 @@ public class StudyGroup extends BaseEntity {
 		this.groupImageUrl = groupImageUrl;
 		this.groupCategory = groupCategory;
 		this.groupStatus = groupStatus;
-
 	}
 
 	public void update(String groupName, User groupCreateUser, LocalDate groupStartDate, LocalDate groupEndDate,
-					   String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
+		String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
 
 		this.groupName = groupName;
 		this.groupCreateUser = groupCreateUser;
@@ -80,5 +78,4 @@ public class StudyGroup extends BaseEntity {
 		this.groupStatus = groupStatus;
 
 	}
-
 }

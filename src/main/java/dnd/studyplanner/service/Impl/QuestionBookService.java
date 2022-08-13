@@ -3,6 +3,7 @@ package dnd.studyplanner.service.Impl;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -45,7 +46,8 @@ public class QuestionBookService implements IQuestionBookService {
 
 		// for Test
 		// ID가 1인 entity 고정
-		User user = userRepository.save(new User());
+		// User user = userRepository.save(new User());
+		User user = userRepository.findById(1L).get();
 		Goal goal = goalRepository.save(new Goal());
 		// 추후 User, Goal Service에 의존하여 Id에 해당하는 Entity를 가져와야함
 
