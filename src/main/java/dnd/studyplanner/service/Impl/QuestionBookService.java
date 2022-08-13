@@ -102,7 +102,7 @@ public class QuestionBookService implements IQuestionBookService {
 		Long userId = jwtService.getUserId(accessToken);
 		List<UserQuestionBookResponse> response = new LinkedList<>();
 
-		userSolveQuestionBookRepository.findAllBySolveUser_Id(userId)
+		userSolveQuestionBookRepository.findAllBySolveUser_IdOrderByCreatedDateDesc(userId)
 			.forEach(e -> response.add(
 				UserQuestionBookResponse.builder()
 					.user(e.getSolveUser())
@@ -126,6 +126,7 @@ public class QuestionBookService implements IQuestionBookService {
 		Optional<QuestionBook> questionBook = questionBookRepository.findById(questionBookId);
 		// Question Book이 포함된 목표의 최소 정답률과 비교
 		Goal goal = questionBook.get().getQuestionBookGoal();
+
 		// 문제집 Pass시 기존 달성률에 문제집의 비중을 더함.
 		if (answerCount >= goal.getMinAnswerCount()) {
 			return true;

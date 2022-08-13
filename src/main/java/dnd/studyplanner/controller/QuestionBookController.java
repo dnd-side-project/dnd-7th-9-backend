@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dnd.studyplanner.domain.user.model.UserGoalRate;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.dto.questionbook.request.SolveQuestionBookDto;
 import dnd.studyplanner.dto.questionbook.response.QuestionBookSolveResponse;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.service.IQuestionBookService;
+import dnd.studyplanner.service.IUserRateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class QuestionBookController {
 
 	private final IQuestionBookService questionBookService;
+	private final IUserRateService userGoalRateService;
 
 	@PostMapping("/list")
 	public ResponseEntity<CustomResponse> addQuestionBookAsList(@RequestBody QuestionBookDto saveDto) {
@@ -51,24 +54,31 @@ public class QuestionBookController {
 		@RequestBody SolveQuestionBookDto requestDto
 	) {
 		boolean passQuestionBook = questionBookService.isPassQuestionBook(accessToken, requestDto);
+		UserGoalRate userGoalRate = userGoalRateService.getUserGoalRateByQuestionBookId(accessToken,
+			requestDto.getQuestionBookId());
 		if (!passQuestionBook) {
 			QuestionBookSolveResponse response = QuestionBookSolveResponse.builder()
 				.isPass(false)
-				.addedRate()
-				.questionBookPostRate()
-				.questionBookSolveRate()
+				.addedRate(0)
+				.userTotalRate(userGoalRate.getAchieveRate())
+				.questionBookPostRate(userGoalRate.getPostRate())
+				.questionBookSolveRate(userGoalRate.getSolveRate())
 				.build();
 			return new CustomResponse<>(response).toResponseEntity();
 		}
+		int beforeUpdate = userGoalRate.getAchieveRate();
 
+		userGoalRateService.updateAfterQuestionBook(accessToken,
+			requestDto.getQuestionBookId());
+
+		int afterUpdate = userGoalRate.getAchieveRate();
 		QuestionBookSolveResponse response = QuestionBookSolveResponse.builder()
 			.isPass(true)
-			.addedRate()
-			.questionBookPostRate()
-			.questionBookSolveRate()
+			.addedRate(afterUpdate - beforeUpdate)
+			.userTotalRate(userGoalRate.getAchieveRate())
+			.questionBookPostRate(userGoalRate.getPostRate())
+			.questionBookSolveRate(userGoalRate.getSolveRate())
 			.build();
-
-		goalUserService.updateUserGoalRate();
 
 		return new CustomResponse<>(response).toResponseEntity();
 	}
