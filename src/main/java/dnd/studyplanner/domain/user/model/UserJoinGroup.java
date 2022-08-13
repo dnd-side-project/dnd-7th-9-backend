@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 
 import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -32,5 +33,13 @@ public class UserJoinGroup extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "study_group_id")
 	private StudyGroup studyGroup;
+
+	@Builder
+	public UserJoinGroup(User user, StudyGroup studyGroup) {
+		this.user = user;
+		this.studyGroup = studyGroup;
+
+		user.getUserJoinGroups().add(this);
+	}
 
 }
