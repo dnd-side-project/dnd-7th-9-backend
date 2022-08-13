@@ -33,9 +33,13 @@ public class QuestionBookController {
 	private final IUserRateService userGoalRateService;
 
 	@PostMapping("/list")
-	public ResponseEntity<CustomResponse> addQuestionBookAsList(@RequestBody QuestionBookDto saveDto) {
+	public ResponseEntity<CustomResponse> addQuestionBookAsList(
+		@RequestHeader String accessToken,
+		@RequestBody QuestionBookDto saveDto
+	) {
 
 		List<String> questionList = questionBookService.saveQuestionBook(saveDto);
+		userGoalRateService.updatePostQuestionBook(accessToken, saveDto.getGoalId());
 
 		return new CustomResponse<>(questionList, SAVE_QUESTION_BOOK_SUCCESS).toResponseEntity();
 	}

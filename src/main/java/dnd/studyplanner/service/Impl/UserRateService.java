@@ -10,6 +10,7 @@ import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserGoalRate;
 import dnd.studyplanner.jwt.JwtService;
+import dnd.studyplanner.repository.GoalRepository;
 import dnd.studyplanner.repository.QuestionBookRepository;
 import dnd.studyplanner.repository.UserGoalRateRepository;
 import dnd.studyplanner.repository.UserRepository;
@@ -28,35 +29,41 @@ public class UserRateService implements IUserRateService {
 	private final UserGoalRateRepository userGoalRateRepository;
 	private final QuestionBookRepository questionBookRepository;
 	private final UserRepository userRepository;
+	private final GoalRepository goalRepository;
 
 	@Override
 	public UserGoalRate updateAfterQuestionBook(String accessToken, Long questionBookId) {
-		Long userId = jwtService.getUserId(accessToken);
-		Optional<User> user = userRepository.findById(userId);
+
 		Optional<QuestionBook> questionBook = questionBookRepository.findById(questionBookId);
 		Goal goal = questionBook.get().getQuestionBookGoal();
 
-		UserGoalRate userGoalRate = userGoalRateRepository.findByUser_IdAndGoal_Id(userId, goal.getId()).orElse(
-			UserGoalRate.builder()
-				.user(user.get())
-				.goal(goal)
-				.build());
+		UserGoalRate userGoalRate = getUserGoalRate(accessToken, goal);
 		userGoalRate.updateQuestionBookSolve(goal.getRatePerQuestionBook());
 	}
 
 	@Override
 	public UserGoalRate getUserGoalRateByQuestionBookId(String accessToken, Long questionBookId) {
-		Long userId = jwtService.getUserId(accessToken);
-
-		Optional<User> user = userRepository.findById(userId);
 		Optional<QuestionBook> questionBook = questionBookRepository.findById(questionBookId);
 		Goal goal = questionBook.get().getQuestionBookGoal();
+
+		return getUserGoalRate(accessToken, goal);
+	}
+
+	@Override
+	public void updatePostQuestionBook(String accessToken, Long goalId) {
+		Goal goal = goalRepository.findById(goalId).get();
+		UserGoalRate userGoalRate = getUserGoalRate(accessToken, goal);
+		userGoalRate.updatePostQuestionBook();
+	}
+
+	private UserGoalRate getUserGoalRate(String accessToken, Goal goal) {
+		Long userId = jwtService.getUserId(accessToken);
+		Optional<User> user = userRepository.findById(userId);
 
 		return userGoalRateRepository.findByUser_IdAndGoal_Id(userId, goal.getId()).orElse(
 			UserGoalRate.builder()
 				.user(user.get())
 				.goal(goal)
-				.build()
-		);
+				.build());
 	}
 }

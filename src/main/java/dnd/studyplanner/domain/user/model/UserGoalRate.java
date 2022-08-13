@@ -59,6 +59,12 @@ public class UserGoalRate {
 		checkFinishGoal();
 	}
 
+	public void updatePostQuestionBook() {
+		achieveRate += 50;
+		postRate += 50;
+		checkFinishGoal();
+	}
+
 	private void checkFinishGoal() {
 		if (this.achieveRate >= 100) {
 			isFinishGoal = true;
