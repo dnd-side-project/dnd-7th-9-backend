@@ -1,8 +1,9 @@
 package dnd.studyplanner.controller;
 
-import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.dto.response.CustomResponse;
+import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
+import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
 import dnd.studyplanner.service.IStudyGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,13 @@ public class StudyGroupController {
 
     private final IStudyGroupService studyGroupService;
 
-    // 그룹 생성
+    // 그룹 생성 & 사용자 초대
     @PostMapping("/info")
     public ResponseEntity<CustomResponse> addStudyGroup(
             @RequestHeader(value = "Access-Token") String accessToken,
-            @RequestBody StudyGroupSaveDto studyGroupSaveDto) {
+            @RequestBody StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto) {
 
-        StudyGroup updateStudyGroup = studyGroupService.saveStudyGroup(studyGroupSaveDto, accessToken);
+        StudyGroupSaveResponse updateStudyGroup = studyGroupService.saveGroupAndInvite(studyGroupSaveDto, userJoinGroupSaveDto, accessToken);
 
         return new CustomResponse<>(updateStudyGroup, SAVE_GROUP_SUCCESS).toResponseEntity();
 

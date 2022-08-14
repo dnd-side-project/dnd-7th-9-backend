@@ -3,7 +3,9 @@ package dnd.studyplanner.service.Impl;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
+import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
+import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.StudyGroupRepository;
 // import dnd.studyplanner.repository.UserJoinGroupRepository;
@@ -34,7 +36,42 @@ public class StudyGroupService implements IStudyGroupService {
 	private final JwtService jwtService;
 
 	@Override
-	public StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String userAccessToken) {
+	public StudyGroupSaveResponse saveGroupAndInvite(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken) {
+
+		StudyGroup updateStudyGroup = saveStudyGroup(studyGroupSaveDto, accessToken);
+		Long updateGroupId = updateStudyGroup.getId();
+
+		log.debug("[생성된 그룹 아이디] : {}", updateGroupId);
+
+		List<UserJoinGroup> invitedPeopleList = new ArrayList<>();
+		List<String> updateStudyGroupMemberList = new ArrayList<>();
+
+		StudyGroup joinStudyGroup = studyGroupRepository.findById(updateGroupId).get();
+
+		Long currentUserId = getCurrentUserId(accessToken);
+		User hostUser = userRepository.findById(currentUserId).get();
+		UserJoinGroup updateHostPeople = userJoinGroupSaveDto.toEntity(hostUser,joinStudyGroup);
+		invitedPeopleList.add(updateHostPeople);
+		updateStudyGroupMemberList.add(hostUser.getUserEmail());
+
+		for (String invitedPeople : studyGroupSaveDto.getInvitedUserEmailList()) {
+			User invitedUser = userRepository.findByUserEmail(invitedPeople).get();
+			UserJoinGroup updateInvitedPeople = userJoinGroupSaveDto.toEntity(invitedUser, joinStudyGroup);
+			invitedPeopleList.add(updateInvitedPeople);
+			updateStudyGroupMemberList.add(invitedPeople);
+		}
+
+		userJoinGroupRepository.saveAll(invitedPeopleList);
+
+		StudyGroupSaveResponse studyGroupSaveResponse = StudyGroupSaveResponse.builder()
+															.newStudyGroup(updateStudyGroup)
+															.studyGroupMember(updateStudyGroupMemberList)
+															.build();
+
+		return studyGroupSaveResponse;
+	}
+
+	private StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String userAccessToken) {
 
 		Long currentUserId = getCurrentUserId(userAccessToken);
 		Optional<User> user = userRepository.findById(currentUserId);
