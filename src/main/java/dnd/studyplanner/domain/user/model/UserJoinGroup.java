@@ -13,10 +13,13 @@ import javax.persistence.ManyToOne;
 
 import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class UserJoinGroup extends BaseEntity {
 

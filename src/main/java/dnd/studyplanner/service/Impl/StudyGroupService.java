@@ -8,7 +8,7 @@ import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.StudyGroupRepository;
-// import dnd.studyplanner.repository.UserJoinGroupRepository;
+import dnd.studyplanner.repository.UserJoinGroupRepository;
 import dnd.studyplanner.repository.UserRepository;
 import dnd.studyplanner.service.IStudyGroupService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class StudyGroupService implements IStudyGroupService {
 
 	private final UserRepository userRepository;
 	private final StudyGroupRepository studyGroupRepository;
-	// private final UserJoinGroupRepository userJoinGroupRepository;
+	private final UserJoinGroupRepository userJoinGroupRepository;
 	private final JwtService jwtService;
 
 	@Override

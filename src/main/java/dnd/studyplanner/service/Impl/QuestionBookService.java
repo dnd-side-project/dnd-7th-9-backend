@@ -52,19 +52,16 @@ public class QuestionBookService implements IQuestionBookService {
 	private final UserSolveQuestionRepository userSolveQuestionRepository;
 	private final UserSolveQuestionBookRepository userSolveQuestionBookRepository;
 
-	public List<String> saveQuestionBook(QuestionBookDto saveDto) {
-		List<String> questionContentList = new ArrayList<>();
+	public List<String> saveQuestionBook(String accessToken, QuestionBookDto saveDto) {
+		Long userId = jwtService.getUserId(accessToken);
 
-		// for Test
-		// ID가 1인 entity 고정
-		// User user = userRepository.save(new User());
-		User user = userRepository.findById(1L).get();
-		Goal goal = goalRepository.save(new Goal());
-		// 추후 User, Goal Service에 의존하여 Id에 해당하는 Entity를 가져와야함
+		User user = userRepository.findById(userId).get();
+		Goal goal = goalRepository.findById(saveDto.getGoalId()).get();
 
 		QuestionBook entity = saveDto.toEntity(goal, user);
 		QuestionBook questionBook = questionBookRepository.save(entity);
 
+		List<String> questionContentList = new ArrayList<>();
 		MultiValueMap<Question, OptionSaveDto> optionBuffer = new LinkedMultiValueMap<>();
 
 		List<Option> options = new LinkedList<>();
@@ -128,7 +125,7 @@ public class QuestionBookService implements IQuestionBookService {
 		Goal goal = questionBook.get().getQuestionBookGoal();
 
 		// 문제집 Pass시 기존 달성률에 문제집의 비중을 더함.
-		if (answerCount >= goal.getMinAnswerCount()) {
+		if (answerCount >= goal.getMinAnswerPerQuestionBook()) {
 			return true;
 		}
 		return false;

@@ -8,7 +8,7 @@ import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
 
 public interface IQuestionBookService {
 
-	List<String> saveQuestionBook(QuestionBookDto saveDto);
+	List<String> saveQuestionBook(String accessToken, QuestionBookDto saveDto);
 
 	List<UserQuestionBookResponse> getAllUserQuestionBooks(String accessToken);
 

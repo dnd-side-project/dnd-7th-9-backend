@@ -95,7 +95,7 @@ class QuestionBookServiceTest {
 		QuestionBookDto questionBookDto = dataUtil.getQuestionBookDto();
 
 		//when
-		questionBookService.saveQuestionBook(questionBookDto);
+		questionBookService.saveQuestionBook("accessTokne", questionBookDto);
 
 		List<Question> allQuestions = questionRepository.findAll();
 		List<Option> allOptions = optionRepository.findAll();

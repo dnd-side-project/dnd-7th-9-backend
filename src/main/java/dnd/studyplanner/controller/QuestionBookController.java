@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dnd.studyplanner.domain.user.model.UserGoalRate;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.dto.questionbook.request.SolveQuestionBookDto;
+import dnd.studyplanner.dto.questionbook.response.QuestionBookSaveResponse;
 import dnd.studyplanner.dto.questionbook.response.QuestionBookSolveResponse;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
 import dnd.studyplanner.dto.response.CustomResponse;
@@ -34,14 +35,20 @@ public class QuestionBookController {
 
 	@PostMapping("/list")
 	public ResponseEntity<CustomResponse> addQuestionBookAsList(
-		@RequestHeader String accessToken,
+		@RequestHeader("Access-Token") String accessToken,
 		@RequestBody QuestionBookDto saveDto
 	) {
 
-		List<String> questionList = questionBookService.saveQuestionBook(saveDto);
-		userGoalRateService.updatePostQuestionBook(accessToken, saveDto.getGoalId());
+		questionBookService.saveQuestionBook(accessToken, saveDto);
+		UserGoalRate userGoalRate = userGoalRateService.updatePostQuestionBook(accessToken, saveDto.getGoalId());
+		QuestionBookSaveResponse response = QuestionBookSaveResponse.builder()
+			.addedRate(50)
+			.questionBookPostRate(userGoalRate.getPostRate())
+			.questionBookSolveRate(userGoalRate.getSolveRate())
+			.userTotalRate(userGoalRate.getAchieveRate())
+			.build();
 
-		return new CustomResponse<>(questionList, SAVE_QUESTION_BOOK_SUCCESS).toResponseEntity();
+		return new CustomResponse<>(response, SAVE_QUESTION_BOOK_SUCCESS).toResponseEntity();
 	}
 
 	@GetMapping("/list/live")
@@ -72,8 +79,7 @@ public class QuestionBookController {
 		}
 		int beforeUpdate = userGoalRate.getAchieveRate();
 
-		userGoalRateService.updateAfterQuestionBook(accessToken,
-			requestDto.getQuestionBookId());
+		userGoalRateService.updateAfterQuestionBook(userGoalRate);
 
 		int afterUpdate = userGoalRate.getAchieveRate();
 		QuestionBookSolveResponse response = QuestionBookSolveResponse.builder()

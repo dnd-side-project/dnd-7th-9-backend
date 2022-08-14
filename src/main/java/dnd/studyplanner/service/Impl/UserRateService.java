@@ -32,13 +32,12 @@ public class UserRateService implements IUserRateService {
 	private final GoalRepository goalRepository;
 
 	@Override
-	public UserGoalRate updateAfterQuestionBook(String accessToken, Long questionBookId) {
+	public UserGoalRate updateAfterQuestionBook(UserGoalRate userGoalRate) {
+		int minSolveQuestionBook = userGoalRate.getGoal().getMinSolveQuestionBook();
 
-		Optional<QuestionBook> questionBook = questionBookRepository.findById(questionBookId);
-		Goal goal = questionBook.get().getQuestionBookGoal();
-
-		UserGoalRate userGoalRate = getUserGoalRate(accessToken, goal);
-		userGoalRate.updateQuestionBookSolve(goal.getRatePerQuestionBook());
+		int ratePerQuestionBook = (50 / minSolveQuestionBook);
+		userGoalRate.updateQuestionBookSolve(ratePerQuestionBook);
+		return userGoalRate;
 	}
 
 	@Override
@@ -50,10 +49,12 @@ public class UserRateService implements IUserRateService {
 	}
 
 	@Override
-	public void updatePostQuestionBook(String accessToken, Long goalId) {
+	public UserGoalRate updatePostQuestionBook(String accessToken, Long goalId) {
 		Goal goal = goalRepository.findById(goalId).get();
 		UserGoalRate userGoalRate = getUserGoalRate(accessToken, goal);
 		userGoalRate.updatePostQuestionBook();
+
+		return userGoalRate;
 	}
 
 	private UserGoalRate getUserGoalRate(String accessToken, Goal goal) {
