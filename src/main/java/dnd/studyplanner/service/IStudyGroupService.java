@@ -1,10 +1,11 @@
 package dnd.studyplanner.service;
 
-import dnd.studyplanner.domain.studygroup.model.StudyGroup;
+import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
+import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
 
 public interface IStudyGroupService {
 
-	StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String accessToken);
+	StudyGroupSaveResponse saveGroupAndInvite(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken);
 
 }

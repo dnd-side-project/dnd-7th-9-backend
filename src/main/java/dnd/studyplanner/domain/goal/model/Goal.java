@@ -1,5 +1,6 @@
 package dnd.studyplanner.domain.goal.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +21,13 @@ import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.user.model.User;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @Entity
 public class Goal extends BaseEntity {
 
@@ -36,8 +41,13 @@ public class Goal extends BaseEntity {
 	private StudyGroup studyGroup;
 
 	private String goalContent;
-	private LocalDateTime goalStartDate;
-	private LocalDateTime goalEndDate;
+
+	private LocalDate goalStartDate;
+	private LocalDate goalEndDate;
+
+	private int minAnswerPerQuestionBook;
+	private int minQuestionPerQuestionBook;
+	private int minSolveQuestionBook;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -49,4 +59,22 @@ public class Goal extends BaseEntity {
 
 	@OneToMany(mappedBy = "questionBookGoal", cascade = CascadeType.ALL)
 	private List<QuestionBook> questionBooks = new ArrayList<>();
+
+	@Builder
+	public Goal(StudyGroup studyGroup, String goalContent, LocalDate goalStartDate, LocalDate goalEndDate,
+				User goalRegisterUser, User goalUpdateUser) {
+		this.studyGroup = studyGroup;
+		this.goalContent = goalContent;
+		this.goalStartDate = goalStartDate;
+		this.goalEndDate = goalEndDate;
+		this.goalRegisterUser = goalRegisterUser;
+		this.goalUpdateUser = goalUpdateUser;
+	}
+
+	public void update(String goalContent, LocalDate goalStartDate, LocalDate goalEndDate, User goalUpdateUser) {
+		this.goalContent = goalContent;
+		this.goalStartDate = goalStartDate;
+		this.goalEndDate = goalEndDate;
+		this.goalUpdateUser = goalUpdateUser;
+	}
 }

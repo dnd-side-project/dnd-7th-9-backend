@@ -21,7 +21,9 @@ public enum CustomResponseStatus {
 	TOKEN_INVALID(false, 4001, "유효하지 않은 토큰입니다", HttpStatus.CONFLICT),
 	TOKEN_EXPIRED(false, 4002, "만료된 토큰입니다", HttpStatus.UNAUTHORIZED),
 	NOT_VALID_USER(false, 4003, "유효하지 않는 이메일 형식입니다", HttpStatus.BAD_REQUEST),
-	NOT_EXIST_USER(false, 4004, "존재하지 않는 사용자입니다", HttpStatus.NOT_FOUND);
+	NOT_EXIST_USER(false, 4004, "존재하지 않는 사용자입니다", HttpStatus.NOT_FOUND),
+
+	NOT_EXIST_DATA(false, 4100, "존재하지 않는 데이터입니다.", HttpStatus.BAD_REQUEST);
 
 
 	private final boolean isSuccess;

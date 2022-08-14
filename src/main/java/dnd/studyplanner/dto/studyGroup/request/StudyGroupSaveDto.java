@@ -1,6 +1,7 @@
 package dnd.studyplanner.dto.studyGroup.request;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
@@ -26,6 +27,8 @@ public class StudyGroupSaveDto {
 
 	@Setter
 	private StudyGroupStatus groupStatus;
+
+	List<String> invitedUserEmailList;
 
 	@Builder
 	public StudyGroupSaveDto(Long createUserId, String groupName, LocalDate groupStartDate, LocalDate groupEndDate,

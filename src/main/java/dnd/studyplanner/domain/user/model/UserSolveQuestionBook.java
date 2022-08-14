@@ -13,9 +13,14 @@ import javax.persistence.ManyToOne;
 
 import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
+import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class UserSolveQuestionBook extends BaseEntity {
 
@@ -32,6 +37,18 @@ public class UserSolveQuestionBook extends BaseEntity {
 	@JoinColumn(name = "question_book_id")
 	private QuestionBook solveQuestionBook;
 
+	private boolean isSolved;
+
+	private boolean isPassed;
+	private int questionNumber;
 	private int answerNum;
-	private int answerRate;
+
+	@Builder
+	public UserSolveQuestionBook(User solveUser, QuestionBook solveQuestionBook, int questionNumber) {
+		this.solveUser = solveUser;
+		this.solveQuestionBook = solveQuestionBook;
+		this.questionNumber = questionNumber;
+		this.isSolved = false;
+		this.isPassed = false;
+	}
 }

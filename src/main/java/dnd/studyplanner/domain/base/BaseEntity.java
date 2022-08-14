@@ -1,6 +1,7 @@
 package dnd.studyplanner.domain.base;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
@@ -17,8 +18,8 @@ import lombok.Getter;
 public class BaseEntity {
 
 	@CreatedDate
-	private LocalDate createdDate;
+	private LocalDateTime createdDate;
 
 	@LastModifiedDate
-	private LocalDate modifiedDate;
+	private LocalDateTime modifiedDate;
 }
