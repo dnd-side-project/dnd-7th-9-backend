@@ -1,4 +1,4 @@
-package dnd.studyplanner.dto.response;
+package dnd.studyplanner.dto.studyGroup.response;
 
 
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;

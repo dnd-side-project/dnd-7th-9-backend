@@ -3,7 +3,7 @@ package dnd.studyplanner.service.Impl;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
-import dnd.studyplanner.dto.response.StudyGroupSaveResponse;
+import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
 import dnd.studyplanner.jwt.JwtService;
@@ -40,6 +40,8 @@ public class StudyGroupService implements IStudyGroupService {
 
 		StudyGroup updateStudyGroup = saveStudyGroup(studyGroupSaveDto, accessToken);
 		Long updateGroupId = updateStudyGroup.getId();
+
+		log.debug("[생성된 그룹 아이디] : {}", updateGroupId);
 
 		List<UserJoinGroup> invitedPeopleList = new ArrayList<>();
 		List<String> updateStudyGroupMemberList = new ArrayList<>();
