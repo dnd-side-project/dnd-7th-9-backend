@@ -136,6 +136,27 @@ public class QuestionBookService implements IQuestionBookService {
 		return isPass;
 	}
 
+
+	@Override
+	public int getRecentQuestionBookCount(Long userId, Long goalId) {
+		// 조회하는 세부목표에 가장 최근에 추가된 문제집
+		QuestionBook recentQuestionBook = questionBookRepository
+			.findByQuestionBookGoal_IdOrderByCreatedDateDesc(goalId)
+			.get();
+
+		UserSolveQuestionBook userSolveQuestionBook = userSolveQuestionBookRepository
+			.findByUser_IdAndQuestionBook_Id(userId, recentQuestionBook.getId())
+			.get();
+
+		// 가장 최근에 추가된 문제집을 풀었으면 return 0
+		if (userSolveQuestionBook.isSolved()) {
+			return 0;
+		}
+
+		// 아직 풀지 않았다면, 문제집 개수 반환
+		return recentQuestionBook.getQuestionBookQuestionNum();
+	}
+
 	/**
 	 * 풀어야할 User와 새로 생성된 QuestionBook 의 관계 저장
 	 * @param goal
