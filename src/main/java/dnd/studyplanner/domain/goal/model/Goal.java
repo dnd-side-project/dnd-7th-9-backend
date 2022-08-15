@@ -45,6 +45,10 @@ public class Goal extends BaseEntity {
 	private LocalDate goalStartDate;
 	private LocalDate goalEndDate;
 
+	private int minAnswerPerQuestionBook;
+	private int minQuestionPerQuestionBook;
+	private int minSolveQuestionBook;
+
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn
 	private User goalRegisterUser;

@@ -46,7 +46,6 @@ public class QuestionBook extends BaseEntity {
 	private User questionBookCreateUser;
 
 	private String questionBookName;
-	private int questionBookMinAchieveRate;
 	private int questionBookQuestionNum;
 
 	@OneToMany(mappedBy = "questionBook", cascade = CascadeType.ALL)
@@ -60,11 +59,10 @@ public class QuestionBook extends BaseEntity {
 
 	@Builder
 	public QuestionBook(Goal questionBookGoal, User questionBookCreateUser, String questionBookName,
-		int questionBookMinAchieveRate, int questionBookQuestionNum) {
+		int questionBookQuestionNum) {
 		this.questionBookGoal = questionBookGoal;
 		this.questionBookCreateUser = questionBookCreateUser;
 		this.questionBookName = questionBookName;
-		this.questionBookMinAchieveRate = questionBookMinAchieveRate;
 		this.questionBookQuestionNum = questionBookQuestionNum;
 
 		questionBookGoal.getQuestionBooks().add(this);

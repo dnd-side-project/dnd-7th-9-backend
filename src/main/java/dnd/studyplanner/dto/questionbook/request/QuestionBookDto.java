@@ -18,21 +18,17 @@ import lombok.NoArgsConstructor;
 public class QuestionBookDto {
 
 	private Long goalId;
-	private Long createUserId;
 	private String questionBookName;
-	private int questionBookMinAchieveRate;
 	private int questionBookQuestionNum;
 
 	private List<QuestionListDto> questionDtoList = new ArrayList<>();
 
+
+
 	@Builder
-	public QuestionBookDto(Long goalId, Long createUserId, String questionBookName, int questionBookMinAchieveRate,
-		int questionBookQuestionNum, List<QuestionListDto> questionDtoList) {
+	public QuestionBookDto(Long goalId, String questionBookName, List<QuestionListDto> questionDtoList) {
 		this.goalId = goalId;
-		this.createUserId = createUserId;
 		this.questionBookName = questionBookName;
-		this.questionBookMinAchieveRate = questionBookMinAchieveRate;
-		this.questionBookQuestionNum = questionBookQuestionNum;
 		this.questionDtoList = questionDtoList;
 	}
 
@@ -40,10 +36,8 @@ public class QuestionBookDto {
 		return QuestionBook.builder()
 			.questionBookGoal(goal)
 			.questionBookCreateUser(user)
-			.questionBookName(this.questionBookName)
 			.questionBookQuestionNum(this.questionBookQuestionNum)
-			.questionBookMinAchieveRate(this.questionBookMinAchieveRate)
+			.questionBookName(this.questionBookName)
 			.build();
 	}
-
 }
