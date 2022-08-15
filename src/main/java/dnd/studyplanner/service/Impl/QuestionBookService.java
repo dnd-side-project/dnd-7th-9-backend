@@ -124,11 +124,16 @@ public class QuestionBookService implements IQuestionBookService {
 		// Question Book이 포함된 목표의 최소 정답률과 비교
 		Goal goal = questionBook.get().getQuestionBookGoal();
 
-		// 문제집 Pass시 기존 달성률에 문제집의 비중을 더함.
+		boolean isPass = false;
 		if (answerCount >= goal.getMinAnswerPerQuestionBook()) {
-			return true;
+			isPass = true;
 		}
-		return false;
+
+		UserSolveQuestionBook userSolveQuestionBook = userSolveQuestionBookRepository.findByUser_IdAndQuestionBook_Id(
+			userId, questionBookId).get();
+		userSolveQuestionBook.updateAfterSolve(isPass, answerCount);
+		
+		return isPass;
 	}
 
 	/**

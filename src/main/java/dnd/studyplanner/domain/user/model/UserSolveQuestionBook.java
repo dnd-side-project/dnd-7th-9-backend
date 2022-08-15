@@ -51,4 +51,10 @@ public class UserSolveQuestionBook extends BaseEntity {
 		this.isSolved = false;
 		this.isPassed = false;
 	}
+
+	public void updateAfterSolve(boolean isPassed, int answerNum) {
+		this.isSolved = true;
+		this.isPassed = isPassed;
+		this.answerNum = answerNum;
+	}
 }
