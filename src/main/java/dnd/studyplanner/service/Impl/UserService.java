@@ -31,8 +31,6 @@ import java.util.stream.Collectors;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
-    private final UserJoinGroupRepository userJoinGroupRepository;
-    private final StudyGroupRepository studyGroupRepository;
     private final JwtService jwtService;
 
     public User saveUserInfo(UserInfoSaveDto userInfoSaveDto, String userAccessToken) {

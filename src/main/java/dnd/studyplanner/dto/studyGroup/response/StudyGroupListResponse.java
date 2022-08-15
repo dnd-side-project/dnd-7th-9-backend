@@ -25,12 +25,9 @@ public class StudyGroupListResponse {
     private String groupCategory;
     private StudyGroupStatus groupStatus;
 
-//    private User groupUserList;
-
-
     @Builder
     public StudyGroupListResponse(Long groupId, String groupName, LocalDate groupStartDate, LocalDate groupEndDate,
-                                  String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus, UserJoinGroup userJoinGroup) {
+                                  String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.groupStartDate = groupStartDate;
@@ -39,6 +36,6 @@ public class StudyGroupListResponse {
         this.groupImageUrl = groupImageUrl;
         this.groupCategory = groupCategory;
         this.groupStatus = groupStatus;
-//        this.groupUserList = userJoinGroup.getUser();
+
     }
 }
