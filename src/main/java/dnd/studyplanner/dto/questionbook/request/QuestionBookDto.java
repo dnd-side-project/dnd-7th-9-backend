@@ -19,6 +19,7 @@ public class QuestionBookDto {
 
 	private Long goalId;
 	private String questionBookName;
+	private int questionBookQuestionNum;
 
 	private List<QuestionListDto> questionDtoList = new ArrayList<>();
 
@@ -35,8 +36,8 @@ public class QuestionBookDto {
 		return QuestionBook.builder()
 			.questionBookGoal(goal)
 			.questionBookCreateUser(user)
+			.questionBookQuestionNum(this.questionBookQuestionNum)
 			.questionBookName(this.questionBookName)
 			.build();
 	}
-
 }

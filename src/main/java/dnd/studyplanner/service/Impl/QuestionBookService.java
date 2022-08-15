@@ -124,11 +124,37 @@ public class QuestionBookService implements IQuestionBookService {
 		// Question Book이 포함된 목표의 최소 정답률과 비교
 		Goal goal = questionBook.get().getQuestionBookGoal();
 
-		// 문제집 Pass시 기존 달성률에 문제집의 비중을 더함.
+		boolean isPass = false;
 		if (answerCount >= goal.getMinAnswerPerQuestionBook()) {
-			return true;
+			isPass = true;
 		}
-		return false;
+
+		UserSolveQuestionBook userSolveQuestionBook = userSolveQuestionBookRepository.findByUser_IdAndQuestionBook_Id(
+			userId, questionBookId).get();
+		userSolveQuestionBook.updateAfterSolve(isPass, answerCount);
+		
+		return isPass;
+	}
+
+
+	@Override
+	public int getRecentQuestionBookCount(Long userId, Long goalId) {
+		// 조회하는 세부목표에 가장 최근에 추가된 문제집
+		QuestionBook recentQuestionBook = questionBookRepository
+			.findByQuestionBookGoal_IdOrderByCreatedDateDesc(goalId)
+			.get();
+
+		UserSolveQuestionBook userSolveQuestionBook = userSolveQuestionBookRepository
+			.findByUser_IdAndQuestionBook_Id(userId, recentQuestionBook.getId())
+			.get();
+
+		// 가장 최근에 추가된 문제집을 풀었으면 return 0
+		if (userSolveQuestionBook.isSolved()) {
+			return 0;
+		}
+
+		// 아직 풀지 않았다면, 문제집 개수 반환
+		return recentQuestionBook.getQuestionBookQuestionNum();
 	}
 
 	/**

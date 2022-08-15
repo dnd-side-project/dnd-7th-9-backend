@@ -18,7 +18,6 @@ import dnd.studyplanner.repository.QuestionRepository;
 import dnd.studyplanner.repository.UserRepository;
 import dnd.studyplanner.repository.UserSolveQuestionRepository;
 import dnd.studyplanner.service.IQuestionService;
-import dnd.studyplanner.service.IUserService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

@@ -13,4 +13,6 @@ public interface IQuestionBookService {
 	List<UserQuestionBookResponse> getAllUserQuestionBooks(String accessToken);
 
 	boolean isPassQuestionBook(String accessToken, SolveQuestionBookDto requestDto);
+
+	public int getRecentQuestionBookCount(Long userId, Long goalId);
 }
