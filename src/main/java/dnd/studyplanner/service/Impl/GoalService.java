@@ -14,7 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
+
+import static dnd.studyplanner.domain.goal.model.GoalStatus.*;
 
 
 @Slf4j
@@ -29,16 +32,26 @@ public class GoalService implements IGoalService {
     private final JwtService jwtService;
 
     @Override
-    public Goal addPeriodGoal(String accessToken, GoalSaveDto goalSaveDto) {
+    public Goal addDetailGoal(String accessToken, GoalSaveDto goalSaveDto) {
 
         Long currentUserId = getCurrentUserId(accessToken);
         User user = userRepository.findById(currentUserId).get();
 
         Long myStudyGroupId = goalSaveDto.getStudyGroupId();
-        log.debug("[Group ID] : {}", myStudyGroupId);
         Optional<StudyGroup> studyGroup = studyGroupRepository.findById(myStudyGroupId);
 
-//        StudyGroup studyGroup = studyGroupRepository.findById(myStudyGroupId).get();
+        LocalDate today = LocalDate.now();
+        LocalDate goalStartDate = goalSaveDto.getGoalStartDate();
+        LocalDate goalEndDate = goalSaveDto.getGoalEndDate();
+        int compareStatus = goalStartDate.compareTo(today);
+
+        if (goalEndDate.isBefore(today)) {  // COMPLETE 상태
+            goalSaveDto.setGoalStatus(COMPLETE);
+        } else if (compareStatus > 0) {   // READY 상태
+            goalSaveDto.setGoalStatus(READY);
+        } else if (compareStatus <= 0) {   // ACTIVE 상태
+            goalSaveDto.setGoalStatus(ACTIVE);
+        }
 
         Goal updateGoal = goalSaveDto.toEntity(user, studyGroup.get());
         goalRepository.save(updateGoal);

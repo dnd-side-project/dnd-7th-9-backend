@@ -24,7 +24,7 @@ public class GoalController {
             @RequestHeader(value = "Access-Token") String accessToken,
             @RequestBody GoalSaveDto goalSaveDto) {
 
-        Goal updateGoal = goalService.addPeriodGoal(accessToken, goalSaveDto);
+        Goal updateGoal = goalService.addDetailGoal(accessToken, goalSaveDto);
 
         return new CustomResponse<>(updateGoal, SAVE_GOAL_SUCCESS).toResponseEntity();
     }
