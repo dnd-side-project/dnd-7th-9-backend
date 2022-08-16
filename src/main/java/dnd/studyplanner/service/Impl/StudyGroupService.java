@@ -5,6 +5,7 @@ import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
+import dnd.studyplanner.dto.user.request.UserInfoExistDto;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.StudyGroupRepository;
@@ -20,7 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static dnd.studyplanner.domain.studygroup.model.StudyGroupStatus.*;
 
@@ -41,10 +45,8 @@ public class StudyGroupService implements IStudyGroupService {
 		StudyGroup updateStudyGroup = saveStudyGroup(studyGroupSaveDto, accessToken);
 		Long updateGroupId = updateStudyGroup.getId();
 
-		log.debug("[생성된 그룹 아이디] : {}", updateGroupId);
-
+		List<String> updateStudyGroupMemberList = checkInvitedPeople(studyGroupSaveDto);
 		List<UserJoinGroup> invitedPeopleList = new ArrayList<>();
-		List<String> updateStudyGroupMemberList = new ArrayList<>();
 
 		StudyGroup joinStudyGroup = studyGroupRepository.findById(updateGroupId).get();
 
@@ -54,19 +56,18 @@ public class StudyGroupService implements IStudyGroupService {
 		invitedPeopleList.add(updateHostPeople);
 		updateStudyGroupMemberList.add(hostUser.getUserEmail());
 
-		for (String invitedPeople : studyGroupSaveDto.getInvitedUserEmailList()) {
+		for (String invitedPeople : updateStudyGroupMemberList) {
 			User invitedUser = userRepository.findByUserEmail(invitedPeople).get();
 			UserJoinGroup updateInvitedPeople = userJoinGroupSaveDto.toEntity(invitedUser, joinStudyGroup);
 			invitedPeopleList.add(updateInvitedPeople);
-			updateStudyGroupMemberList.add(invitedPeople);
 		}
 
 		userJoinGroupRepository.saveAll(invitedPeopleList);
 
 		StudyGroupSaveResponse studyGroupSaveResponse = StudyGroupSaveResponse.builder()
-															.newStudyGroup(updateStudyGroup)
-															.studyGroupMember(updateStudyGroupMemberList)
-															.build();
+			.newStudyGroup(updateStudyGroup)
+			.studyGroupMember(updateStudyGroupMemberList)
+			.build();
 
 		return studyGroupSaveResponse;
 	}
@@ -74,7 +75,7 @@ public class StudyGroupService implements IStudyGroupService {
 	private StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String userAccessToken) {
 
 		Long currentUserId = getCurrentUserId(userAccessToken);
-		Optional<User> user = userRepository.findById(currentUserId);
+		User user = userRepository.findById(currentUserId).get();
 
 		LocalDate today = LocalDate.now();
 		LocalDate groupStartDate = studyGroupSaveDto.getGroupStartDate();
@@ -89,7 +90,7 @@ public class StudyGroupService implements IStudyGroupService {
 			studyGroupSaveDto.setGroupStatus(ACTIVE);
 		}
 
-		StudyGroup studyGroup = studyGroupSaveDto.toEntity(user.get());
+		StudyGroup studyGroup = studyGroupSaveDto.toEntity(user);
 		studyGroupRepository.save(studyGroup);
 
 		return studyGroup;
@@ -99,6 +100,42 @@ public class StudyGroupService implements IStudyGroupService {
 
 		Long currentUserId = jwtService.getUserId(userAccessToken);
 		return currentUserId;
+	}
+
+	private List<String> checkInvitedPeople(StudyGroupSaveDto studyGroupSaveDto) {
+
+		List<String> correctInvitedUserEmailList = new ArrayList<>();
+
+		List<String> invitedUserEmailList = studyGroupSaveDto.getInvitedUserEmailList();
+		for (String invitedUserEmail : invitedUserEmailList) {
+			if (!isValidEmail(invitedUserEmail) || !checkExistUser(invitedUserEmail)) {
+				continue;
+			}
+			correctInvitedUserEmailList.add(invitedUserEmail);
+		}
+		return correctInvitedUserEmailList;
+	}
+
+	private boolean checkExistUser(String invitedUserEmail) {
+
+		try {
+			User findUser = userRepository.findByUserEmail(invitedUserEmail).get();
+			return true;
+		} catch (NoSuchElementException exception) {
+			return false;
+		}
+	}
+
+	private boolean isValidEmail(String invitedUserEmail) {
+
+		boolean check = false;
+		String regex = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
+		Pattern p = Pattern.compile(regex);
+		Matcher m = p.matcher(invitedUserEmail);
+		if(m.matches()) {
+			check = true;
+		}
+		return check;
 	}
 
 }
