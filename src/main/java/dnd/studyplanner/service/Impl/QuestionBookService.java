@@ -129,7 +129,7 @@ public class QuestionBookService implements IQuestionBookService {
 			isPass = true;
 		}
 
-		UserSolveQuestionBook userSolveQuestionBook = userSolveQuestionBookRepository.findByUser_IdAndQuestionBook_Id(
+		UserSolveQuestionBook userSolveQuestionBook = userSolveQuestionBookRepository.findBySolveUserIdAndSolveQuestionBookId(
 			userId, questionBookId).get();
 		userSolveQuestionBook.updateAfterSolve(isPass, answerCount);
 		
@@ -145,7 +145,7 @@ public class QuestionBookService implements IQuestionBookService {
 			.get();
 
 		UserSolveQuestionBook userSolveQuestionBook = userSolveQuestionBookRepository
-			.findByUser_IdAndQuestionBook_Id(userId, recentQuestionBook.getId())
+			.findBySolveUserIdAndSolveQuestionBookId(userId, recentQuestionBook.getId())
 			.get();
 
 		// 가장 최근에 추가된 문제집을 풀었으면 return 0

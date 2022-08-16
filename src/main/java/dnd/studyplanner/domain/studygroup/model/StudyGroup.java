@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import dnd.studyplanner.domain.base.BaseEntity;
+import dnd.studyplanner.domain.goal.model.Goal;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import lombok.AccessLevel;
@@ -52,6 +53,9 @@ public class StudyGroup extends BaseEntity {
 	@OneToMany(mappedBy = "studyGroup")
 	private List<UserJoinGroup> userJoinGroups = new ArrayList<>();
 
+	@OneToMany(mappedBy = "studyGroup")
+	private List<Goal> groupDetailGoals = new ArrayList<>();
+
 	@Builder
 	public StudyGroup(String groupName, User groupCreateUser, LocalDate groupStartDate, LocalDate groupEndDate,
 		String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
@@ -77,5 +81,9 @@ public class StudyGroup extends BaseEntity {
 		this.groupCategory = groupCategory;
 		this.groupStatus = groupStatus;
 
+	}
+
+	public void updateStatus(StudyGroupStatus groupStatus) {
+		this.groupStatus = groupStatus;
 	}
 }

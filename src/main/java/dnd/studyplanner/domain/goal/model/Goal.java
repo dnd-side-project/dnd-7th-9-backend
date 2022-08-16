@@ -8,6 +8,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -45,9 +47,13 @@ public class Goal extends BaseEntity {
 	private LocalDate goalStartDate;
 	private LocalDate goalEndDate;
 
-	private int minAnswerPerQuestionBook;
-	private int minQuestionPerQuestionBook;
-	private int minSolveQuestionBook;
+	@Enumerated(EnumType.STRING)
+	private GoalStatus goalStatus;
+
+	private int minQuestionPerQuestionBook;   // 문제집 당 최소 문제 수
+	private int minSolveQuestionBook;   // 개인별 최소 풀이 문제집 수
+	private int minAnswerPerQuestionBook;   // 한 문제집 당 최소 정답 수
+	private int minPersonPerQuestionBook;   // 문제집 당 최소 팀원 참여 수 ?
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn
@@ -62,19 +68,31 @@ public class Goal extends BaseEntity {
 
 	@Builder
 	public Goal(StudyGroup studyGroup, String goalContent, LocalDate goalStartDate, LocalDate goalEndDate,
-				User goalRegisterUser, User goalUpdateUser) {
+				User goalRegisterUser, User goalUpdateUser, GoalStatus goalStatus,
+				int minQuestionPerQuestionBook, int minSolveQuestionBook, int minAnswerPerQuestionBook, int minPersonPerQuestionBook) {
 		this.studyGroup = studyGroup;
 		this.goalContent = goalContent;
 		this.goalStartDate = goalStartDate;
 		this.goalEndDate = goalEndDate;
 		this.goalRegisterUser = goalRegisterUser;
 		this.goalUpdateUser = goalUpdateUser;
+		this.goalStatus = goalStatus;
+		this.minQuestionPerQuestionBook = minQuestionPerQuestionBook;
+		this.minSolveQuestionBook = minSolveQuestionBook;
+		this.minAnswerPerQuestionBook = minAnswerPerQuestionBook;
+		this.minPersonPerQuestionBook = minPersonPerQuestionBook;
 	}
 
-	public void update(String goalContent, LocalDate goalStartDate, LocalDate goalEndDate, User goalUpdateUser) {
+	public void update(String goalContent, LocalDate goalStartDate, LocalDate goalEndDate,
+					   User goalUpdateUser, GoalStatus goalStatus) {
 		this.goalContent = goalContent;
 		this.goalStartDate = goalStartDate;
 		this.goalEndDate = goalEndDate;
 		this.goalUpdateUser = goalUpdateUser;
+		this.goalStatus = goalStatus;
+	}
+
+	public void updateStatus(GoalStatus goalStatus) {
+		this.goalStatus = goalStatus;
 	}
 }
