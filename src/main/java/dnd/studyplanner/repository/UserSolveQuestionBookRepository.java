@@ -10,5 +10,7 @@ import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
 public interface UserSolveQuestionBookRepository extends JpaRepository<UserSolveQuestionBook, Long> {
 	List<UserSolveQuestionBook> findAllBySolveUser_IdOrderByCreatedDateDesc(Long id);
 
-	Optional<UserSolveQuestionBook> findByUser_IdAndQuestionBook_Id(Long userId, Long questionBookId);
+	// Optional<UserSolveQuestionBook> findByUser_IdAndQuestionBook_Id(Long userId, Long questionBookId);
+
+	Optional<UserSolveQuestionBook> findBySolveUserIdAndSolveQuestionBookId(Long userId, Long questionBookId);
 }
