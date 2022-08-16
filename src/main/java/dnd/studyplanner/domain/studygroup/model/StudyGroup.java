@@ -82,4 +82,8 @@ public class StudyGroup extends BaseEntity {
 		this.groupStatus = groupStatus;
 
 	}
+
+	public void updateStatus(StudyGroupStatus groupStatus) {
+		this.groupStatus = groupStatus;
+	}
 }

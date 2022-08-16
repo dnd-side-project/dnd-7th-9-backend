@@ -88,4 +88,8 @@ public class Goal extends BaseEntity {
 		this.goalUpdateUser = goalUpdateUser;
 		this.goalStatus = goalStatus;
 	}
+
+	public void updateStatus(GoalStatus goalStatus) {
+		this.goalStatus = goalStatus;
+	}
 }
