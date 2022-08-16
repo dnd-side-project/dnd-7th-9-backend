@@ -8,6 +8,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -45,6 +47,7 @@ public class Goal extends BaseEntity {
 	private LocalDate goalStartDate;
 	private LocalDate goalEndDate;
 
+	@Enumerated(EnumType.STRING)
 	private GoalStatus goalStatus;
 
 	private int minQuestionPerQuestionBook;   // 문제집 당 최소 문제 수
