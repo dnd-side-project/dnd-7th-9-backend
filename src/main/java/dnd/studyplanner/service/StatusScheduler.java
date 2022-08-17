@@ -26,7 +26,7 @@ public class StatusScheduler {
 	private final StudyGroupRepository studyGroupRepository;
 	private final GoalRepository goalRepository;
 
-	@Scheduled(cron = "* * 12 * * *")
+	@Scheduled(cron = "0 0 12 * * *")
 	@Transactional
 	public void updateStudyGroupStatus() {
 		LocalDate today = LocalDate.now();
@@ -51,7 +51,7 @@ public class StatusScheduler {
 		studyGroupRepository.saveAll(studyGroupList);
 	}
 
-	@Scheduled(cron = "* * 12 * * *")
+	@Scheduled(cron = "0 0 12 * * *")
 	@Transactional
 	public void updateGoalStatus() {
 		LocalDate today = LocalDate.now();
