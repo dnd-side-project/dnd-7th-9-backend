@@ -10,4 +10,6 @@ public interface UserSolveQuestionRepository extends JpaRepository<UserSolveQues
 	int countBySolveUser_IdAndAndSolveQuestionBook_IdAndRightCheck(Long userId, Long questionBookId, boolean right);
 
 	List<UserSolveQuestion> findAllBySolveUserId(Long userId);
+
+	List<UserSolveQuestion> findBySolveUserIdAndSolveQuestionBookId(Long userId, Long questionId);
 }

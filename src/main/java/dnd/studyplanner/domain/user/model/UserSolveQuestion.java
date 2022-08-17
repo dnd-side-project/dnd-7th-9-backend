@@ -1,5 +1,7 @@
 package dnd.studyplanner.domain.user.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,8 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import dnd.studyplanner.domain.option.model.Option;
 import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
+import dnd.studyplanner.dto.questionbook.response.UserSolveQuestionResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,5 +55,19 @@ public class UserSolveQuestion {
 		this.solveQuestionBook = solveQuestion.getQuestionBook();
 		this.answerOption = solveQuestion.getQuestionAnswer();
 		this.rightCheck = (this.answerOption == this.pickOption);
+
+		solveQuestion.getUserSolveQuestions().add(this);
 	}
+
+
+
+	public UserSolveQuestionResponse toResponseDto() {
+		return UserSolveQuestionResponse.builder()
+			.question(this.getSolveQuestion())
+			.answerOption(this.answerOption)
+			.pickOption(this.pickOption)
+			.rightCheck(this.rightCheck)
+			.build();
+	}
+
 }

@@ -27,6 +27,7 @@ import dnd.studyplanner.dto.question.request.QuestionSolveDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookSolveDto;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
+import dnd.studyplanner.dto.questionbook.response.UserSolveQuestionResponse;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.GoalRepository;
 import dnd.studyplanner.repository.QuestionBookRepository;
@@ -36,7 +37,6 @@ import dnd.studyplanner.repository.UserSolveQuestionBookRepository;
 import dnd.studyplanner.repository.UserSolveQuestionRepository;
 import dnd.studyplanner.service.IOptionService;
 import dnd.studyplanner.service.IQuestionBookService;
-import dnd.studyplanner.service.IQuestionService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -144,6 +144,12 @@ public class QuestionBookService implements IQuestionBookService {
 		userSolveQuestionRepository.saveAll(userSolveQuestions);
 
 		return isPassedQuestionBook(userId, questionBookId, answerCount);
+	}
+
+	@Override
+	public List<UserSolveQuestion> getUserSolveDetails(String accessToken, Long questionBookId) {
+		Long userId = jwtService.getUserId(accessToken);
+		return userSolveQuestionRepository.findBySolveUserIdAndSolveQuestionBookId(userId, questionBookId);
 	}
 
 	private boolean isPassedQuestionBook(Long userId, Long questionBookId, int answerCount) {

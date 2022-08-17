@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.question.model.Question;
+import dnd.studyplanner.dto.option.response.OptionResponseDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,4 +46,11 @@ public class Option extends BaseEntity {
 
 		question.getOptions().add(this);
 	}
+
+	public OptionResponseDto toResponseDto() {
+		return OptionResponseDto.builder()
+			.option(this)
+			.build();
+	}
+
 }
