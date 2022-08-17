@@ -3,9 +3,11 @@ package dnd.studyplanner.controller;
 import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -13,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dnd.studyplanner.domain.user.model.UserGoalRate;
+import dnd.studyplanner.domain.user.model.UserSolveQuestion;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
-import dnd.studyplanner.dto.questionbook.request.SolveQuestionBookDto;
+import dnd.studyplanner.dto.questionbook.request.QuestionBookSolveDto;
 import dnd.studyplanner.dto.questionbook.response.QuestionBookSaveResponse;
 import dnd.studyplanner.dto.questionbook.response.QuestionBookSolveResponse;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
+import dnd.studyplanner.dto.questionbook.response.UserSolveQuestionResponse;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.service.IQuestionBookService;
 import dnd.studyplanner.service.IUserRateService;
@@ -62,9 +66,9 @@ public class QuestionBookController {
 	@PostMapping("/end")
 	public ResponseEntity<CustomResponse> finishQuestionBook(
 		@RequestHeader("Access-Token") String accessToken,
-		@RequestBody SolveQuestionBookDto requestDto
+		@RequestBody QuestionBookSolveDto requestDto
 	) {
-		boolean passQuestionBook = questionBookService.isPassQuestionBook(accessToken, requestDto);
+		boolean passQuestionBook = questionBookService.solveQuestionBook(accessToken, requestDto);
 		UserGoalRate userGoalRate = userGoalRateService.getUserGoalRateByQuestionBookId(accessToken,
 			requestDto.getQuestionBookId());
 		if (!passQuestionBook) {
@@ -89,6 +93,19 @@ public class QuestionBookController {
 			.questionBookPostRate(userGoalRate.getPostRate())
 			.questionBookSolveRate(userGoalRate.getSolveRate())
 			.build();
+
+		return new CustomResponse<>(response).toResponseEntity();
+	}
+
+	@GetMapping("/{questionBookId}/solved/details")
+	public ResponseEntity<CustomResponse> getSolveQuestionBookDetail(
+		@RequestHeader("Access-Token") String accessToken,
+		@PathVariable Long questionBookId
+	) {
+		List<UserSolveQuestionResponse> response = questionBookService.getUserSolveDetails(accessToken,
+				questionBookId).stream()
+			.map(UserSolveQuestion::toResponseDto)
+			.collect(Collectors.toList());
 
 		return new CustomResponse<>(response).toResponseEntity();
 	}

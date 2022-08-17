@@ -32,4 +32,9 @@ public class AuthEntity {
 		this.refreshToken = refreshToken;
 		this.userId = userId;
 	}
+
+	public void updateTokens(String jwt, String refreshToken) {
+		this.jwt = jwt;
+		this.refreshToken = refreshToken;
+	}
 }

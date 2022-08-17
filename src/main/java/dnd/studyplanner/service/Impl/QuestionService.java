@@ -1,6 +1,7 @@
 package dnd.studyplanner.service.Impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
 import dnd.studyplanner.dto.question.request.QuestionSaveDto;
 import dnd.studyplanner.dto.question.request.QuestionSolveDto;
+import dnd.studyplanner.dto.question.response.QuestionResponseDto;
 import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.QuestionBookRepository;
@@ -42,6 +44,14 @@ public class QuestionService implements IQuestionService {
 
 	public void saveAllQuestions(List<Question> questionList) {
 		questionRepository.saveAll(questionList);
+	}
+
+	@Override
+	public List<QuestionResponseDto> getQuestions(Long questionBookId) {
+		List<Question> questions = questionRepository.findByQuestionBookId(questionBookId);
+		return questions.stream()
+			.map(Question::toResponseDto)
+			.collect(Collectors.toList());
 	}
 
 	@Override

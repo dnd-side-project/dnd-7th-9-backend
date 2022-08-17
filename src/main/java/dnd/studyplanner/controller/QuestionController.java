@@ -2,7 +2,11 @@ package dnd.studyplanner.controller;
 
 import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dnd.studyplanner.dto.question.request.QuestionSaveDto;
 import dnd.studyplanner.dto.question.request.QuestionSolveDto;
+import dnd.studyplanner.dto.question.response.QuestionResponseDto;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.service.IQuestionService;
@@ -28,6 +33,14 @@ public class QuestionController {
 	@PostMapping
 	public void addQuestion(QuestionSaveDto saveDto) throws BaseException {
 		questionService.saveQuestion(saveDto);
+	}
+
+	@GetMapping("/{questionBookId}")
+	public ResponseEntity<CustomResponse> getQuestionsByQuestionBookId(
+		@PathVariable Long questionBookId
+	) {
+		List<QuestionResponseDto> response = questionService.getQuestions(questionBookId);
+		return new CustomResponse<>(response).toResponseEntity();
 	}
 
 	@PostMapping("/solve")

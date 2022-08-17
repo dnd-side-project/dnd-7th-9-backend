@@ -29,12 +29,11 @@ public class AuthService {
 
 		AuthEntity authEntity = authRepository.findById(userId).orElse(
 			AuthEntity.builder()
-				.jwt(newAccessToken)
-				.refreshToken(newRefreshToken)
 				.userId(userId)
 				.build()
 		);
 
+		authEntity.updateTokens(newAccessToken, newRefreshToken);
 		authRepository.save(authEntity);
 
 		return new TokenResponseDto(newAccessToken, newRefreshToken);
