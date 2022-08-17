@@ -129,10 +129,8 @@ public class DataUtil {
 
 		return QuestionBookDto.builder()
 				.goalId(1L)
-				.createUserId(1L)
 				.questionBookName("고양이 문제")
 				.questionBookQuestionNum(3)
-				.questionBookMinAchieveRate(80)
 				.questionDtoList(questionListDto)
 				.build();
 	}

@@ -8,4 +8,6 @@ import dnd.studyplanner.domain.user.model.UserSolveQuestion;
 
 public interface UserSolveQuestionRepository extends JpaRepository<UserSolveQuestion, Long> {
 	int countBySolveUser_IdAndAndSolveQuestionBook_IdAndRightCheck(Long userId, Long questionBookId, boolean right);
+
+	List<UserSolveQuestion> findAllBySolveUserId(Long userId);
 }

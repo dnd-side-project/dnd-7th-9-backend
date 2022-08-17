@@ -3,6 +3,7 @@ package dnd.studyplanner.service.Impl;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -18,15 +19,18 @@ import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
+import dnd.studyplanner.domain.user.model.UserSolveQuestion;
 import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
 import dnd.studyplanner.dto.option.request.OptionSaveDto;
 import dnd.studyplanner.dto.question.request.QuestionListDto;
+import dnd.studyplanner.dto.question.request.QuestionSolveDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
-import dnd.studyplanner.dto.questionbook.request.SolveQuestionBookDto;
+import dnd.studyplanner.dto.questionbook.request.QuestionBookSolveDto;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.GoalRepository;
 import dnd.studyplanner.repository.QuestionBookRepository;
+import dnd.studyplanner.repository.QuestionRepository;
 import dnd.studyplanner.repository.UserRepository;
 import dnd.studyplanner.repository.UserSolveQuestionBookRepository;
 import dnd.studyplanner.repository.UserSolveQuestionRepository;
@@ -42,13 +46,12 @@ public class QuestionBookService implements IQuestionBookService {
 
 	private final QuestionBookRepository questionBookRepository;
 
-	private final IQuestionService questionService;
-
 	private final IOptionService optionService;
 	private final JwtService jwtService;
 
 	private final UserRepository userRepository;
 	private final GoalRepository goalRepository;
+	private final QuestionRepository questionRepository;
 	private final UserSolveQuestionRepository userSolveQuestionRepository;
 	private final UserSolveQuestionBookRepository userSolveQuestionBookRepository;
 
@@ -76,7 +79,7 @@ public class QuestionBookService implements IQuestionBookService {
 				.forEach(o -> optionBuffer.add(question, o));
 		}
 
-		questionService.saveAllQuestions(questions); // 문제 List 저장
+		questionRepository.saveAll(questions); // 문제 List 저장
 
 		for (Question question : optionBuffer.keySet()) {
 			options.addAll(
@@ -112,14 +115,38 @@ public class QuestionBookService implements IQuestionBookService {
 	}
 
 	@Override
-	public boolean isPassQuestionBook(String accessToken, SolveQuestionBookDto requestDto) {
+	public boolean solveQuestionBook(String accessToken, QuestionBookSolveDto requestDto) {
 		Long userId = jwtService.getUserId(accessToken);
+		Optional<User> user = userRepository.findById(userId);
 		Long questionBookId = requestDto.getQuestionBookId();
 
-		int answerCount = userSolveQuestionRepository.countBySolveUser_IdAndAndSolveQuestionBook_IdAndRightCheck(
-			userId, questionBookId, true
-		);
+		// DB 커넥션을 줄이기 위해 Map 자료구조 사용
+		Map<Long, Question> questionMap = questionRepository.findByQuestionBookId(questionBookId).stream()
+			.collect(Collectors.toMap(Question::getId, v -> v));
+		List<QuestionSolveDto> questionSolveDto = requestDto.getSolveDtoList();
 
+
+		List<UserSolveQuestion> userSolveQuestions = new ArrayList<>(); //풀이 정보 saveAll 하기 위한 리스트
+		int answerCount = 0;
+
+		for (QuestionSolveDto solveDto : questionSolveDto) {
+			UserSolveQuestion userSolveQuestion = solveDto.toEntity(
+				user.get(),
+				questionMap.get(solveDto.getQuestionId())); // Map을 통해 조회하여 DB에 직접 연결하는 횟수를 줄임
+
+			if (userSolveQuestion.isRightCheck()) {
+				answerCount += 1;
+			}
+
+			userSolveQuestions.add(userSolveQuestion);
+		}
+
+		userSolveQuestionRepository.saveAll(userSolveQuestions);
+
+		return isPassedQuestionBook(userId, questionBookId, answerCount);
+	}
+
+	private boolean isPassedQuestionBook(Long userId, Long questionBookId, int answerCount) {
 		Optional<QuestionBook> questionBook = questionBookRepository.findById(questionBookId);
 		// Question Book이 포함된 목표의 최소 정답률과 비교
 		Goal goal = questionBook.get().getQuestionBookGoal();
@@ -131,11 +158,10 @@ public class QuestionBookService implements IQuestionBookService {
 
 		UserSolveQuestionBook userSolveQuestionBook = userSolveQuestionBookRepository.findBySolveUserIdAndSolveQuestionBookId(
 			userId, questionBookId).get();
+
 		userSolveQuestionBook.updateAfterSolve(isPass, answerCount);
-		
 		return isPass;
 	}
-
 
 	@Override
 	public int getRecentQuestionBookCount(Long userId, Long goalId) {

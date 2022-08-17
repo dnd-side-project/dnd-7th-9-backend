@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dnd.studyplanner.domain.user.model.UserGoalRate;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
-import dnd.studyplanner.dto.questionbook.request.SolveQuestionBookDto;
+import dnd.studyplanner.dto.questionbook.request.QuestionBookSolveDto;
 import dnd.studyplanner.dto.questionbook.response.QuestionBookSaveResponse;
 import dnd.studyplanner.dto.questionbook.response.QuestionBookSolveResponse;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
@@ -62,9 +62,9 @@ public class QuestionBookController {
 	@PostMapping("/end")
 	public ResponseEntity<CustomResponse> finishQuestionBook(
 		@RequestHeader("Access-Token") String accessToken,
-		@RequestBody SolveQuestionBookDto requestDto
+		@RequestBody QuestionBookSolveDto requestDto
 	) {
-		boolean passQuestionBook = questionBookService.isPassQuestionBook(accessToken, requestDto);
+		boolean passQuestionBook = questionBookService.solveQuestionBook(accessToken, requestDto);
 		UserGoalRate userGoalRate = userGoalRateService.getUserGoalRateByQuestionBookId(accessToken,
 			requestDto.getQuestionBookId());
 		if (!passQuestionBook) {

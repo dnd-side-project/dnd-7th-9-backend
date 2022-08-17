@@ -26,9 +26,10 @@ public class QuestionBookDto {
 
 
 	@Builder
-	public QuestionBookDto(Long goalId, String questionBookName, List<QuestionListDto> questionDtoList) {
+	public QuestionBookDto(Long goalId, String questionBookName, int questionBookQuestionNum, List<QuestionListDto> questionDtoList) {
 		this.goalId = goalId;
 		this.questionBookName = questionBookName;
+		this.questionBookQuestionNum = questionBookQuestionNum;
 		this.questionDtoList = questionDtoList;
 	}
 

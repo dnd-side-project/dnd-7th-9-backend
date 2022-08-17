@@ -3,7 +3,7 @@ package dnd.studyplanner.service;
 import java.util.List;
 
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
-import dnd.studyplanner.dto.questionbook.request.SolveQuestionBookDto;
+import dnd.studyplanner.dto.questionbook.request.QuestionBookSolveDto;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
 
 public interface IQuestionBookService {
@@ -12,7 +12,7 @@ public interface IQuestionBookService {
 
 	List<UserQuestionBookResponse> getAllUserQuestionBooks(String accessToken);
 
-	boolean isPassQuestionBook(String accessToken, SolveQuestionBookDto requestDto);
+	boolean solveQuestionBook(String accessToken, QuestionBookSolveDto requestDto);
 
 	public int getRecentQuestionBookCount(Long userId, Long goalId);
 }
