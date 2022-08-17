@@ -2,6 +2,7 @@ package dnd.studyplanner.domain.question.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -20,6 +21,7 @@ import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.option.model.Option;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
+import dnd.studyplanner.dto.question.response.QuestionResponseDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,4 +60,15 @@ public class Question extends BaseEntity {
 
 		questionBook.getQuestions().add(this);
 	}
+
+	public QuestionResponseDto toResponseDto() {
+		return QuestionResponseDto.builder()
+			.questionId(this.getId())
+			.questionContent(this.getQuestionContent())
+			.optionList(this.getOptions().stream()
+				.map(Option::toResponseDto)
+				.collect(Collectors.toList()))
+			.build();
+	}
+
 }

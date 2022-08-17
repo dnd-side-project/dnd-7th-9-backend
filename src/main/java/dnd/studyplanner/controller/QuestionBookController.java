@@ -97,7 +97,7 @@ public class QuestionBookController {
 		return new CustomResponse<>(response).toResponseEntity();
 	}
 
-	@GetMapping("/{questionBookId}/details")
+	@GetMapping("/{questionBookId}/solved/details")
 	public ResponseEntity<CustomResponse> getSolveQuestionBookDetail(
 		@RequestHeader("Access-Token") String accessToken,
 		@PathVariable Long questionBookId
