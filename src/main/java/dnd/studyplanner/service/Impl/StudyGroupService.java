@@ -1,8 +1,12 @@
 package dnd.studyplanner.service.Impl;
 
+import static dnd.studyplanner.domain.studygroup.model.StudyGroupStatus.*;
+
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
+import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
+import dnd.studyplanner.dto.studyGroup.response.StudyGroupListResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
 import dnd.studyplanner.dto.user.request.UserInfoExistDto;
@@ -25,8 +29,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static dnd.studyplanner.domain.studygroup.model.StudyGroupStatus.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -70,6 +73,29 @@ public class StudyGroupService implements IStudyGroupService {
 			.build();
 
 		return studyGroupSaveResponse;
+	}
+
+	@Override
+	public List<StudyGroupListResponse> getUserStudyGroups(String accessToken, String status) {
+		Long currentUserId = getCurrentUserId(accessToken);
+		StudyGroupStatus studyGroupStatus = StudyGroupStatus.valueOf(status.toUpperCase());
+
+		return userJoinGroupRepository.findAll().stream()
+			.filter(o -> o.getUser().getId().equals(currentUserId))
+			.map(UserJoinGroup::getStudyGroup)
+			.filter(studyGroup -> studyGroup.getGroupStatus().equals(studyGroupStatus))
+			.map(userGroup -> StudyGroupListResponse.builder()
+				.groupId(userGroup.getId())
+				.groupName(userGroup.getGroupName())
+				.groupStartDate(userGroup.getGroupStartDate())
+				.groupEndDate(userGroup.getGroupEndDate())
+				.groupGoal(userGroup.getGroupGoal())
+				.groupImageUrl(userGroup.getGroupImageUrl())
+				.groupCategory(userGroup.getGroupCategory())
+				.groupStatus(userGroup.getGroupStatus())
+				.build())
+			.collect(Collectors.toList());
+
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String userAccessToken) {

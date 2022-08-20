@@ -14,6 +14,7 @@ public enum CustomResponseStatus {
 	SAVE_USER_SUCCESS(true, 1200, "사용자 정보 저장 성공", HttpStatus.OK),
 	SAVE_GROUP_SUCCESS(true, 1300, "그룹 정보 저장 성공", HttpStatus.OK),
 	GET_GROUP_SUCCESS(true, 1301, "사용자 가입 그룹 조회 성공", HttpStatus.OK),
+	GET_MY_GROUP_SUCCESS(true, 1302, "프로필 스터디 그룹 조회 성공", HttpStatus.OK),
 	SAVE_GOAL_SUCCESS(true, 1400, "목표 저장 성공", HttpStatus.OK),
 
 	//4000번 오류 응답코드
@@ -22,6 +23,7 @@ public enum CustomResponseStatus {
 	TOKEN_EXPIRED(false, 4002, "만료된 토큰입니다", HttpStatus.UNAUTHORIZED),
 	NOT_VALID_USER(false, 4003, "유효하지 않는 이메일 형식입니다", HttpStatus.BAD_REQUEST),
 	NOT_EXIST_USER(false, 4004, "존재하지 않는 사용자입니다", HttpStatus.NOT_FOUND),
+	NOT_VALID_STATUS(false, 4005, "옳바르지 않는 스터디 그룹 상태 입니다", HttpStatus.BAD_REQUEST),
 
 	NOT_EXIST_DATA(false, 4100, "존재하지 않는 데이터입니다.", HttpStatus.BAD_REQUEST);
 
