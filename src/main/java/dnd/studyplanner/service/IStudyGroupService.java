@@ -4,6 +4,7 @@ import java.util.List;
 
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
+import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupListResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
@@ -13,6 +14,6 @@ public interface IStudyGroupService {
 
 	StudyGroupSaveResponse saveGroupAndInvite(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken);
 
-	List<StudyGroupListResponse> getUserStudyGroups(String accessToken, String status);
+	List<MyStudyGroupResponse> getUserStudyGroups(String accessToken, String status);
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
 import dnd.studyplanner.dto.response.CustomResponse;
+import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupListResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
@@ -49,7 +50,7 @@ public class StudyGroupController {
 
         try {
             log.debug("[STUDY GROUP STATUS] : {}", status);
-            List<StudyGroupListResponse> response = studyGroupService.getUserStudyGroups(accessToken, status);
+            List<MyStudyGroupResponse> response = studyGroupService.getUserStudyGroups(accessToken, status);
 
             return new CustomResponse<>(response, GET_MY_GROUP_SUCCESS).toResponseEntity();
         } catch (IllegalArgumentException e) {
