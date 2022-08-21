@@ -8,9 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
 
 public interface UserSolveQuestionBookRepository extends JpaRepository<UserSolveQuestionBook, Long> {
-	List<UserSolveQuestionBook> findAllBySolveUser_IdOrderByCreatedDateDesc(Long id);
 
-	// Optional<UserSolveQuestionBook> findByUser_IdAndQuestionBook_Id(Long userId, Long questionBookId);
+	// 사용자가 풀어야 하는 문제집 리스트 조회 - 최근 등록일 순 ?
+	List<UserSolveQuestionBook> findAllBySolveUser_IdOrderByCreatedDateDesc(Long id);
 
 	Optional<UserSolveQuestionBook> findBySolveUserIdAndSolveQuestionBookId(Long userId, Long questionBookId);
 }

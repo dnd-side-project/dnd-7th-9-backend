@@ -1,7 +1,7 @@
 package dnd.studyplanner.service;
 
 import dnd.studyplanner.domain.user.model.User;
-import dnd.studyplanner.dto.studyGroup.response.StudyGroupListResponse;
+import dnd.studyplanner.dto.user.response.StudyGroupListGetResponse;
 import dnd.studyplanner.dto.user.request.UserInfoExistDto;
 import dnd.studyplanner.dto.user.request.UserInfoSaveDto;
 
@@ -15,5 +15,5 @@ public interface IUserService {
 
     boolean isValidEmail(String userMail);
 
-    List<StudyGroupListResponse> getStudyGroupList(String accessToken);
+    List<StudyGroupListGetResponse> getUserStudyGroupList(String accessToken, Long userId);
 }
