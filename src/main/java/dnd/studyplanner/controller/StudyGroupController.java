@@ -8,7 +8,7 @@ import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
-import dnd.studyplanner.dto.studyGroup.response.StudyGroupListResponse;
+import dnd.studyplanner.dto.user.response.StudyGroupListResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
