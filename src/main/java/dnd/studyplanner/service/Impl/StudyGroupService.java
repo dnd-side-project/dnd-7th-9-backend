@@ -1,32 +1,35 @@
 package dnd.studyplanner.service.Impl;
 
+import static dnd.studyplanner.domain.studygroup.model.StudyGroupStatus.*;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
+import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
-import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
-import dnd.studyplanner.dto.user.request.UserInfoExistDto;
+import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
+import dnd.studyplanner.dto.studyGroup.response.StudyGroupListResponse;
+import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.StudyGroupRepository;
 import dnd.studyplanner.repository.UserJoinGroupRepository;
 import dnd.studyplanner.repository.UserRepository;
 import dnd.studyplanner.service.IStudyGroupService;
+import dnd.studyplanner.service.IUserRateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static dnd.studyplanner.domain.studygroup.model.StudyGroupStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,6 +41,7 @@ public class StudyGroupService implements IStudyGroupService {
 	private final StudyGroupRepository studyGroupRepository;
 	private final UserJoinGroupRepository userJoinGroupRepository;
 	private final JwtService jwtService;
+	private final IUserRateService userRateService;
 
 	@Override
 	public StudyGroupSaveResponse saveGroupAndInvite(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken) {
@@ -70,6 +74,31 @@ public class StudyGroupService implements IStudyGroupService {
 			.build();
 
 		return studyGroupSaveResponse;
+	}
+
+	@Override
+	public List<MyStudyGroupResponse> getUserStudyGroups(String accessToken, String status) {
+		Long currentUserId = getCurrentUserId(accessToken);
+		StudyGroupStatus studyGroupStatus = StudyGroupStatus.valueOf(status.toUpperCase());
+
+
+		return userJoinGroupRepository.findAll().stream()
+			.filter(o -> o.getUser().getId().equals(currentUserId))
+			.map(UserJoinGroup::getStudyGroup)
+			.filter(studyGroup -> studyGroup.getGroupStatus().equals(studyGroupStatus))
+			.map(userGroup -> MyStudyGroupResponse.builder()
+				.groupId(userGroup.getId())
+				.groupName(userGroup.getGroupName())
+				.groupStartDate(userGroup.getGroupStartDate())
+				.groupEndDate(userGroup.getGroupEndDate())
+				.groupGoal(userGroup.getGroupGoal())
+				.groupImageUrl(userGroup.getGroupImageUrl())
+				.groupCategory(userGroup.getGroupCategory())
+				.groupStatus(userGroup.getGroupStatus())
+				.studyGroupRate(userRateService.getUserStudyGroupRate(accessToken, userGroup.getId()))
+				.build())
+			.collect(Collectors.toList());
+
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String userAccessToken) {

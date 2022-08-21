@@ -1,6 +1,9 @@
 package dnd.studyplanner.service.Impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +58,18 @@ public class UserRateService implements IUserRateService {
 		userGoalRate.updatePostQuestionBook();
 
 		return userGoalRate;
+	}
+
+	@Override
+	public int getUserStudyGroupRate(String accessToken, Long studyGroupId) {
+		Long userId = jwtService.getUserId(accessToken);
+		double userGoalRateOfStudyGroup = userGoalRateRepository.findAll().stream()
+			.filter(o -> o.getUser().getId().equals(userId))
+			.filter(o -> o.getGoal().getStudyGroup().getId().equals(studyGroupId))
+			.mapToDouble(UserGoalRate::getAchieveRate)
+			.average()
+			.orElse(0D);
+		return (int) userGoalRateOfStudyGroup;
 	}
 
 	private UserGoalRate getUserGoalRate(String accessToken, Goal goal) {
