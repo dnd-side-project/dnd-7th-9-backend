@@ -2,7 +2,8 @@ package dnd.studyplanner.controller;
 
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.dto.response.CustomResponse;
-import dnd.studyplanner.dto.studyGroup.response.StudyGroupListResponse;
+import dnd.studyplanner.dto.user.request.UserIdDto;
+import dnd.studyplanner.dto.user.response.StudyGroupListGetResponse;
 import dnd.studyplanner.dto.user.request.UserInfoExistDto;
 import dnd.studyplanner.dto.user.request.UserInfoSaveDto;
 import dnd.studyplanner.service.IStudyGroupService;
@@ -52,12 +53,12 @@ public class UserController {
         return new CustomResponse<>(userInfoExistDto.getUserEmail(), SUCCESS).toResponseEntity();
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<CustomResponse> getStudyGroupList(
-            @RequestHeader(value = "Access-Token") String accessToken) {
+    @PostMapping("/list")
+    public ResponseEntity<CustomResponse> getUserStudyGroupList(
+            @RequestHeader(value = "Access-Token") String accessToken,
+            @RequestBody UserIdDto userIdDto) {
 
-        List<StudyGroupListResponse> groupList = userService.getStudyGroupList(accessToken);
-        return new CustomResponse<>(groupList, GET_GROUP_SUCCESS).toResponseEntity();
+        List<StudyGroupListGetResponse> userGroupList = userService.getUserStudyGroupList(accessToken, userIdDto.getUserId());
+        return new CustomResponse<>(userGroupList, GET_GROUP_SUCCESS).toResponseEntity();
     }
-
 }
