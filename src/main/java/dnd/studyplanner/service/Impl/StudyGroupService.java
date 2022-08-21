@@ -1,6 +1,7 @@
 package dnd.studyplanner.service.Impl;
 
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
+import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,6 +71,14 @@ public class StudyGroupService implements IStudyGroupService {
 															.build();
 
 		return studyGroupSaveResponse;
+	}
+
+	@Override
+	public List<StudyGroupCategory> getCategoryList(String accessToken) {
+
+		List<StudyGroupCategory> categoryList = new ArrayList<>();
+		categoryList.addAll(Arrays.asList(StudyGroupCategory.values()));
+		return categoryList;
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String userAccessToken) {
