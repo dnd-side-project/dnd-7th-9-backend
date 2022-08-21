@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.goal.model.Goal;
 import dnd.studyplanner.domain.user.model.User;
@@ -41,11 +42,15 @@ public class StudyGroup extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User groupCreateUser;
 
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate groupStartDate;
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate groupEndDate;
 	private String groupGoal;
 	private String groupImageUrl;
-	private String groupCategory;
+
+	@Enumerated(EnumType.STRING)
+	private StudyGroupCategory groupCategory;
 
 	@Enumerated(EnumType.STRING)
 	private StudyGroupStatus groupStatus;
@@ -58,7 +63,7 @@ public class StudyGroup extends BaseEntity {
 
 	@Builder
 	public StudyGroup(String groupName, User groupCreateUser, LocalDate groupStartDate, LocalDate groupEndDate,
-		String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
+		String groupGoal, String groupImageUrl, StudyGroupCategory groupCategory, StudyGroupStatus groupStatus) {
 		this.groupName = groupName;
 		this.groupCreateUser = groupCreateUser;
 		this.groupStartDate = groupStartDate;
@@ -70,7 +75,7 @@ public class StudyGroup extends BaseEntity {
 	}
 
 	public void update(String groupName, User groupCreateUser, LocalDate groupStartDate, LocalDate groupEndDate,
-		String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
+		String groupGoal, String groupImageUrl, StudyGroupCategory groupCategory, StudyGroupStatus groupStatus) {
 
 		this.groupName = groupName;
 		this.groupCreateUser = groupCreateUser;

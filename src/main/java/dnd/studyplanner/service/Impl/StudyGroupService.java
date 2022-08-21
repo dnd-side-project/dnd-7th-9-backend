@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
+import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
@@ -30,6 +31,17 @@ import dnd.studyplanner.service.IStudyGroupService;
 import dnd.studyplanner.service.IUserRateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static dnd.studyplanner.domain.studygroup.model.StudyGroupStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -99,6 +111,11 @@ public class StudyGroupService implements IStudyGroupService {
 				.build())
 			.collect(Collectors.toList());
 
+	public List<StudyGroupCategory> getCategoryList(String accessToken) {
+
+		List<StudyGroupCategory> categoryList = new ArrayList<>();
+		categoryList.addAll(Arrays.asList(StudyGroupCategory.values()));
+		return categoryList;
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String userAccessToken) {

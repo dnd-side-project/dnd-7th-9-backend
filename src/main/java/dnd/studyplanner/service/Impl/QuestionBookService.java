@@ -185,7 +185,7 @@ public class QuestionBookService implements IQuestionBookService {
 			return 0;
 		}
 
-		// 아직 풀지 않았다면, 문제집 개수 반환
+		// 아직 풀지 않았다면, 문제집 개수 반환 -> 추가된(전체에 대한) 문제집 수
 		return recentQuestionBook.getQuestionBookQuestionNum();
 	}
 

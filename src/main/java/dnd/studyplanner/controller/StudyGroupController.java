@@ -5,6 +5,7 @@ import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 import java.util.List;
 
 import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
+import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupListResponse;
@@ -18,6 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import static dnd.studyplanner.dto.response.CustomResponseStatus.SAVE_GROUP_SUCCESS;
+import static dnd.studyplanner.dto.response.CustomResponseStatus.SUCCESS;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/group")
@@ -25,6 +31,17 @@ import org.springframework.web.bind.annotation.*;
 public class StudyGroupController {
 
     private final IStudyGroupService studyGroupService;
+
+    // 스터디 그룹 생성 시 카테고리 리스트 조회
+    @GetMapping("/category")
+    public ResponseEntity<CustomResponse> getStudyGroupCategory(
+            @RequestHeader(value = "Access-Token") String accessToken
+    ) {
+        List<StudyGroupCategory> studyGroupCategoryList = studyGroupService.getCategoryList(accessToken);
+
+        return new CustomResponse<>(studyGroupCategoryList, SUCCESS).toResponseEntity();
+    }
+
 
     // 그룹 생성 & 사용자 초대
     @PostMapping("/info")
