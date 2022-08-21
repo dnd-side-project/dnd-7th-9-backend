@@ -10,6 +10,7 @@ import dnd.studyplanner.dto.goal.response.ActiveGoalResponse;
 import dnd.studyplanner.dto.user.response.StudyGroupListGetResponse;
 import dnd.studyplanner.dto.user.request.UserInfoExistDto;
 import dnd.studyplanner.dto.user.request.UserInfoSaveDto;
+import dnd.studyplanner.dto.user.response.StudyGroupListResponse;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.*;
 import dnd.studyplanner.service.IQuestionBookService;
@@ -98,12 +99,10 @@ public class UserService implements IUserService {
      *    - 문제 풀기 완료는, 전체 문제집을 푼 경우의 상태
      */
     @Override
-    public List<StudyGroupListGetResponse> getUserStudyGroupList(String accessToken, Long userId) {
+    public List<StudyGroupListGetResponse> getUserStudyGroupList(String accessToken) {
 
-//        Long currentUserId = getCurrentUserId(accessToken);
-//        User user = userRepository.findById(currentUserId).get();
-
-        User user = userRepository.findById(userId).get();
+        Long currentUserId = getCurrentUserId(accessToken);
+        User user = userRepository.findById(currentUserId).get();
 
         // 사용자가 속한 그룹에서, 각 그룹별 진행중인 세부 목표 리스트
         List<Goal> myLatestGoalListPerStudyGroup = getLatestGoalListPerGroup(user);
