@@ -53,12 +53,11 @@ public class UserController {
         return new CustomResponse<>(userInfoExistDto.getUserEmail(), SUCCESS).toResponseEntity();
     }
 
-    @PostMapping("/list")
+    @GetMapping("/list")
     public ResponseEntity<CustomResponse> getUserStudyGroupList(
-            @RequestHeader(value = "Access-Token") String accessToken,
-            @RequestBody UserIdDto userIdDto) {
+            @RequestHeader(value = "Access-Token") String accessToken) {
 
-        List<StudyGroupListGetResponse> userGroupList = userService.getUserStudyGroupList(accessToken, userIdDto.getUserId());
+        List<StudyGroupListGetResponse> userGroupList = userService.getUserStudyGroupList(accessToken);
         return new CustomResponse<>(userGroupList, GET_GROUP_SUCCESS).toResponseEntity();
     }
 }

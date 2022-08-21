@@ -15,5 +15,5 @@ public interface IUserService {
 
     boolean isValidEmail(String userMail);
 
-    List<StudyGroupListGetResponse> getUserStudyGroupList(String accessToken, Long userId);
+    List<StudyGroupListGetResponse> getUserStudyGroupList(String accessToken);
 }

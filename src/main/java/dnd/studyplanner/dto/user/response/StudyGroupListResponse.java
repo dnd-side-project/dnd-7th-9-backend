@@ -1,16 +1,14 @@
 package dnd.studyplanner.dto.user.response;
 
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
+import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
-import dnd.studyplanner.domain.user.model.User;
-import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,20 +20,20 @@ public class StudyGroupListResponse {
     private LocalDate groupEndDate;
     private String groupGoal;
     private String groupImageUrl;
-    private String groupCategory;
+    private StudyGroupCategory groupCategory;
     private StudyGroupStatus groupStatus;
 
+
     @Builder
-    public StudyGroupListResponse(Long groupId, String groupName, LocalDate groupStartDate, LocalDate groupEndDate,
-                                  String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus) {
-        this.groupId = groupId;
-        this.groupName = groupName;
-        this.groupStartDate = groupStartDate;
-        this.groupEndDate = groupEndDate;
-        this.groupGoal = groupGoal;
-        this.groupImageUrl = groupImageUrl;
-        this.groupCategory = groupCategory;
-        this.groupStatus = groupStatus;
+    public StudyGroupListResponse(StudyGroup studyGroup) {
+        this.groupId = studyGroup.getId();
+        this.groupName = studyGroup.getGroupName();
+        this.groupStartDate = studyGroup.getGroupStartDate();
+        this.groupEndDate = studyGroup.getGroupEndDate();
+        this.groupGoal = studyGroup.getGroupGoal();
+        this.groupImageUrl = studyGroup.getGroupImageUrl();
+        this.groupCategory = studyGroup.getGroupCategory();
+        this.groupStatus = studyGroup.getGroupStatus();
 
     }
 }
