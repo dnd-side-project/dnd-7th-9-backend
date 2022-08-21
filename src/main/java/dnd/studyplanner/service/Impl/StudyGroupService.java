@@ -20,7 +20,7 @@ import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
-import dnd.studyplanner.dto.studyGroup.response.StudyGroupListResponse;
+import dnd.studyplanner.dto.user.response.StudyGroupListResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
 import dnd.studyplanner.jwt.JwtService;
@@ -95,21 +95,23 @@ public class StudyGroupService implements IStudyGroupService {
 
 
 		return userJoinGroupRepository.findAll().stream()
-			.filter(o -> o.getUser().getId().equals(currentUserId))
-			.map(UserJoinGroup::getStudyGroup)
-			.filter(studyGroup -> studyGroup.getGroupStatus().equals(studyGroupStatus))
-			.map(userGroup -> MyStudyGroupResponse.builder()
-				.groupId(userGroup.getId())
-				.groupName(userGroup.getGroupName())
-				.groupStartDate(userGroup.getGroupStartDate())
-				.groupEndDate(userGroup.getGroupEndDate())
-				.groupGoal(userGroup.getGroupGoal())
-				.groupImageUrl(userGroup.getGroupImageUrl())
-				.groupCategory(userGroup.getGroupCategory())
-				.groupStatus(userGroup.getGroupStatus())
-				.studyGroupRate(userRateService.getUserStudyGroupRate(accessToken, userGroup.getId()))
-				.build())
-			.collect(Collectors.toList());
+				.filter(o -> o.getUser().getId().equals(currentUserId))
+				.map(UserJoinGroup::getStudyGroup)
+				.filter(studyGroup -> studyGroup.getGroupStatus().equals(studyGroupStatus))
+				.map(userGroup -> MyStudyGroupResponse.builder()
+						.groupId(userGroup.getId())
+						.groupName(userGroup.getGroupName())
+						.groupStartDate(userGroup.getGroupStartDate())
+						.groupEndDate(userGroup.getGroupEndDate())
+						.groupGoal(userGroup.getGroupGoal())
+						.groupImageUrl(userGroup.getGroupImageUrl())
+						.groupCategory(userGroup.getGroupCategory())
+						.groupStatus(userGroup.getGroupStatus())
+						.studyGroupRate(userRateService.getUserStudyGroupRate(accessToken, userGroup.getId()))
+						.build())
+				.collect(Collectors.toList());
+
+	}
 
 	public List<StudyGroupCategory> getCategoryList(String accessToken) {
 

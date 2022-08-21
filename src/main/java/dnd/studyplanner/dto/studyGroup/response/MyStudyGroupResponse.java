@@ -2,6 +2,7 @@ package dnd.studyplanner.dto.studyGroup.response;
 
 import java.time.LocalDate;
 
+import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,14 +18,14 @@ public class MyStudyGroupResponse{
     private LocalDate groupEndDate;
     private String groupGoal;
     private String groupImageUrl;
-    private String groupCategory;
+    private StudyGroupCategory groupCategory;
     private StudyGroupStatus groupStatus;
     private int studyGroupRate;
 
     @Builder
     public MyStudyGroupResponse(Long groupId, String groupName, LocalDate groupStartDate, LocalDate groupEndDate,
-        String groupGoal, String groupImageUrl, String groupCategory, StudyGroupStatus groupStatus,
-        int studyGroupRate) {
+                                String groupGoal, String groupImageUrl, StudyGroupCategory groupCategory, StudyGroupStatus groupStatus,
+                                int studyGroupRate) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.groupStartDate = groupStartDate;
