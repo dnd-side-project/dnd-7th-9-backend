@@ -20,7 +20,6 @@ import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
-import dnd.studyplanner.dto.user.response.StudyGroupListResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
 import dnd.studyplanner.jwt.JwtService;
@@ -32,16 +31,7 @@ import dnd.studyplanner.service.IUserRateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static dnd.studyplanner.domain.studygroup.model.StudyGroupStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -81,7 +71,7 @@ public class StudyGroupService implements IStudyGroupService {
 		userJoinGroupRepository.saveAll(invitedPeopleList);
 
 		StudyGroupSaveResponse studyGroupSaveResponse = StudyGroupSaveResponse.builder()
-			.newStudyGroup(updateStudyGroup)
+			.studyGroup(updateStudyGroup)
 			.studyGroupMember(updateStudyGroupMemberList)
 			.build();
 
