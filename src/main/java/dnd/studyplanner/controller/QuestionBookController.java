@@ -102,7 +102,7 @@ public class QuestionBookController {
 
 			return new CustomResponse<>(response).toResponseEntity();
 		} catch (BaseException e) {
-			return new CustomResponse<>(e.getStatus().getMessage()).toResponseEntity();
+			return new CustomResponse<>(e.getStatus()).toResponseEntity();
 		}
 
 	}

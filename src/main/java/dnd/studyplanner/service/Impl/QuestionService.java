@@ -1,18 +1,23 @@
 package dnd.studyplanner.service.Impl;
 
+import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import dnd.studyplanner.domain.goal.model.Goal;
 import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
 import dnd.studyplanner.dto.question.request.QuestionSaveDto;
 import dnd.studyplanner.dto.question.request.QuestionSolveDto;
+import dnd.studyplanner.dto.question.response.QuestionListResponseDto;
 import dnd.studyplanner.dto.question.response.QuestionResponseDto;
+import dnd.studyplanner.dto.response.CustomResponseStatus;
 import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.QuestionBookRepository;
@@ -47,11 +52,24 @@ public class QuestionService implements IQuestionService {
 	}
 
 	@Override
-	public List<QuestionResponseDto> getQuestions(Long questionBookId) {
+	public QuestionListResponseDto getQuestions(Long questionBookId) throws BaseException {
 		List<Question> questions = questionRepository.findByQuestionBookId(questionBookId);
-		return questions.stream()
+		List<QuestionResponseDto> questionList = questions.stream()
 			.map(Question::toResponseDto)
 			.collect(Collectors.toList());
+
+		if (questions.isEmpty()) {
+			throw new BaseException(NOT_EXIST_DATA);
+		}
+
+		QuestionBook questionBook = questions.get(0).getQuestionBook();
+		Goal goal = questionBook.getQuestionBookGoal();
+
+		return QuestionListResponseDto.builder()
+			.goalContent(goal.getGoalContent())
+			.questionBookContent(questionBook.getQuestionBookName())
+			.questionList(questionList)
+			.build();
 	}
 
 	@Override
