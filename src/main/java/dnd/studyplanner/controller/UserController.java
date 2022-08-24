@@ -3,9 +3,11 @@ package dnd.studyplanner.controller;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.dto.user.request.UserIdDto;
-import dnd.studyplanner.dto.user.response.StudyGroupListGetResponse;
+import dnd.studyplanner.dto.user.response.UserStudyGroupListDetailResponse;
+import dnd.studyplanner.dto.user.response.groupList.StudyGroupListGetResponse;
 import dnd.studyplanner.dto.user.request.UserInfoExistDto;
 import dnd.studyplanner.dto.user.request.UserInfoSaveDto;
+import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.service.IStudyGroupService;
 import dnd.studyplanner.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +64,21 @@ public class UserController {
             return new CustomResponse<>(userGroupList, GET_GROUP_SUCCESS).toResponseEntity();
         } catch (Exception e) {
             return new CustomResponse<>(NOT_EXIST_DATA).toResponseEntity();
+        }
+    }
+
+    @GetMapping("/list/detail")
+    public ResponseEntity<CustomResponse> getUserStudyGroupListDetail(
+        @RequestHeader(value = "Access-Token") String accessToken,
+        @RequestParam Long groupId,
+        @RequestParam(required = false) Long goalId,
+        @RequestParam(required = false) String version) {
+
+        try {
+            UserStudyGroupListDetailResponse userStudyGroupListDetailResponse = userService.getUserStudyGroupListDetail(accessToken, groupId, goalId, version);
+            return new CustomResponse<>(userStudyGroupListDetailResponse, GET_GROUP_DETAIL_SUCCESS).toResponseEntity();
+        } catch (BaseException e) {
+            return new CustomResponse<>(USER_NOT_IN_GROUP).toResponseEntity();
         }
     }
 }
