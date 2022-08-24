@@ -57,7 +57,11 @@ public class UserController {
     public ResponseEntity<CustomResponse> getUserStudyGroupList(
             @RequestHeader(value = "Access-Token") String accessToken) {
 
-        List<StudyGroupListGetResponse> userGroupList = userService.getUserStudyGroupList(accessToken);
-        return new CustomResponse<>(userGroupList, GET_GROUP_SUCCESS).toResponseEntity();
+        try {
+            List<StudyGroupListGetResponse> userGroupList = userService.getUserStudyGroupList(accessToken);
+            return new CustomResponse<>(userGroupList, GET_GROUP_SUCCESS).toResponseEntity();
+        } catch (Exception e) {
+            return new CustomResponse<>(NOT_EXIST_DATA).toResponseEntity();
+        }
     }
 }
