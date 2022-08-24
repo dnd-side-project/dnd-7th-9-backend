@@ -64,6 +64,7 @@ public class StudyGroupService implements IStudyGroupService {
 
 		for (String invitedPeople : updateStudyGroupMemberList) {
 			User invitedUser = userRepository.findByUserEmail(invitedPeople).get();
+			if (hostUser.getUserEmail().equals(invitedUser.getUserEmail())) continue;
 			UserJoinGroup updateInvitedPeople = userJoinGroupSaveDto.toEntity(invitedUser, joinStudyGroup);
 			invitedPeopleList.add(updateInvitedPeople);
 		}
