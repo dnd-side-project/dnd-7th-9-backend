@@ -1,5 +1,6 @@
 package dnd.studyplanner.service.Impl;
 
+import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.dto.user.request.UserInfoExistDto;
 import dnd.studyplanner.dto.user.request.UserInfoSaveDto;
@@ -222,12 +223,11 @@ public class UserService implements IUserService {
                 StudyGroupAndGoalDetailPersonalVerResponse studyGroupAndGoalDetailPersonalVerResponse = StudyGroupAndGoalDetailPersonalVerResponse
                     .builder()
                     .goal(defaultGoal)
-
-                    .checkEditEnabled(getCheckEditEnabled(questionBook))   // getCheckEditEnabled()
+                    .myQuestionBook(getCheckMyQuestionBook(user, questionBook))
+                    .checkEditEnabled(getCheckEditEnabled(user, questionBook))   // getCheckEditEnabled()
                     .questionBook(questionBook)
                     .questionNumPerQuestionBook(questionBook.getQuestionBookQuestionNum())   // 각 문제집 당 문제 수
                     .answerNumPerQuestionBook(getAnswerNumPerQuestionBook(user, questionBook))   // 사용자의 각 문제집 풀이에 따른 정답 개수 -> 푼 경우에만
-
                     .checkCompleteToSolve(getCheckCompleteSolveQuestionBook(user, defaultGoal))   // 풀었는지 여부
                     .build();
 
@@ -240,12 +240,11 @@ public class UserService implements IUserService {
                 StudyGroupAndGoalDetailPersonalVerResponse studyGroupAndGoalDetailPersonalVerResponse = StudyGroupAndGoalDetailPersonalVerResponse
                     .builder()
                     .goal(targetGoal)
-
-                    .checkEditEnabled(getCheckEditEnabled(questionBook))   // getCheckEditEnabled()
+                    .myQuestionBook(getCheckMyQuestionBook(user, questionBook))
+                    .checkEditEnabled(getCheckEditEnabled(user, questionBook))   // getCheckEditEnabled()
                     .questionBook(questionBook)
                     .questionNumPerQuestionBook(questionBook.getQuestionBookQuestionNum())   // 각 문제집 당 문제 수
                     .answerNumPerQuestionBook(getAnswerNumPerQuestionBook(user, questionBook))   // 사용자의 각 문제집 풀이에 따른 정답 개수 -> 푼 경우에만
-
                     .checkCompleteToSolve(getCheckCompleteSolveQuestionBook(user, targetGoal))
                     .build();
 
@@ -259,17 +258,14 @@ public class UserService implements IUserService {
             List<String> peopleNameToSolveList = getPersonNameListToSolveQuestionBook(questionBook);
             StudyGroupAndGoalDetailTeamVerResponse studyGroupAndGoalDetailTeamVerResponse = StudyGroupAndGoalDetailTeamVerResponse
                 .builder()
-
                 .goal(targetGoal)
                 .questionBook(questionBook)
                 .personListOfCompleteToSolvePerQuestionBook(peopleNameToSolveList)   // 어떤 사람들이 각 문제집을 풀었는지
                 .personNumOfCompleteToSolvePerQuestionBook(peopleNameToSolveList.size())   // 몇 명의 사람들이 각 문제집을 풀었는지
-
                 .build();
 
             studyGroupAndGoalDetailTeamVerResponseList.add(studyGroupAndGoalDetailTeamVerResponse);
         }
-
 
         if ("PERSONAL".equals(studyGroupDetailVersion.toString())) {
             return UserStudyGroupListDetailResponse.builder()
@@ -343,19 +339,31 @@ public class UserService implements IUserService {
         return answerNumPerQuestionBook;
     }
 
+    private boolean getCheckMyQuestionBook(User user, QuestionBook questionBook) {
+        boolean checkMyQuestionBook = false;
+        if (questionBook.getQuestionBookCreateUser().getId().equals(user.getId())) {
+            checkMyQuestionBook = true;
+        }
+        return checkMyQuestionBook;
+    }
+
     // 사용자 자신이 출제한 문제집을 수정할 수 있는지 여부 확인
     // 해당 문제집을 푼 사람이 한 명이라도 존재하는 경우, 수정 불가
-    // userSolveQuestionBook.isSolved() >= 1 인 경우 false
-    private boolean getCheckEditEnabled(QuestionBook questionBook) {
+    // 조건1 : 내가 출제한 문제집인지 / 조건2 : 해당 문제집을 푼 사용자가 아무도 없는 경우
+    private boolean getCheckEditEnabled(User user, QuestionBook questionBook) {
 
         boolean checkEditEnabled = true;
-        // 그룹원들의 문제집 풀이 현황
+        // 그룹원들의 문제집 풀이 현황 - 문제를 푼 구성원이 존재하는지 확인
         List<UserSolveQuestionBook> userSolveQuestionBookList = questionBook.getUserSolveQuestionBooks();
         for (UserSolveQuestionBook userSolveQuestionBook : userSolveQuestionBookList) {
             if (userSolveQuestionBook.isSolved()) {
                 checkEditEnabled = false;
                 break;
             }
+        }
+        // 사용자 본인이 출제한 문제집인지 확인 - if not false
+        if (!getCheckMyQuestionBook(user, questionBook)) {
+            checkEditEnabled = false;
         }
         return checkEditEnabled;
     }

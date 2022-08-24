@@ -15,7 +15,8 @@ import lombok.NoArgsConstructor;
 public class StudyGroupAndGoalDetailPersonalVerResponse {
 
     private Long goalId;
-    private boolean checkEditEnabled;   // 내가 출제한 문제집 수정 가능 여부 - 해당 문제집을 푼 사람이 아무도 없는 경우 수정 가능
+    private boolean myQuestionBook;   // 내가 출제한 문제집인지 여부
+    private boolean checkEditEnabled;   // 내가 출제한 문제집 수정 가능 여부 - 출제자가 나인 경우 + 해당 문제집을 푼 사람이 아무도 없는 경우 수정 가능
     private String questionBookName;   // 해당 세부 목표의 문제집 리스트 ( 본인이 출제한 문제집 제외 ) INDEX -> 문제집 + INDEX
     private String questionBookCreateUserName;   // 각 문제집을 출제한 사람 이름
     private int questionNumPerQuestionBook;   // 문제집 내의 문제 수
@@ -24,11 +25,12 @@ public class StudyGroupAndGoalDetailPersonalVerResponse {
 
 
     @Builder
-    public StudyGroupAndGoalDetailPersonalVerResponse(Goal goal, QuestionBook questionBook, boolean checkEditEnabled,
+    public StudyGroupAndGoalDetailPersonalVerResponse(Goal goal, QuestionBook questionBook, boolean myQuestionBook, boolean checkEditEnabled,
                                         int questionNumPerQuestionBook, int answerNumPerQuestionBook, boolean checkCompleteToSolve) {
         this.goalId = goal.getId();
         this.questionBookName = questionBook.getQuestionBookName();
         this.questionBookCreateUserName = questionBook.getQuestionBookCreateUser().getUserNickName();
+        this.myQuestionBook = myQuestionBook;
         this.checkEditEnabled = checkEditEnabled;   // userSolveQuestionBook.isSolved() >= 1 인 경우 false
         this.questionNumPerQuestionBook = questionNumPerQuestionBook;   // 세부 목표 ID 가 id 인 QuestionBook 의 개수
         this.answerNumPerQuestionBook = answerNumPerQuestionBook;
