@@ -40,6 +40,7 @@ public class UserRateService implements IUserRateService {
 
 		int ratePerQuestionBook = (50 / minSolveQuestionBook);
 		userGoalRate.updateQuestionBookSolve(ratePerQuestionBook);
+		userGoalRateRepository.save(userGoalRate);
 		return userGoalRate;
 	}
 
