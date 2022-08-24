@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
+import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupPageResponse;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
@@ -80,13 +82,12 @@ public class StudyGroupService implements IStudyGroupService {
 	}
 
 	@Override
-	public List<MyStudyGroupResponse> getUserStudyGroups(String accessToken, String status) {
+	public MyStudyGroupPageResponse getUserStudyGroups(String accessToken, String status) {
 		Long currentUserId = getCurrentUserId(accessToken);
 		StudyGroupStatus studyGroupStatus = StudyGroupStatus.valueOf(status.toUpperCase());
 
 
-		return userJoinGroupRepository.findAll().stream()
-				.filter(o -> o.getUser().getId().equals(currentUserId))
+		List<MyStudyGroupResponse> studyGroupList = userJoinGroupRepository.findByUserId(currentUserId).stream()
 				.map(UserJoinGroup::getStudyGroup)
 				.filter(studyGroup -> studyGroup.getGroupStatus().equals(studyGroupStatus))
 				.map(userGroup -> MyStudyGroupResponse.builder()
@@ -102,6 +103,15 @@ public class StudyGroupService implements IStudyGroupService {
 						.build())
 				.collect(Collectors.toList());
 
+		User user = userRepository.findById(currentUserId).get();
+		String profileImageUrl = user.getUserProfileImageUrl();
+		String userNickName = user.getUserNickName();
+
+		return MyStudyGroupPageResponse.builder()
+			.profileImageUrl(profileImageUrl)
+			.nickname(userNickName)
+			.studyGroupResponses(studyGroupList)
+			.build();
 	}
 
 	public List<StudyGroupCategory> getCategoryList(String accessToken) {

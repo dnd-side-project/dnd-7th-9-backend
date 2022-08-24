@@ -4,25 +4,25 @@ import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 
 import java.util.List;
 
-import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
 import dnd.studyplanner.dto.response.CustomResponse;
-import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
-import dnd.studyplanner.dto.user.response.StudyGroupListResponse;
-import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
+import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupPageResponse;
+import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
+import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
 import dnd.studyplanner.service.IStudyGroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import static dnd.studyplanner.dto.response.CustomResponseStatus.SAVE_GROUP_SUCCESS;
-import static dnd.studyplanner.dto.response.CustomResponseStatus.SUCCESS;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -67,7 +67,7 @@ public class StudyGroupController {
 
         try {
             log.debug("[STUDY GROUP STATUS] : {}", status);
-            List<MyStudyGroupResponse> response = studyGroupService.getUserStudyGroups(accessToken, status);
+            MyStudyGroupPageResponse response = studyGroupService.getUserStudyGroups(accessToken, status);
 
             return new CustomResponse<>(response, GET_MY_GROUP_SUCCESS).toResponseEntity();
         } catch (IllegalArgumentException e) {
