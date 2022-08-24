@@ -27,6 +27,7 @@ import dnd.studyplanner.dto.question.request.QuestionListDto;
 import dnd.studyplanner.dto.question.request.QuestionSolveDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookSolveDto;
+import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.repository.OptionRepository;
 import dnd.studyplanner.repository.QuestionRepository;
 import dnd.studyplanner.repository.UserRepository;
@@ -120,7 +121,7 @@ class QuestionBookServiceTest {
 	@DisplayName(value = "문제집 풀이 완료 테스트")
 	@Transactional
 	@Test
-	void solveQuestion() {
+	void solveQuestion() throws BaseException {
 	    //given
 		List<QuestionSolveDto> questionSolveList = new ArrayList<>();
 
