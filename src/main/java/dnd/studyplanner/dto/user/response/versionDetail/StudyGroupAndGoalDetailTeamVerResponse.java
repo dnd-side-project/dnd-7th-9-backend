@@ -31,7 +31,7 @@ public class StudyGroupAndGoalDetailTeamVerResponse {
 
         this.goalId = goal.getId();
         this.questionBookName = questionBook.getQuestionBookName();
-        this.questionBookCreateUserName = questionBook.getQuestionBookCreateUser().getUserName();
+        this.questionBookCreateUserName = questionBook.getQuestionBookCreateUser().getUserNickName();
         this.personNumOfCompleteToSolvePerQuestionBook = personNumOfCompleteToSolvePerQuestionBook;   // userSolveQuestionBook.isSolved() 개수
         this.personListOfCompleteToSolvePerQuestionBook = personListOfCompleteToSolvePerQuestionBook;   // userSolveQuestionBook.isSolved() 인 사람의 이름 목록
     }

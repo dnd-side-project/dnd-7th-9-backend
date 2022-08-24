@@ -1,7 +1,6 @@
 package dnd.studyplanner.service;
 
 import dnd.studyplanner.domain.user.model.User;
-import dnd.studyplanner.dto.user.request.UserStudyGroupListDetailDto;
 import dnd.studyplanner.dto.user.response.UserStudyGroupListDetailResponse;
 import dnd.studyplanner.dto.user.response.groupList.StudyGroupListGetResponse;
 import dnd.studyplanner.dto.user.request.UserInfoExistDto;
