@@ -106,6 +106,9 @@ public class UserService implements IUserService {
 
         // 사용자가 속한 그룹에서, 각 그룹별 진행중인 세부 목표 리스트
         List<Goal> myLatestGoalListPerStudyGroup = getLatestGoalListPerGroup(user);
+        if (myLatestGoalListPerStudyGroup.isEmpty()) {
+            return null;
+        }
         List<StudyGroupListGetResponse> studyGroupListGetResponseList = new ArrayList<>();
 
         for (Goal myGoal : myLatestGoalListPerStudyGroup) {
@@ -141,6 +144,10 @@ public class UserService implements IUserService {
     private List<Goal> getLatestGoalListPerGroup(User user) {
 
         List<UserJoinGroup> userJoinGroupList = user.getUserJoinGroups();
+        // TODO 사용자가 속한 그룹이 없는 경우
+        if (userJoinGroupList.isEmpty()) {
+            return null;
+        }
 
         List<Goal> userLatestGoalListPerStudyGroup = new ArrayList<>();
 
@@ -154,6 +161,10 @@ public class UserService implements IUserService {
                     userLatestGoalListPerStudyGroup.add(latestDetailGoal);
                 }
             }
+        }
+        // TODO 사용자가 속한 그룹에 현재 진행중인 목표가 없는 경우
+        if (userLatestGoalListPerStudyGroup.isEmpty()) {
+            return null;
         }
 
         return userLatestGoalListPerStudyGroup;
