@@ -20,7 +20,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	public void addInterceptors(InterceptorRegistry registry) {
 		//Interceptor scope
-		registry.addInterceptor(jwtTokenInterceptor).addPathPatterns("/token/test/**");
+		registry.addInterceptor(jwtTokenInterceptor)
+			.addPathPatterns("/token/test/**")
+			.addPathPatterns("/**")
+			.excludePathPatterns("oauth2/**", "/auth/token/reissue", "/user/exist");
 	}
 
 	@Override
