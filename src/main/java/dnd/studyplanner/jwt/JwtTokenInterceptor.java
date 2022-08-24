@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -34,6 +35,10 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object handler) throws
 		IOException {
+
+		if (HttpMethod.OPTIONS.matches(httpServletRequest.getMethod())) {
+			return true;
+		}
 
 		log.debug("[JWT Token Interceptor]");
 		String accessToken = jwtService.getJwt(); // Header 에 있는 Token 추출
