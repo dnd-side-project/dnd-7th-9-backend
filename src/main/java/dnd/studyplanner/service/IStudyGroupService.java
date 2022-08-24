@@ -2,6 +2,7 @@ package dnd.studyplanner.service;
 
 import java.util.List;
 
+import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupPageResponse;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
@@ -13,7 +14,7 @@ public interface IStudyGroupService {
 
 	StudyGroupSaveResponse saveGroupAndInvite(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken);
 
-	List<MyStudyGroupResponse> getUserStudyGroups(String accessToken, String status);
+	MyStudyGroupPageResponse getUserStudyGroups(String accessToken, String status);
 
 	List<StudyGroupCategory> getCategoryList(String accessToken);
 
