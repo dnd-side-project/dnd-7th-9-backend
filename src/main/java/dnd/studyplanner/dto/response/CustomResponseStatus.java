@@ -25,6 +25,7 @@ public enum CustomResponseStatus {
 	NOT_EXIST_USER(false, 4004, "존재하지 않는 사용자입니다", HttpStatus.NOT_FOUND),
 	NOT_VALID_STATUS(false, 4005, "옳바르지 않는 스터디 그룹 상태 입니다", HttpStatus.BAD_REQUEST),
 
+	TOKEN_NULL(false, 4006, "토큰이 존재하지 않습니다", HttpStatus.UNAUTHORIZED),
 	NOT_EXIST_DATA(false, 4100, "존재하지 않는 데이터입니다.", HttpStatus.BAD_REQUEST);
 
 
