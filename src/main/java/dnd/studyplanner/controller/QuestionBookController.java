@@ -23,6 +23,7 @@ import dnd.studyplanner.dto.questionbook.response.QuestionBookSolveResponse;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
 import dnd.studyplanner.dto.questionbook.response.UserSolveQuestionResponse;
 import dnd.studyplanner.dto.response.CustomResponse;
+import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.service.IQuestionBookService;
 import dnd.studyplanner.service.IUserRateService;
 import lombok.RequiredArgsConstructor;
@@ -68,33 +69,42 @@ public class QuestionBookController {
 		@RequestHeader("Access-Token") String accessToken,
 		@RequestBody QuestionBookSolveDto requestDto
 	) {
-		boolean passQuestionBook = questionBookService.solveQuestionBook(accessToken, requestDto);
-		UserGoalRate userGoalRate = userGoalRateService.getUserGoalRateByQuestionBookId(accessToken,
-			requestDto.getQuestionBookId());
-		if (!passQuestionBook) {
+
+		try {
+			if (questionBookService.isSolvedQuestionBook(accessToken, requestDto.getQuestionBookId())) {
+				return new CustomResponse<>(ALREADY_SOLVED_QUESTION_BOOK).toResponseEntity();
+			}
+			boolean passQuestionBook = questionBookService.solveQuestionBook(accessToken, requestDto);
+			UserGoalRate userGoalRate = userGoalRateService.getUserGoalRateByQuestionBookId(accessToken,
+				requestDto.getQuestionBookId());
+			if (!passQuestionBook) {
+				QuestionBookSolveResponse response = QuestionBookSolveResponse.builder()
+					.isPass(false)
+					.addedRate(0)
+					.userTotalRate(userGoalRate.getAchieveRate())
+					.questionBookPostRate(userGoalRate.getPostRate())
+					.questionBookSolveRate(userGoalRate.getSolveRate())
+					.build();
+				return new CustomResponse<>(response).toResponseEntity();
+			}
+			int beforeUpdate = userGoalRate.getAchieveRate();
+
+			userGoalRateService.updateAfterQuestionBook(userGoalRate);
+
+			int afterUpdate = userGoalRate.getAchieveRate();
 			QuestionBookSolveResponse response = QuestionBookSolveResponse.builder()
-				.isPass(false)
-				.addedRate(0)
+				.isPass(true)
+				.addedRate(afterUpdate - beforeUpdate)
 				.userTotalRate(userGoalRate.getAchieveRate())
 				.questionBookPostRate(userGoalRate.getPostRate())
 				.questionBookSolveRate(userGoalRate.getSolveRate())
 				.build();
+
 			return new CustomResponse<>(response).toResponseEntity();
+		} catch (BaseException e) {
+			return new CustomResponse<>(e.getStatus()).toResponseEntity();
 		}
-		int beforeUpdate = userGoalRate.getAchieveRate();
 
-		userGoalRateService.updateAfterQuestionBook(userGoalRate);
-
-		int afterUpdate = userGoalRate.getAchieveRate();
-		QuestionBookSolveResponse response = QuestionBookSolveResponse.builder()
-			.isPass(true)
-			.addedRate(afterUpdate - beforeUpdate)
-			.userTotalRate(userGoalRate.getAchieveRate())
-			.questionBookPostRate(userGoalRate.getPostRate())
-			.questionBookSolveRate(userGoalRate.getSolveRate())
-			.build();
-
-		return new CustomResponse<>(response).toResponseEntity();
 	}
 
 	@GetMapping("/{questionBookId}/solved/details")

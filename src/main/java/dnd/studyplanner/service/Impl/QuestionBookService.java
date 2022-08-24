@@ -1,5 +1,7 @@
 package dnd.studyplanner.service.Impl;
 
+import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +30,7 @@ import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookSolveDto;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
 import dnd.studyplanner.dto.questionbook.response.UserSolveQuestionResponse;
+import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.GoalRepository;
 import dnd.studyplanner.repository.QuestionBookRepository;
@@ -115,9 +118,12 @@ public class QuestionBookService implements IQuestionBookService {
 	}
 
 	@Override
-	public boolean solveQuestionBook(String accessToken, QuestionBookSolveDto requestDto) {
+	public boolean solveQuestionBook(String accessToken, QuestionBookSolveDto requestDto) throws BaseException {
 		Long userId = jwtService.getUserId(accessToken);
-		Optional<User> user = userRepository.findById(userId);
+		User user = userRepository.findById(userId).orElseThrow(
+			() -> new BaseException(NOT_EXIST_USER)
+		);
+
 		Long questionBookId = requestDto.getQuestionBookId();
 
 		// DB 커넥션을 줄이기 위해 Map 자료구조 사용
@@ -131,7 +137,7 @@ public class QuestionBookService implements IQuestionBookService {
 
 		for (QuestionSolveDto solveDto : questionSolveDto) {
 			UserSolveQuestion userSolveQuestion = solveDto.toEntity(
-				user.get(),
+				user,
 				questionMap.get(solveDto.getQuestionId())); // Map을 통해 조회하여 DB에 직접 연결하는 횟수를 줄임
 
 			if (userSolveQuestion.isRightCheck()) {
@@ -187,6 +193,15 @@ public class QuestionBookService implements IQuestionBookService {
 
 		// 아직 풀지 않았다면, 문제집 개수 반환 -> 추가된(전체에 대한) 문제집 수
 		return recentQuestionBook.getQuestionBookQuestionNum();
+	}
+
+	@Override
+	public boolean isSolvedQuestionBook(String accessToken, Long questionBookId) throws BaseException {
+		Long userId = jwtService.getUserId(accessToken);
+		UserSolveQuestionBook userSolveQuestionBook = userSolveQuestionBookRepository.findBySolveUserIdAndSolveQuestionBookId(
+			userId, questionBookId).orElseThrow(() -> new BaseException(UNAUTHORIZED_QUESTION_BOOK));
+
+		return userSolveQuestionBook.isSolved();
 	}
 
 	/**

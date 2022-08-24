@@ -7,6 +7,7 @@ import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookSolveDto;
 import dnd.studyplanner.dto.questionbook.response.UserQuestionBookResponse;
 import dnd.studyplanner.dto.questionbook.response.UserSolveQuestionResponse;
+import dnd.studyplanner.exception.BaseException;
 
 public interface IQuestionBookService {
 
@@ -14,9 +15,11 @@ public interface IQuestionBookService {
 
 	List<UserQuestionBookResponse> getAllUserQuestionBooks(String accessToken);
 
-	boolean solveQuestionBook(String accessToken, QuestionBookSolveDto requestDto);
+	boolean solveQuestionBook(String accessToken, QuestionBookSolveDto requestDto) throws BaseException;
 
 	List<UserSolveQuestion> getUserSolveDetails(String accessToken, Long questionBookId);
 
 	public int getRecentQuestionBookCount(Long userId, Long goalId);
+
+	boolean isSolvedQuestionBook(String accessToken, Long questionBookId) throws BaseException;
 }
