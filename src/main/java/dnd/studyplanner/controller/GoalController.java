@@ -2,6 +2,7 @@ package dnd.studyplanner.controller;
 
 import dnd.studyplanner.domain.goal.model.Goal;
 import dnd.studyplanner.dto.goal.request.GoalSaveDto;
+import dnd.studyplanner.dto.goal.response.GoalSaveResponse;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.service.IGoalService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class GoalController {
             @RequestHeader(value = "Access-Token") String accessToken,
             @RequestBody GoalSaveDto goalSaveDto) {
 
-        Goal updateGoal = goalService.addDetailGoal(accessToken, goalSaveDto);
+        GoalSaveResponse updateGoal = goalService.addDetailGoal(accessToken, goalSaveDto);
 
         return new CustomResponse<>(updateGoal, SAVE_GOAL_SUCCESS).toResponseEntity();
     }

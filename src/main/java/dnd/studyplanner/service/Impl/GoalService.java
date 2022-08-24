@@ -4,6 +4,7 @@ import dnd.studyplanner.domain.goal.model.Goal;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.dto.goal.request.GoalSaveDto;
+import dnd.studyplanner.dto.goal.response.GoalSaveResponse;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.GoalRepository;
 import dnd.studyplanner.repository.StudyGroupRepository;
@@ -32,7 +33,7 @@ public class GoalService implements IGoalService {
     private final JwtService jwtService;
 
     @Override
-    public Goal addDetailGoal(String accessToken, GoalSaveDto goalSaveDto) {
+    public GoalSaveResponse addDetailGoal(String accessToken, GoalSaveDto goalSaveDto) {
 
         Long currentUserId = getCurrentUserId(accessToken);
         User user = userRepository.findById(currentUserId).get();
@@ -56,7 +57,10 @@ public class GoalService implements IGoalService {
         Goal updateGoal = goalSaveDto.toEntity(user, studyGroup.get());
         goalRepository.save(updateGoal);
 
-        return updateGoal;
+        GoalSaveResponse updateGoalSaveResponse = GoalSaveResponse.builder()
+            .goal(updateGoal).build();
+
+        return updateGoalSaveResponse;
     }
 
     private Long getCurrentUserId(String userAccessToken) {
