@@ -12,7 +12,7 @@ public class Constant {
 
 	public static String CLIENT_DOMAIN;
 
-	public static final int JWT_EXPIRATION = 1000 * 60 * 60 * 2; //2시간
+	public static final int JWT_EXPIRATION = 1000 * 60 * 60 * 24 * 7; //2시간 -> 1주
 	public static final int REFRESH_EXPIRATION = 1000 * 60 * 60 * 24 * 7 * 2; //14일 (2주)
 	public static final int WEEKS = 1000 * 60 * 60 * 24 * 7; // 7일
 
