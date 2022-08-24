@@ -58,14 +58,13 @@ public class StudyGroupController {
     @GetMapping("/my")
     public ResponseEntity<CustomResponse> getMyStudyGroups(
         @RequestHeader(value = "Access-Token") String accessToken,
-        @RequestParam String status
+        @RequestParam(required = false) String status
     ) {
-
-        if (status == null) {
-            return new CustomResponse<>(REQUEST_DATA_NULL).toResponseEntity();
-        }
-
         try {
+            if (status == null) {
+                status = "complete";
+            }
+
             log.debug("[STUDY GROUP STATUS] : {}", status);
             MyStudyGroupPageResponse response = studyGroupService.getUserStudyGroups(accessToken, status);
 
