@@ -212,8 +212,11 @@ public class QuestionBookService implements IQuestionBookService {
 	private void saveUserQuestionBook(Goal goal, QuestionBook questionBook) {
 		StudyGroup studyGroup = goal.getStudyGroup(); //현재 세부 목표를 포함하는 스터디 그룹
 
+		Long questionBookUserId = questionBook.getQuestionBookCreateUser().getId();
+
 		List<UserSolveQuestionBook> userSolveQuestionBooks = studyGroup.getUserJoinGroups().stream()
 			.map(UserJoinGroup::getUser) // 스터디 그룹원들을 조회
+			.filter(o -> !o.getId().equals(questionBookUserId)) // 본인이 출제한 문제는 풀 필요 X
 			.map(solveUser -> UserSolveQuestionBook.builder() // 스터디원 - 문제집 저장
 				.solveUser(solveUser)
 				.solveQuestionBook(questionBook)
