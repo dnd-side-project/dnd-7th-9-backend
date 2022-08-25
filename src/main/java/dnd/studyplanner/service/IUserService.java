@@ -1,9 +1,11 @@
 package dnd.studyplanner.service;
 
 import dnd.studyplanner.domain.user.model.User;
-import dnd.studyplanner.dto.user.response.StudyGroupListGetResponse;
+import dnd.studyplanner.dto.user.response.UserStudyGroupListDetailResponse;
+import dnd.studyplanner.dto.user.response.groupList.StudyGroupListGetResponse;
 import dnd.studyplanner.dto.user.request.UserInfoExistDto;
 import dnd.studyplanner.dto.user.request.UserInfoSaveDto;
+import dnd.studyplanner.exception.BaseException;
 
 import java.util.List;
 
@@ -16,4 +18,6 @@ public interface IUserService {
     boolean isValidEmail(String userMail);
 
     List<StudyGroupListGetResponse> getUserStudyGroupList(String accessToken);
+
+    UserStudyGroupListDetailResponse getUserStudyGroupListDetail(String accessToken, Long groupId, Long goalId, String version) throws BaseException;
 }
