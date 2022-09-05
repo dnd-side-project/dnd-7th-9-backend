@@ -1,17 +1,14 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-
-name: Java CI with Gradle
+name: DND Api CI/CD
 
 on:
   push:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+
+env:
+  S3_BUCKET_NAME: dnd-deploy
+  PROJECT_NAME: dnd-7th-9-backend
 
 permissions:
   contents: read
@@ -21,7 +18,7 @@ jobs:
     # 실행 환경 지정
     runs-on: ubuntu-latest
     
-    # Task의 sequence를 명시
+    # Task 의 sequence 를 명시
     steps:
       - uses: actions/checkout@v2
 
@@ -36,3 +33,20 @@ jobs:
       # Build
       - name: Build with Gradle
         run: ./gradlew clean build -x test
+
+      # 압축파일 형태로 전달
+      - name: Make zip file
+        run: zip -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # S3 Bucket 으로 copy
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+
