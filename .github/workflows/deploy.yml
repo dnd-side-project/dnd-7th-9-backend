@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 env:
-  S3_BUCKET_NAME: dnd-deploy
+  S3_BUCKET_NAME: dnd-deploy-bucket
   PROJECT_NAME: dnd-7th-9-backend
 
 permissions:
