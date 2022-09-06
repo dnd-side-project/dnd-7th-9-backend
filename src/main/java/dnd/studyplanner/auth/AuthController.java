@@ -33,7 +33,7 @@ public class AuthController {
 	) {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		if (jwtService.isNotValidRefreshToken(refreshToken)) { // Refresh Token 이 유효하지 않은 경우
-			log.debug("[REFRESH TOKEN EXPIRED] : {} is invalid refresh token", refreshToken);
+			log.debug("[REFRESH TOKEN INVALID] : {} is invalid refresh token", refreshToken);
 			httpHeaders.set("msg", "Invalid Refresh Token");
 			return new CustomResponse<>(TOKEN_INVALID).toResponseEntity(httpHeaders);
 		}

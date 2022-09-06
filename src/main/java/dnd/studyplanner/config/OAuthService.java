@@ -1,6 +1,7 @@
 package dnd.studyplanner.config;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.repository.UserRepository;
@@ -68,12 +69,16 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 	}
 
 	private void saveOrUpdateAuthEntity(User user) {
-		if (!authRepository.existsByUserId(user.getId())) {
-			String jwt = jwtService.createJwt(user.getId());
-			String refreshToken = jwtService.createRefreshToken(user.getId());
-			authRepository.save(new AuthEntity(jwt, refreshToken, user.getId()));
+		AuthEntity authEntity = authRepository.findById(user.getId()).orElse(
+			AuthEntity.builder()
+				.userId(user.getId())
+				.build()
+		);
 
-		}
+		String jwt = jwtService.createJwt(user.getId());
+		String refreshToken = jwtService.createRefreshToken(user.getId());
+		authEntity.updateTokens(jwt, refreshToken);
+		authRepository.save(authEntity);
 	}
 
 }
