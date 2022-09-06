@@ -4,9 +4,7 @@ REPOSITORY=/home/ec2-user/app/deploy
 
 echo">check running pid"
 
-
 CURRENT_PID=$(pgrep -f dnd)
-
 
 echo "> CURRENT_PID"
 
