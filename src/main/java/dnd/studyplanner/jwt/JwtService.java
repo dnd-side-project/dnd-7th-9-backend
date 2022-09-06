@@ -84,7 +84,7 @@ public class JwtService {
 				.getBody()
 				.get("userId", Long.class);
 			return false;
-		}  catch (JwtException | NullPointerException exception) {
+		} catch (JwtException | NullPointerException exception) {
 			return true;
 		}
 	}
@@ -97,8 +97,10 @@ public class JwtService {
 				.getBody()
 				.get("userId", Long.class);
 			return false;
-		}  catch (JwtException | NullPointerException exception) {
+		} catch (NullPointerException exception) {
 			return true;
+		} catch (ExpiredJwtException exception) {
+			return false;
 		}
 	}
 
@@ -142,10 +144,9 @@ public class JwtService {
 		return claims.getBody().get("userId", Long.class); //userId 추출
 	}
 
-
 	// RefreshToken 만료 시간이 7일 남았으면,
 	// 새로운 RefreshToken 발급
-	public boolean isUpdatableRefreshToken (String refreshToken) {
+	public boolean isUpdatableRefreshToken(String refreshToken) {
 		Date oneWeekLater = new Date(System.currentTimeMillis() + WEEKS);
 		Date expiredAt = Jwts.parser()
 			.setSigningKey(REFRESH_SECRET_KEY) //gitignore에 등록된 KEY
