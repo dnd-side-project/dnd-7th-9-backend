@@ -1,4 +1,4 @@
-name: DND Api CI/CD
+name: DND API CI/CD
 
 on:
   push:
