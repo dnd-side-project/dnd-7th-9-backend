@@ -64,7 +64,7 @@ jobs:
           aws deploy create-deployment \
           --application-name dnd-system-deploy \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
-          --deployment-group-name develop \
+          --deployment-group-name deploy \
           --file-exists-behavior OVERWRITE \
           --s3-location bucket=dnd-deploy-bucket,bundleType=zip,key=dnd-build.zip \
           --region ap-northeast-2
