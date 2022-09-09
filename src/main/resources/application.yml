@@ -10,10 +10,20 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
 logging:
   level:
     dnd.studyplanner: debug
     org.hibernate.SQL: debug
     org.hibernate.type: trace
     com.amazonaws.util.EC2MetadataUtils: ERROR
+server:
+  tomcat:
+    basedir: .
+    accesslog:
+        enabled: true
+        directory: logs
+        pattern: '%t %s %r %{Access-Token}i'
+        prefix: access
+        suffix: .log
+        rotate: true
+        rename-on-rotate: true

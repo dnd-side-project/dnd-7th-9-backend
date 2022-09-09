@@ -28,7 +28,7 @@ out/
 
 src/main/resources/application-dev.yml
 src/main/resources/application-oauth.yml
-
+logs
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
