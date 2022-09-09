@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.fasterxml.jackson.core.json.JsonWriteFeature;
@@ -41,9 +42,16 @@ public class JwtTokenInterceptor implements HandlerInterceptor {
 		}
 
 		log.debug("[JWT Token Interceptor]");
-		String accessToken = jwtService.getJwt(); // Header 에 있는 Token 추출
-		log.debug("[JWT] : {}", accessToken);
+		log.info("[HTTP METHOD] : {}", httpServletRequest.getMethod());
+		log.info("[REQUEST URL] : {}", httpServletRequest.getRequestURL());
 
+		HandlerMethod handlerMethod = (HandlerMethod)handler;
+		log.info("[HANDLER METHOD] : {}", handlerMethod.getMethod().getName());
+		String accessToken = jwtService.getJwt(); // Header 에 있는 Token 추출
+
+
+		httpServletResponse.setContentType("application/json");
+		httpServletResponse.setCharacterEncoding("UTF-8");
 		if (accessToken == null) {
 			log.warn("[JWT TOKEN EXCEPTION] : Token is not found");
 			httpServletResponse.setStatus(401);
