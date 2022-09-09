@@ -1,6 +1,6 @@
 package dnd.studyplanner.service.Impl;
 
-import dnd.studyplanner.domain.question.model.Question;
+import dnd.studyplanner.domain.goal.model.GoalEndDateComparator;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.dto.user.request.UserInfoExistDto;
 import dnd.studyplanner.dto.user.request.UserInfoSaveDto;
@@ -30,10 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -112,17 +109,54 @@ public class UserService implements IUserService {
      *    - 세부(이번) 목표 달성 완료 여부는, 출제 + 풀이 활동으로 => 100% 를 채우는 경우
      *    - 문제 풀기 완료는, 전체 문제집을 푼 경우의 상태
      */
+
+    // 현재 활동중인 스터디 그룹 리스트 조회
+    private List<StudyGroup> getActiveStudyGroupList(User user) {
+        List<StudyGroup> myActiveStudyGroup = new ArrayList<>();
+
+        for (UserJoinGroup userJoinGroup : user.getUserJoinGroups()) {
+            StudyGroup studyGroup = userJoinGroup.getStudyGroup();
+            if (studyGroup.getGroupStatus() == StudyGroupStatus.ACTIVE) {
+                myActiveStudyGroup.add(studyGroup);
+            }
+        }
+
+        return myActiveStudyGroup;
+    }
+
+    // 현재 할동중인 스터디 그룹 중, 각 스터디 그룹마다 현재 활동중인 목표가 있는지에 대한 리스트 조회
+    private Goal getActiveGoalInStudyGroup(StudyGroup studyGroup) {
+
+        List<Goal> userActiveGoalListPerStudyGroup = new ArrayList<>();   // 각 그룹 당 현재 진행중인 목표들의 리스트
+
+        List<Goal> myGoalListPerGroup = studyGroup.getGroupDetailGoals();
+        for (Goal goal : myGoalListPerGroup) {
+            if (goal.getGoalStatus().equals(GoalStatus.ACTIVE)) {
+                userActiveGoalListPerStudyGroup.add(goal);   // 각 그룹 당 현재 진행중인 목표들의 리스트
+            }
+        }
+        if (userActiveGoalListPerStudyGroup.isEmpty()) {
+            return null;
+        }
+        Collections.sort(userActiveGoalListPerStudyGroup, new GoalEndDateComparator());
+
+        return userActiveGoalListPerStudyGroup.get(0);
+    }
+
     @Override
     public List<StudyGroupListGetResponse> getUserStudyGroupList(String accessToken) {
 
         Long currentUserId = getCurrentUserId(accessToken);
         User user = userRepository.findById(currentUserId).get();
 
-        // 사용자가 속한 그룹에서, 각 그룹별 진행중인 세부 목표 리스트
+        // 사용자가 속한 그룹에서, 각 그룹별 임박순으로 정렬된, 진행중인 세부 목표 리스트
+        List<StudyGroup> myActiveStudyGroup = new ArrayList<>();
         List<Goal> myLatestGoalListPerStudyGroup = getLatestGoalListPerGroup(user);
-        if (myLatestGoalListPerStudyGroup.isEmpty()) {
-            return null;
-        }
+//        if (myLatestGoalListPerStudyGroup.isEmpty()) {
+//            return null;
+//        }
+        log.debug("[사용자가 속한 그룹에서, 각 그룹별 임박순으로 정렬된, 진행중인 세부 목표 리스트 원소 수] : {}", myLatestGoalListPerStudyGroup.size());
+
         List<StudyGroupListGetResponse> studyGroupListGetResponseList = new ArrayList<>();
 
         for (Goal myGoal : myLatestGoalListPerStudyGroup) {
@@ -280,28 +314,134 @@ public class UserService implements IUserService {
         }
     }
 
-    // 사용자 가입 스터디 그룹의 최근 목표 리스트 조회
+    @Override
+    public List<StudyGroupListGetResponse> getLatestGoalListPerGroup2(String accessToken) {
+
+        Long currentUserId = getCurrentUserId(accessToken);
+        User user = userRepository.findById(currentUserId).get();
+
+        /**
+         * 각 활동중인 그룹의 정보는 무조건 포함
+         * -> 각 활동중인 그룹 내의 세부 목표 중에서, 현재 진행중인 세부 목표가 하나도 없는 경우는 -> 그룹의 정보만 포함
+         * -> 각 활동중인 그룹 내의 세부 목표 중에서, 현재 진행중이 세부 목표가 있는 경우 -> 그룹의 정보 + 가장 종료일이 임박한 세부 목표의 정부 포함
+         */
+        List<StudyGroupListGetResponse> studyGroupListGetResponseList = new ArrayList<>();   // RESPONSE LIST
+
+        List<StudyGroup> myActiveStudyGroupList = getActiveStudyGroupList(user);   // 현재 활동중인 스터디 그룹
+
+        List<Goal> userLatestGoalListPerStudyGroup = new ArrayList<>();
+        for (StudyGroup studyGroup : myActiveStudyGroupList) {
+            List<Goal> groupGoalList = studyGroup.getGroupDetailGoals();
+            List<Goal> userActiveGoalListPerStudyGroup = new ArrayList<>();   // 각 그룹 당 현재 진행중인 목표들의 리스트
+
+            for (Goal detailGoal : groupGoalList) {
+                if (detailGoal.getGoalStatus().equals(GoalStatus.ACTIVE)) {
+                    userActiveGoalListPerStudyGroup.add(detailGoal);   // 각 그룹 당 현재 진행중인 목표들의 리스트
+                }
+            }
+
+            // TODO 각 그룹 내에서 세부 목표 리스트마다 정렬 수행
+            Collections.sort(userActiveGoalListPerStudyGroup, new GoalEndDateComparator());
+
+            // TODO 종료 날짜가 가장 임박한 한 개의 목표만 리스트에 추가
+            if (!userActiveGoalListPerStudyGroup.isEmpty()) {
+                userLatestGoalListPerStudyGroup.add(userActiveGoalListPerStudyGroup.get(0));
+
+            }
+        }
+
+        for (StudyGroup myActiveStudyGroup : myActiveStudyGroupList) {
+            Goal activeGoal = getActiveGoalInStudyGroup(myActiveStudyGroup);
+            if (activeGoal != null) {
+                studyGroupListGetResponseList.add(
+                        StudyGroupListGetResponse.builder()
+                                // 그룹 정보
+                                .studyGroupListResponse(
+                                        StudyGroupListResponse.builder()
+                                                .studyGroup(myActiveStudyGroup)
+                                                .build()
+                                )
+                                // 세부 목표 정보 - 현재 진행 중인 목표가 없는 경우 null
+                                .activeGoalResponse(
+                                        ActiveGoalResponse.builder()
+                                                .goal(activeGoal)
+                                                .achieveGoalStatus(getAchieveGoalStatus(user, activeGoal))   // 사용자의 해당 세부 목표 달성 여부
+                                                .checkSubmitQuestionBook(getCheckSubmitQuestionBook(user, activeGoal))   // 사용자의 해당 세부 목표에 문제집 제출 여부
+                                                .checkSolveQuestionBook(getCheckCompleteSolveQuestionBook(user, activeGoal))   // 사용자의 해당 세부 목표에서 문제 풀기 (전체?) 완료 여부
+                                                .clearSolveQuestionBookNum(getClearSolveQuestionBookNum(user, activeGoal))   // 풀기를 완료한 문제집 개수
+                                                .toSolveQuestionBookNum(getToSolveQuestionBookNum(user, activeGoal))   // 사용자가 해당 세부 목표에서 풀어야 하는 문제집 개수
+                                                .build()
+                                )
+                                .build()
+
+                );
+            } else {
+                studyGroupListGetResponseList.add(
+                        StudyGroupListGetResponse.builder()
+                                // 그룹 정보
+                                .studyGroupListResponse(
+                                        StudyGroupListResponse.builder()
+                                                .studyGroup(myActiveStudyGroup)
+                                                .build()
+                                )
+                                // 세부 목표 정보 - 현재 진행 중인 목표가 없는 경우 null
+                                .build()
+
+                );
+            }
+        }
+
+        return studyGroupListGetResponseList;
+    }
+
+    // 사용자 가입 스터디 그룹의 현재 진행중인 목표 리스트 종료 임박 순 조회
     private List<Goal> getLatestGoalListPerGroup(User user) {
 
         List<UserJoinGroup> userJoinGroupList = user.getUserJoinGroups();
+
+        log.debug("[사용자 가입 그룹 개수] : {}", userJoinGroupList.size());
         // TODO 사용자가 속한 그룹이 없는 경우
         if (userJoinGroupList.isEmpty()) {
             return null;
         }
 
-        List<Goal> userLatestGoalListPerStudyGroup = new ArrayList<>();
+        List<Goal> userLatestGoalListPerStudyGroup = new ArrayList<>();   // 각 그룹 당 현재 진행중인 목표들의 리스트 중, 마감 기한이 가장 임박한 목표들의 리스트
 
         for (UserJoinGroup userJoinGroup : userJoinGroupList) {
             StudyGroup myStudyGroup = userJoinGroup.getStudyGroup();
             // 스터디 그룹의 현재 상태가 ACTIVE 이며,
             if (myStudyGroup.getGroupStatus() == StudyGroupStatus.ACTIVE) {
-                Goal latestDetailGoal = goalRepository.findFirstByStudyGroupOrderByGoalStartDateDesc(myStudyGroup);
+                List<Goal> groupGoalList = myStudyGroup.getGroupDetailGoals();
+                List<Goal> userActiveGoalListPerStudyGroup = new ArrayList<>();   // 각 그룹 당 현재 진행중인 목표들의 리스트
                 // 현재 날짜 기준 세부 목표가 진행중인 경우만 추가
-                if (latestDetailGoal.getGoalStatus() == GoalStatus.ACTIVE) {
-                    userLatestGoalListPerStudyGroup.add(latestDetailGoal);
+                for (Goal detailGoal : groupGoalList) {
+                    log.debug("[각 그룹의 상태] : {}", detailGoal.getGoalStatus());
+                    if (detailGoal.getGoalStatus().equals(GoalStatus.ACTIVE)) {
+                        userActiveGoalListPerStudyGroup.add(detailGoal);   // 각 그룹 당 현재 진행중인 목표들의 리스트
+                    }
                 }
+                log.debug("[그룹의 아이디 및 이름] : {}, {}", myStudyGroup.getId(), myStudyGroup.getGroupName());
+                for (Goal sortedGoal : userActiveGoalListPerStudyGroup) {
+                    log.debug("[정렬 전 Goal 순서] : {}, {}, {}", sortedGoal.getId(), sortedGoal.getGoalContent(), sortedGoal.getGoalEndDate());
+                }
+
+                // TODO 각 그룹 내에서 세부 목표 리스트마다 정렬 수행
+                Collections.sort(userActiveGoalListPerStudyGroup, new GoalEndDateComparator());
+
+                for (Goal sortedGoal : userActiveGoalListPerStudyGroup) {
+                    log.debug("[정렬 후 Goal 순서] : {}, {}, {}", sortedGoal.getId(), sortedGoal.getGoalContent(), sortedGoal.getGoalEndDate());
+                }
+                // TODO 종료 날짜가 가장 임박한 한 개의 목표만 리스트에 추가
+                if (!userActiveGoalListPerStudyGroup.isEmpty()) {
+                    userLatestGoalListPerStudyGroup.add(userActiveGoalListPerStudyGroup.get(0));
+                    log.debug("[정렬 후 가장 임박한 Goal ID, 내용, 종료일] : {}, {}, {}", userActiveGoalListPerStudyGroup.get(0).getId()
+                            , userActiveGoalListPerStudyGroup.get(0).getGoalContent()
+                            , userActiveGoalListPerStudyGroup.get(0).getGoalEndDate());
+                }
+
             }
         }
+        log.debug("[각 그룹 별 현재 진행중인 세부 목표 중, 가장 임박한 것이 담긴 후 원소 수] : {}", userLatestGoalListPerStudyGroup.size());
         // TODO 사용자가 속한 그룹에 현재 진행중인 목표가 없는 경우
         if (userLatestGoalListPerStudyGroup.isEmpty()) {
             return null;
@@ -309,6 +449,7 @@ public class UserService implements IUserService {
 
         return userLatestGoalListPerStudyGroup;
     }
+    
 
     // 각 문제집을 푼 그룹의 구성원 이름
     private List<String> getPersonNameListToSolveQuestionBook(QuestionBook questionBook) {

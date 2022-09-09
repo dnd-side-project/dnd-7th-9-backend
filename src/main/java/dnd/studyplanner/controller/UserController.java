@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -59,12 +60,10 @@ public class UserController {
     public ResponseEntity<CustomResponse> getUserStudyGroupList(
             @RequestHeader(value = "Access-Token") String accessToken) {
 
-        try {
-            List<StudyGroupListGetResponse> userGroupList = userService.getUserStudyGroupList(accessToken);
-            return new CustomResponse<>(userGroupList, GET_GROUP_SUCCESS).toResponseEntity();
-        } catch (Exception e) {
-            return new CustomResponse<>(NOT_EXIST_DATA).toResponseEntity();
-        }
+        List<StudyGroupListGetResponse> userGroupList = new ArrayList<>();
+//        userGroupList = userService.getUserStudyGroupList(accessToken);
+        userGroupList = userService.getLatestGoalListPerGroup2(accessToken);
+        return new CustomResponse<>(userGroupList, GET_GROUP_SUCCESS).toResponseEntity();
     }
 
     @GetMapping("/list/detail")
