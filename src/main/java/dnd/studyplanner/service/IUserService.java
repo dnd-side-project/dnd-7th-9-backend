@@ -20,4 +20,5 @@ public interface IUserService {
     List<StudyGroupListGetResponse> getUserStudyGroupList(String accessToken);
 
     UserStudyGroupListDetailResponse getUserStudyGroupListDetail(String accessToken, Long groupId, Long goalId, String version) throws BaseException;
+
 }
