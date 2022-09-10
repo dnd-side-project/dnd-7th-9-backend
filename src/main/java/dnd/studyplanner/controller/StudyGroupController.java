@@ -4,7 +4,9 @@ import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 
 import java.util.List;
 
+import dnd.studyplanner.dto.studyGroup.request.StudyGroupInviteDto;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +45,6 @@ public class StudyGroupController {
         return new CustomResponse<>(studyGroupCategoryList, SUCCESS).toResponseEntity();
     }
 
-
     // 그룹 생성 & 사용자 초대
     @PostMapping("/info")
     public ResponseEntity<CustomResponse> addStudyGroup(
@@ -73,6 +74,30 @@ public class StudyGroupController {
         } catch (IllegalArgumentException e) {
             return new CustomResponse<>(NOT_VALID_STATUS).toResponseEntity();
         }
+    }
+
+    // 스터디 그룹 생성
+    @PostMapping("/save")
+    public ResponseEntity<CustomResponse> saveStudyGroupOnly (
+            @RequestHeader(value = "Access-Token") String accessToken,
+            @RequestBody StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto) {
+
+        StudyGroupSaveResponse updateStudyGroup = studyGroupService.saveStudyGroupOnly(studyGroupSaveDto, userJoinGroupSaveDto, accessToken);
+
+        return new CustomResponse<>(updateStudyGroup, SAVE_GROUP_SUCCESS).toResponseEntity();
+
+    }
+
+    // 스터디 그룹 초대
+    @PostMapping("/invite")
+    public ResponseEntity<CustomResponse> groupInvite (
+            @RequestHeader(value = "Access-Token") String accessToken,
+            @RequestBody StudyGroupInviteDto studyGroupInviteDto, UserJoinGroupSaveDto userJoinGroupSaveDto) {
+
+        StudyGroupSaveResponse updateStudyGroup = studyGroupService.groupInvite(studyGroupInviteDto, userJoinGroupSaveDto, accessToken);
+
+        return new CustomResponse<>(updateStudyGroup, INVITE_USER_SUCCESS).toResponseEntity();
+
     }
 
 }
