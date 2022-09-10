@@ -3,14 +3,14 @@ package dnd.studyplanner.service.Impl;
 import static dnd.studyplanner.domain.studygroup.model.StudyGroupStatus.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import dnd.studyplanner.dto.studyGroup.request.StudyGroupInviteDto;
+import dnd.studyplanner.dto.studyGroup.response.StudyGroupResponse;
+import dnd.studyplanner.dto.user.request.UserInfoExistDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +32,6 @@ import dnd.studyplanner.service.IStudyGroupService;
 import dnd.studyplanner.service.IUserRateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Arrays;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -60,7 +58,7 @@ public class StudyGroupService implements IStudyGroupService {
 
 		Long currentUserId = getCurrentUserId(accessToken);
 		User hostUser = userRepository.findById(currentUserId).get();
-		UserJoinGroup updateHostPeople = userJoinGroupSaveDto.toEntity(hostUser,joinStudyGroup);
+		UserJoinGroup updateHostPeople = userJoinGroupSaveDto.toEntity(hostUser, joinStudyGroup);
 		invitedPeopleList.add(updateHostPeople);
 		updateStudyGroupMemberList.add(hostUser.getUserEmail());
 
@@ -119,6 +117,76 @@ public class StudyGroupService implements IStudyGroupService {
 		List<StudyGroupCategory> categoryList = new ArrayList<>();
 		categoryList.addAll(Arrays.asList(StudyGroupCategory.values()));
 		return categoryList;
+	}
+
+	// TODO 스터디 그룹 생성과 초대 API 분리 - 스터디 그룹 생성
+	@Override
+	public StudyGroupSaveResponse saveStudyGroupOnly(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken) {
+
+		Long currentUserId = getCurrentUserId(accessToken);
+		User hostUser = userRepository.findById(currentUserId).get();   // host
+
+		LocalDate today = LocalDate.now();
+		LocalDate groupStartDate = studyGroupSaveDto.getGroupStartDate();
+		LocalDate groupEndDate = studyGroupSaveDto.getGroupEndDate();
+		int compareStatus = groupStartDate.compareTo(today);
+
+		if (groupEndDate.isBefore(today)) {  // COMPLETE 상태
+			studyGroupSaveDto.setGroupStatus(COMPLETE);
+		} else if (compareStatus > 0) {   // READY 상태
+			studyGroupSaveDto.setGroupStatus(READY);
+		} else if (compareStatus <= 0) {   // ACTIVE 상태
+			studyGroupSaveDto.setGroupStatus(ACTIVE);
+		}
+
+		StudyGroup studyGroup = studyGroupSaveDto.toEntity(hostUser);
+		studyGroupRepository.save(studyGroup);   // 스터디 그룹 생성
+
+		// Host User 스터디 그룹 가입
+		UserJoinGroup updateHostUser = userJoinGroupSaveDto.toEntity(hostUser, studyGroup);
+		userJoinGroupRepository.save(updateHostUser);
+
+		StudyGroupSaveResponse studyGroupSaveResponse = StudyGroupSaveResponse.builder()
+				.studyGroup(studyGroup)
+				.studyGroupMember(Collections.singletonList(hostUser.getUserEmail()))
+				.build();
+
+		return studyGroupSaveResponse;
+	}
+
+	// TODO 스터디 그룹 생성과 초대 API 분리 - 사용자 이메일 검색 시 목록 조회
+	
+
+	// TODO 스터디 그룹 생성과 초대 API 분리 - 사용자 초대
+	@Override
+	public StudyGroupSaveResponse groupInvite(StudyGroupInviteDto studyGroupInviteDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken) {
+
+		Long currentUserId = getCurrentUserId(accessToken);
+		User hostUser = userRepository.findById(currentUserId).get();
+		StudyGroup inviteStudyGroup = studyGroupRepository.findById(studyGroupInviteDto.getStudyGroupId()).get();
+
+		String inviteUserEmail = studyGroupInviteDto.getUserEmail();
+		if (isValidEmail(inviteUserEmail) && checkExistUser(inviteUserEmail)) {
+			if (!hostUser.getUserEmail().equals(inviteUserEmail)) {
+				User inviteUser = userRepository.findByUserEmail(inviteUserEmail).get();
+				UserJoinGroup updateInvitedPeople = userJoinGroupSaveDto.toEntity(inviteUser, inviteStudyGroup);
+
+				userJoinGroupRepository.save(updateInvitedPeople);
+			}
+		}
+
+		List<String> groupUserList = new ArrayList<>();
+		List<UserJoinGroup> userJoinGroupList = inviteStudyGroup.getUserJoinGroups();
+		for (UserJoinGroup userJoinGroup : userJoinGroupList) {
+			groupUserList.add(userJoinGroup.getUser().getUserEmail());
+		}
+		// 사용자
+		StudyGroupSaveResponse studyGroupSaveResponse = StudyGroupSaveResponse.builder()
+				.studyGroup(inviteStudyGroup)
+				.studyGroupMember(groupUserList)
+				.build();
+
+		return studyGroupSaveResponse;
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String userAccessToken) {

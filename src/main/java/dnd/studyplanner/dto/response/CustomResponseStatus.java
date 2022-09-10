@@ -16,6 +16,7 @@ public enum CustomResponseStatus {
 	GET_GROUP_SUCCESS(true, 1301, "사용자 가입 그룹 조회 성공", HttpStatus.OK),
 	GET_MY_GROUP_SUCCESS(true, 1302, "프로필 스터디 그룹 조회 성공", HttpStatus.OK),
 	GET_GROUP_DETAIL_SUCCESS(true, 1303, "스터디 그룹 상세 정보 조회 성공", HttpStatus.OK),
+	INVITE_USER_SUCCESS(true, 1304, "사용자 그룹 초대 성공", HttpStatus.OK),
 	SAVE_GOAL_SUCCESS(true, 1400, "목표 저장 성공", HttpStatus.OK),
 
 	//4000번 오류 응답코드

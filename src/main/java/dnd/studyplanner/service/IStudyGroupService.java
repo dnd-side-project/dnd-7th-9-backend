@@ -2,9 +2,11 @@ package dnd.studyplanner.service;
 
 import java.util.List;
 
+import dnd.studyplanner.dto.studyGroup.request.StudyGroupInviteDto;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupPageResponse;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
+import dnd.studyplanner.dto.studyGroup.response.StudyGroupResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
@@ -18,4 +20,7 @@ public interface IStudyGroupService {
 
 	List<StudyGroupCategory> getCategoryList(String accessToken);
 
+	StudyGroupSaveResponse saveStudyGroupOnly(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto,String accessToken);
+
+	StudyGroupSaveResponse groupInvite(StudyGroupInviteDto studyGroupInviteDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken);
 }
