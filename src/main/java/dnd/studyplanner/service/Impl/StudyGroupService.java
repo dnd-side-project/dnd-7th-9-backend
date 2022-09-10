@@ -3,22 +3,24 @@ package dnd.studyplanner.service.Impl;
 import static dnd.studyplanner.domain.studygroup.model.StudyGroupStatus.*;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import dnd.studyplanner.dto.studyGroup.request.StudyGroupInviteDto;
-import dnd.studyplanner.dto.studyGroup.response.StudyGroupResponse;
-import dnd.studyplanner.dto.user.request.UserInfoExistDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
-import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
+import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
+import dnd.studyplanner.dto.studyGroup.request.StudyGroupInviteDto;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupPageResponse;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
