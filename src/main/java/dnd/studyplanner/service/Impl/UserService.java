@@ -510,7 +510,6 @@ public class UserService implements IUserService {
     }
 
     @Override
-//    @Async
     public UserEmailListResponse getUserEmailList(String userEmail) {
 
         List<String> userEmailList = new ArrayList<>();
