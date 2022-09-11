@@ -1,8 +1,10 @@
 package dnd.studyplanner.controller;
 
+import com.amazonaws.Response;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.dto.user.request.UserIdDto;
+import dnd.studyplanner.dto.user.response.UserEmailListResponse;
 import dnd.studyplanner.dto.user.response.UserStudyGroupListDetailResponse;
 import dnd.studyplanner.dto.user.response.groupList.StudyGroupListGetResponse;
 import dnd.studyplanner.dto.user.request.UserInfoExistDto;
@@ -78,5 +80,13 @@ public class UserController {
         } catch (BaseException e) {
             return new CustomResponse<>(USER_NOT_IN_GROUP).toResponseEntity();
         }
+    }
+
+    // 사용자 이메일 검색 목록 조회
+    @GetMapping("/exist")
+    public ResponseEntity<CustomResponse> getUserEmailList(@RequestParam String userEmail) {
+
+//        UserEmailListResponse userEmailListResponse = userService.getUserEmailList(userEmail);
+        return new CustomResponse<>(userService.getUserEmailList(userEmail), SUCCESS).toResponseEntity();
     }
 }
