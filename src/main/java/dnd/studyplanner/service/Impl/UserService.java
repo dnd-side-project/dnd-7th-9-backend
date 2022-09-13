@@ -13,6 +13,7 @@ import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
 import dnd.studyplanner.domain.user.model.*;
 import dnd.studyplanner.dto.goal.response.ActiveGoalResponse;
 import dnd.studyplanner.dto.user.request.StudyGroupDetailVersion;
+import dnd.studyplanner.dto.user.response.UserEmailListResponse;
 import dnd.studyplanner.dto.user.response.UserStudyGroupListDetailResponse;
 import dnd.studyplanner.dto.user.response.groupAndGoalDetail.StudyGroupDetailResponse;
 import dnd.studyplanner.dto.user.response.groupAndGoalDetail.StudyGroupGoalResponse;
@@ -27,6 +28,7 @@ import dnd.studyplanner.service.IUserRateService;
 import dnd.studyplanner.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -505,5 +507,21 @@ public class UserService implements IUserService {
 
         Long currentUserId = jwtService.getUserId(userAccessToken);
         return currentUserId;
+    }
+
+    @Override
+    public UserEmailListResponse getUserEmailList(String userEmail) {
+
+        List<String> userEmailList = new ArrayList<>();
+        List<User> userList = userRepository.findByUserEmailContaining(userEmail);
+
+        for (User user : userList) {
+            userEmailList.add(user.getUserEmail());
+        }
+        UserEmailListResponse userEmailListResponse = UserEmailListResponse.builder()
+                .userEmailList(userEmailList)
+                .build();
+
+        return userEmailListResponse;
     }
 }

@@ -23,8 +23,10 @@ public class StudyGroupSaveResponse {
     private StudyGroupStatus studyGroupStatus;
     private List<String> studyGroupMember;
 
+    private String invitedUrl;
+
     @Builder
-    public StudyGroupSaveResponse(StudyGroup studyGroup, List<String> studyGroupMember) {
+    public StudyGroupSaveResponse(StudyGroup studyGroup, List<String> studyGroupMember, String invitedUrl) {
 
         this.groupId = studyGroup.getId();
         this.groupName = studyGroup.getGroupName();
@@ -35,5 +37,6 @@ public class StudyGroupSaveResponse {
         this.studyGroupCategory = studyGroup.getGroupCategory();
         this.studyGroupStatus = studyGroup.getGroupStatus();
         this.studyGroupMember = studyGroupMember;
+        this.invitedUrl = invitedUrl;
     }
 }

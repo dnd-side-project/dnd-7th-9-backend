@@ -1,6 +1,7 @@
 package dnd.studyplanner.service;
 
 import dnd.studyplanner.domain.user.model.User;
+import dnd.studyplanner.dto.user.response.UserEmailListResponse;
 import dnd.studyplanner.dto.user.response.UserStudyGroupListDetailResponse;
 import dnd.studyplanner.dto.user.response.groupList.StudyGroupListGetResponse;
 import dnd.studyplanner.dto.user.request.UserInfoExistDto;
@@ -21,4 +22,5 @@ public interface IUserService {
 
     UserStudyGroupListDetailResponse getUserStudyGroupListDetail(String accessToken, Long groupId, Long goalId, String version) throws BaseException;
 
+    UserEmailListResponse getUserEmailList(String userEmail);
 }
