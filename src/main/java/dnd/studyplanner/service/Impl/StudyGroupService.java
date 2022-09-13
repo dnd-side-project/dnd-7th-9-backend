@@ -148,9 +148,13 @@ public class StudyGroupService implements IStudyGroupService {
 		UserJoinGroup updateHostUser = userJoinGroupSaveDto.toEntity(hostUser, studyGroup);
 		userJoinGroupRepository.save(updateHostUser);
 
+		String newGroupId = String.valueOf(studyGroup.getId());   // 바로 직전에 생성한 그룹의 ID
+		String invitedStudyGroupUrl = "https://run-us.netlify.app/invited-group/" + newGroupId;
+
 		StudyGroupSaveResponse studyGroupSaveResponse = StudyGroupSaveResponse.builder()
 				.studyGroup(studyGroup)
 				.studyGroupMember(Collections.singletonList(hostUser.getUserEmail()))
+				.invitedUrl(invitedStudyGroupUrl)
 				.build();
 
 		return studyGroupSaveResponse;
@@ -182,10 +186,14 @@ public class StudyGroupService implements IStudyGroupService {
 		for (UserJoinGroup userJoinGroup : userJoinGroupList) {
 			groupUserList.add(userJoinGroup.getUser().getUserEmail());
 		}
-		// 사용자
+
+		String newGroupId = String.valueOf(studyGroupInviteDto.getStudyGroupId());   // 바로 직전에 생성한 그룹의 ID
+		String invitedStudyGroupUrl = "https://run-us.netlify.app/invited-group/" + newGroupId;
+		// TODO 초대 링크(초대 수락 페이지) 함께 리턴
 		StudyGroupSaveResponse studyGroupSaveResponse = StudyGroupSaveResponse.builder()
 				.studyGroup(inviteStudyGroup)
 				.studyGroupMember(groupUserList)
+				.invitedUrl(invitedStudyGroupUrl)
 				.build();
 
 		return studyGroupSaveResponse;
