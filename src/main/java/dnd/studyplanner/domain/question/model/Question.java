@@ -43,6 +43,7 @@ public class Question extends BaseEntity {
 	private String questionContent;
 	private int questionAnswer;
 	private int answerCount = 0;
+
 	@Enumerated(EnumType.STRING)
 	private QuestionOptionType questionOptionType;
 

@@ -44,6 +44,7 @@ public class Option extends BaseEntity {
 		this.optionContent = optionContent;
 		this.optionImageEnable = optionImageEnable;
 		this.optionImageUrl = optionImageUrl;
+		this.isAnswer = isAnswer;
 
 		question.getOptions().add(this);
 
