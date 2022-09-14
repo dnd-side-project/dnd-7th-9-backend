@@ -17,15 +17,17 @@ import lombok.NoArgsConstructor;
 public class QuestionListDto {
 
 	private String questionContent;
+	private String questionImage;
 	private QuestionOptionType questionOptionType;
 
 	private List<OptionSaveDto> optionSaveDtoList;
 
 	@Builder
-	public QuestionListDto(String questionContent, QuestionOptionType questionOptionType, List<OptionSaveDto> optionSaveDtoList) {
+	public QuestionListDto(String questionContent, QuestionOptionType questionOptionType, List<OptionSaveDto> optionSaveDtoList, String questionImage) {
 		this.questionContent = questionContent;
 		this.questionOptionType = questionOptionType;
 		this.optionSaveDtoList = optionSaveDtoList;
+		this.questionImage = questionImage;
 	}
 
 	public Question toEntity(QuestionBook questionBook) {
@@ -33,6 +35,7 @@ public class QuestionListDto {
 			.questionContent(this.questionContent)
 			.questionBook(questionBook)
 			.questionOptionType(this.questionOptionType)
+			.questionImage(this.questionImage)
 			.build();
 	}
 }

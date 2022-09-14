@@ -12,12 +12,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QuestionResponseDto {
 	private Long questionId;
+	private String questionImage;
 	private String questionContent;
 	private List<OptionResponseDto> optionList;
 
 	@Builder
-	public QuestionResponseDto(Long questionId, String questionContent, List<OptionResponseDto> optionList) {
+	public QuestionResponseDto(Long questionId, String questionImage, String questionContent,
+		List<OptionResponseDto> optionList) {
 		this.questionId = questionId;
+		this.questionImage = questionImage;
 		this.questionContent = questionContent;
 		this.optionList = optionList;
 	}
