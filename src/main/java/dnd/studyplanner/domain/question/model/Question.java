@@ -42,6 +42,7 @@ public class Question extends BaseEntity {
 
 	private String questionContent;
 	private int questionAnswer;
+	private int answerCount = 0;
 	@Enumerated(EnumType.STRING)
 	private QuestionOptionType questionOptionType;
 
@@ -59,6 +60,10 @@ public class Question extends BaseEntity {
 		this.questionOptionType = questionOptionType;
 
 		questionBook.getQuestions().add(this);
+	}
+
+	public void countAnswer() {
+		this.answerCount += 1;
 	}
 
 	public QuestionResponseDto toResponseDto() {

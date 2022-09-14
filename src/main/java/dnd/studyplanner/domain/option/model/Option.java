@@ -36,15 +36,20 @@ public class Option extends BaseEntity {
 	private String optionContent;
 	private boolean optionImageEnable;
 	private String optionImageUrl;
+	private boolean isAnswer;
 
 	@Builder
-	public Option(Question question, String optionContent, boolean optionImageEnable, String optionImageUrl) {
+	public Option(Question question, String optionContent, boolean optionImageEnable, String optionImageUrl, boolean isAnswer) {
 		this.question = question;
 		this.optionContent = optionContent;
 		this.optionImageEnable = optionImageEnable;
 		this.optionImageUrl = optionImageUrl;
 
 		question.getOptions().add(this);
+
+		if (isAnswer) {
+			question.countAnswer();
+		}
 	}
 
 	public OptionResponseDto toResponseDto() {

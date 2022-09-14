@@ -1,7 +1,9 @@
 package dnd.studyplanner.domain.user.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import dnd.studyplanner.domain.option.model.Option;
 import dnd.studyplanner.domain.question.model.Question;
@@ -45,6 +48,9 @@ public class UserSolveQuestion {
 	private int pickOption;
 	private int answerOption;
 	private boolean rightCheck;
+
+	@OneToMany(mappedBy = "userSolveQuestion")
+	private List<UserCheckOption> userCheckOptions = new ArrayList<>();
 
 	@Builder
 	public UserSolveQuestion(User solveUser, Question solveQuestion, int pickOption) {
