@@ -18,13 +18,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Value("${front-client.domain}")
 	public String DOMAIN_HOST;
 
-	// public void addInterceptors(InterceptorRegistry registry) {
-	// 	//Interceptor scope
-	// 	registry.addInterceptor(jwtTokenInterceptor)
-	// 		.addPathPatterns("/token/test/**")
-	// 		.addPathPatterns("/**")
-	// 		.excludePathPatterns("oauth2/**", "/auth/token/reissue", "/user/exist");
-	// }
+	public void addInterceptors(InterceptorRegistry registry) {
+		//Interceptor scope
+		registry.addInterceptor(jwtTokenInterceptor)
+			.addPathPatterns("/token/test/**")
+			.addPathPatterns("/**")
+			.excludePathPatterns("/css/**","/images/**","/js/**","/h2-console/**", "/profile")
+			.excludePathPatterns("oauth2/**", "/auth/token/reissue", "/user/exist");
+	}
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
