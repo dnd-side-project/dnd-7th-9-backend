@@ -123,4 +123,18 @@ public class StudyGroupController {
 
     }
 
+    // 초대 링크 접속 후 초대 수락 클릭
+    @GetMapping("/invite/agree")
+    public ResponseEntity<CustomResponse> agreeInvitedGroup(
+        @RequestHeader(value = "Access-Token") String accessToken,
+        @RequestParam Long groupId) {
+
+        try {
+            AgreeInvitedStudyGroupResponse invitedStudyGroupResponse = studyGroupService.agreeInvitedGroup(accessToken, groupId);
+            return new CustomResponse<>(invitedStudyGroupResponse).toResponseEntity();
+        } catch (BaseException e) {
+            return new CustomResponse<>(e.getStatus()).toResponseEntity();
+        }
+    }
+
 }

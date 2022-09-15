@@ -28,6 +28,7 @@ public enum CustomResponseStatus {
 	NOT_VALID_STATUS(false, 4005, "옳바르지 않는 스터디 그룹 상태 입니다", HttpStatus.BAD_REQUEST),
 	TOKEN_NULL(false, 4006, "토큰이 존재하지 않습니다", HttpStatus.UNAUTHORIZED),
 	USER_NOT_IN_GROUP(false, 4007, "사용자가 가입한 그룹이 아닙니다", HttpStatus.BAD_REQUEST),
+	USER_ALREADY_IN_GROUP(false, 4008, "이미 가입한 그룹입니다.", HttpStatus.ALREADY_REPORTED),
 	NOT_EXIST_DATA(false, 4100, "존재하지 않는 데이터입니다.", HttpStatus.BAD_REQUEST),
 
 	ALREADY_SOLVED_QUESTION_BOOK(false, 4200, "이미 풀이 완료한 문제집 입니다", HttpStatus.BAD_REQUEST),

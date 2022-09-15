@@ -25,4 +25,6 @@ public interface IStudyGroupService {
 	StudyGroupSaveResponse groupInvite(StudyGroupInviteDto studyGroupInviteDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken);
 
 	InvitedStudyGroupResponse getInvitedStudyGroup(String accessToken, Long studyGroupId);
+
+	AgreeInvitedStudyGroupResponse agreeInvitedGroup(String accessToken, Long studyGroupId) throws BaseException;
 }

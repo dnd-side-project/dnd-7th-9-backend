@@ -249,6 +249,31 @@ public class StudyGroupService implements IStudyGroupService {
 		return invitedStudyGroupResponse;
 	}
 
+	// 초대 링크 접속 후 초대 수락 클릭 -> 해당 사용자 가입 처리
+	@Override
+	public AgreeInvitedStudyGroupResponse agreeInvitedGroup(String accessToken, Long studyGroupId) throws BaseException {
+
+		Long currentUserId = getCurrentUserId(accessToken);
+		User user = userRepository.findById(currentUserId).get();
+		StudyGroup invitedStudyGroup = studyGroupRepository.findById(studyGroupId).get();
+
+		// TODO 이미 스터디 그룹에 가입이 되어있는지 확인
+		if (existInStudyGroup(user, invitedStudyGroup)) {
+			// 가입된 그룹임을 안내
+			throw new BaseException(USER_ALREADY_IN_GROUP);
+		}
+		// TODO 가입
+		UserJoinGroup updateUser = UserJoinGroup.builder().user(user).studyGroup(invitedStudyGroup).build();
+		userJoinGroupRepository.save(updateUser);
+
+		AgreeInvitedStudyGroupResponse agreeInvitedStudyGroupResponse = AgreeInvitedStudyGroupResponse.builder()
+			.studyGroup(invitedStudyGroup)
+			.build();
+
+		return agreeInvitedStudyGroupResponse;
+
+	}
+
 	private boolean existInStudyGroup(User user, StudyGroup studyGroup) {
 
 		boolean check = false;
