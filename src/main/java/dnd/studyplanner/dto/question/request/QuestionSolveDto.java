@@ -1,5 +1,7 @@
 package dnd.studyplanner.dto.question.request;
 
+import java.util.List;
+
 import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
@@ -12,19 +14,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QuestionSolveDto {
 	private Long questionId;
-	private int checkAnswer;
-
-	@Builder
-	public QuestionSolveDto(Long questionId, int checkAnswer) {
-		this.questionId = questionId;
-		this.checkAnswer = checkAnswer;
-	}
+	private List<Long> checkOptionIdList;
 
 	public UserSolveQuestion toEntity(User solveUser, Question solveQuestion) {
 		return UserSolveQuestion.builder()
 			.solveUser(solveUser)
 			.solveQuestion(solveQuestion)
-			.pickOption(this.checkAnswer)
 			.build();
 	}
 }

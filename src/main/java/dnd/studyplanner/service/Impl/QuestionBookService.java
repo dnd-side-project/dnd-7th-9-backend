@@ -20,6 +20,7 @@ import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.user.model.User;
+import dnd.studyplanner.domain.user.model.UserCheckOption;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
 import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
@@ -126,9 +127,15 @@ public class QuestionBookService implements IQuestionBookService {
 
 		Long questionBookId = requestDto.getQuestionBookId();
 
+		List<Question> questionList = questionRepository.findByQuestionBookId(questionBookId);
+
 		// DB 커넥션을 줄이기 위해 Map 자료구조 사용
-		Map<Long, Question> questionMap = questionRepository.findByQuestionBookId(questionBookId).stream()
+		Map<Long, Question> questionMap = questionList.stream()
 			.collect(Collectors.toMap(Question::getId, v -> v));
+
+		Map<Long, Option> optionMap = optionService.findByAllByQuestionList(questionList).stream()
+			.collect(Collectors.toMap(Option::getId, v -> v));
+
 		List<QuestionSolveDto> questionSolveDto = requestDto.getSolveDtoList();
 
 
@@ -136,11 +143,19 @@ public class QuestionBookService implements IQuestionBookService {
 		int answerCount = 0;
 
 		for (QuestionSolveDto solveDto : questionSolveDto) {
-			UserSolveQuestion userSolveQuestion = solveDto.toEntity(
-				user,
-				questionMap.get(solveDto.getQuestionId())); // Map을 통해 조회하여 DB에 직접 연결하는 횟수를 줄임
 
-			if (userSolveQuestion.isRightCheck()) {
+			UserSolveQuestion userSolveQuestion = solveDto.toEntity(user, questionMap.get(solveDto.getQuestionId()));
+
+			for (Long checkOptionId : solveDto.getCheckOptionIdList()) {
+				//유저가 선택한 옵션 저장
+				UserCheckOption.builder()
+					.userSolveQuestion(userSolveQuestion)
+					.option(optionMap.get(checkOptionId))
+					.build();
+			}
+
+			if (isCorrect(userSolveQuestion)) {
+				userSolveQuestion.setRightCheck(true); // 정답 반영
 				answerCount += 1;
 			}
 
@@ -202,6 +217,19 @@ public class QuestionBookService implements IQuestionBookService {
 			userId, questionBookId).orElseThrow(() -> new BaseException(UNAUTHORIZED_QUESTION_BOOK));
 
 		return userSolveQuestionBook.isSolved();
+	}
+
+	private boolean isCorrect(UserSolveQuestion userSolveQuestion) {
+		List<UserCheckOption> userCheckOptions = userSolveQuestion.getUserCheckOptions();
+		int answerCount = userSolveQuestion.getSolveQuestion().getAnswerCount();
+		int correctCount = 0;
+		for (UserCheckOption userCheckOption : userCheckOptions) {
+			if (userCheckOption.getOption().isAnswer()) {
+				correctCount += 1; //사용자 체크 옵션 중 정답 개수 count
+			}
+		}
+
+		return answerCount == correctCount; //문제의 정답 개수와 사용자가 맞춘 개수가 같으면 return true
 	}
 
 	/**

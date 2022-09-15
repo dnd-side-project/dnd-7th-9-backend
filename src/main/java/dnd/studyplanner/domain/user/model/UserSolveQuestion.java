@@ -45,26 +45,26 @@ public class UserSolveQuestion {
 	@JoinColumn(name = "question_id")
 	private Question solveQuestion;
 
-	private int pickOption;
+	private int pickOption; //deprecate
 	private int answerOption;
-	private boolean rightCheck;
+	private boolean rightCheck; // 정답 유무
 
-	@OneToMany(mappedBy = "userSolveQuestion")
+	@OneToMany(mappedBy = "userSolveQuestion", cascade = CascadeType.ALL)
 	private List<UserCheckOption> userCheckOptions = new ArrayList<>();
 
 	@Builder
-	public UserSolveQuestion(User solveUser, Question solveQuestion, int pickOption) {
+	public UserSolveQuestion(User solveUser, Question solveQuestion) {
 		this.solveUser = solveUser;
 		this.solveQuestion = solveQuestion;
-		this.pickOption = pickOption;
-
 		this.solveQuestionBook = solveQuestion.getQuestionBook();
 		this.answerOption = solveQuestion.getQuestionAnswer();
-		this.rightCheck = (this.answerOption == this.pickOption);
 
 		solveQuestion.getUserSolveQuestions().add(this);
 	}
 
+	public void setRightCheck(boolean rightCheck) {
+		this.rightCheck = rightCheck;
+	}
 
 
 	public UserSolveQuestionResponse toResponseDto() {

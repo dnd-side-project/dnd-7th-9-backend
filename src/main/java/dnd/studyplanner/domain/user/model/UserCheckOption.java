@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 
 import dnd.studyplanner.domain.option.model.Option;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,4 +33,12 @@ public class UserCheckOption {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_solve_question_id")
 	private UserSolveQuestion userSolveQuestion;
+
+	@Builder
+	public UserCheckOption(Option option, UserSolveQuestion userSolveQuestion) {
+		this.option = option;
+		this.userSolveQuestion = userSolveQuestion;
+
+		userSolveQuestion.getUserCheckOptions().add(this);
+	}
 }

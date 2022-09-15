@@ -2,6 +2,7 @@ package dnd.studyplanner.service.Impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,5 +41,10 @@ public class OptionService implements IOptionService {
 		optionRepository.saveAll(options);
 	}
 
+	@Override
+	public List<Option> findByAllByQuestionList(List<Question> questionList) {
+		return optionRepository.findAllByQuestion_IdIn(
+			questionList.stream().map(Question::getId).collect(Collectors.toList()));
+	}
 
 }
