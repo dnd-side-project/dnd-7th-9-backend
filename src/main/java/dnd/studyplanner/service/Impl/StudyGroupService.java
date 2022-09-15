@@ -1,6 +1,7 @@
 package dnd.studyplanner.service.Impl;
 
 import static dnd.studyplanner.domain.studygroup.model.StudyGroupStatus.*;
+import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -15,17 +17,25 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import dnd.studyplanner.domain.goal.model.Goal;
+import dnd.studyplanner.domain.goal.model.GoalEndDateComparator;
+import dnd.studyplanner.domain.goal.model.GoalStatus;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
+import dnd.studyplanner.dto.goal.response.ActiveGoalResponse;
+import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupInviteDto;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
+import dnd.studyplanner.dto.studyGroup.response.AgreeInvitedStudyGroupResponse;
+import dnd.studyplanner.dto.studyGroup.response.InvitedStudyGroupResponse;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupPageResponse;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
+import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.repository.StudyGroupRepository;
 import dnd.studyplanner.repository.UserJoinGroupRepository;
@@ -46,6 +56,8 @@ public class StudyGroupService implements IStudyGroupService {
 	private final UserJoinGroupRepository userJoinGroupRepository;
 	private final JwtService jwtService;
 	private final IUserRateService userRateService;
+
+	private final UserService userService;
 
 	@Override
 	public StudyGroupSaveResponse saveGroupAndInvite(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken) {
@@ -197,6 +209,56 @@ public class StudyGroupService implements IStudyGroupService {
 				.build();
 
 		return studyGroupSaveResponse;
+	}
+
+	// 초대 링크를 통한 초대 수락 페이지 접속
+	@Override
+	@Transactional
+	public InvitedStudyGroupResponse getInvitedStudyGroup(String accessToken, Long studyGroupId) {
+
+		Long currentUserId = getCurrentUserId(accessToken);
+		User user = userRepository.findById(currentUserId).get();
+
+		// TODO 그룹 정보 가져오기
+		StudyGroup invitedStudyGroup = studyGroupRepository.findById(studyGroupId).get();
+
+		List<Goal> goalList = invitedStudyGroup.getGroupDetailGoals();   // 그룹의 목표가 없는 경우?
+		List<Goal> activeGoalList = new ArrayList<>();
+		for (Goal goal : goalList) {
+			log.debug("[goal ID] : {}", goal.getId());
+			if (goal.getGoalStatus().equals(GoalStatus.ACTIVE)) {
+				activeGoalList.add(goal);
+			}
+		}
+		// 현재 활동중인 그룹의 목표가 없는 경우?
+		Collections.sort(activeGoalList, new GoalEndDateComparator());
+		Goal nowLatestGoal = activeGoalList.get(0);
+
+		ActiveGoalResponse activeGoalResponse = ActiveGoalResponse.builder()
+			.goal(nowLatestGoal)
+			.achieveGoalStatus(userService.getAchieveGoalStatus(user, nowLatestGoal))
+			.clearSolveQuestionBookNum(userService.getClearSolveQuestionBookNum(user, nowLatestGoal))
+			.toSolveQuestionBookNum(userService.getToSolveQuestionBookNum(user, nowLatestGoal))
+			.build();
+
+		InvitedStudyGroupResponse invitedStudyGroupResponse = InvitedStudyGroupResponse.builder()
+			.studyGroup(invitedStudyGroup)
+			.activeGoalResponse(activeGoalResponse)
+			.build();
+
+		return invitedStudyGroupResponse;
+	}
+
+	private boolean existInStudyGroup(User user, StudyGroup studyGroup) {
+
+		boolean check = false;
+		List<UserJoinGroup> userJoinGroupList = user.getUserJoinGroups();
+		for (UserJoinGroup userJoinGroup : userJoinGroupList) {
+			if (userJoinGroup.getStudyGroup().getId().equals(studyGroup.getId())) {
+				check = true;
+			}
+		}
+		return check;
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupSaveDto studyGroupSaveDto, String userAccessToken) {

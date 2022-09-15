@@ -6,7 +6,6 @@ import java.util.List;
 
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupInviteDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,11 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
+import dnd.studyplanner.dto.studyGroup.response.AgreeInvitedStudyGroupResponse;
+import dnd.studyplanner.dto.studyGroup.response.InvitedStudyGroupResponse;
 import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupPageResponse;
-import dnd.studyplanner.dto.studyGroup.response.MyStudyGroupResponse;
 import dnd.studyplanner.dto.studyGroup.response.StudyGroupSaveResponse;
-import dnd.studyplanner.dto.user.response.groupList.StudyGroupListResponse;
 import dnd.studyplanner.dto.userJoinGroup.request.UserJoinGroupSaveDto;
+import dnd.studyplanner.exception.BaseException;
+import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.service.IStudyGroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 public class StudyGroupController {
 
     private final IStudyGroupService studyGroupService;
+
+    private final JwtService jwtService;
 
     // 스터디 그룹 생성 시 카테고리 리스트 조회
     @GetMapping("/category")
@@ -97,6 +100,26 @@ public class StudyGroupController {
         StudyGroupSaveResponse updateStudyGroup = studyGroupService.groupInvite(studyGroupInviteDto, userJoinGroupSaveDto, accessToken);
 
         return new CustomResponse<>(updateStudyGroup, INVITE_USER_SUCCESS).toResponseEntity();
+
+    }
+
+    // 초대 링크를 통한 초대 수락 페이지 접속
+    @GetMapping("/invite")
+    public ResponseEntity<CustomResponse> getInvitedStudyGroup(
+        @RequestHeader(value = "Access-Token") String accessToken,
+        @RequestParam Long groupId) {
+
+        if (accessToken == null) {   // 토근이 존재하지 않는 경우 -> 로그인 페이지로 redirect
+            return new CustomResponse<>(TOKEN_NULL).toResponseEntity();
+        } else if (jwtService.isNotValid(accessToken)) {
+            return new CustomResponse<>(TOKEN_INVALID).toResponseEntity();
+        } else if (jwtService.isExpired(accessToken)) {
+            return new CustomResponse<>(TOKEN_EXPIRED).toResponseEntity();
+        }
+
+        InvitedStudyGroupResponse invitedStudyGroupResponse = studyGroupService.getInvitedStudyGroup(accessToken, groupId);
+
+        return new CustomResponse<>(invitedStudyGroupResponse, SUCCESS).toResponseEntity();
 
     }
 
