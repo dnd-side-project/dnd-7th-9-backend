@@ -213,37 +213,15 @@ public class StudyGroupService implements IStudyGroupService {
 
 	// 초대 링크를 통한 초대 수락 페이지 접속
 	@Override
-	@Transactional
 	public InvitedStudyGroupResponse getInvitedStudyGroup(String accessToken, Long studyGroupId) {
 
 		Long currentUserId = getCurrentUserId(accessToken);
 		User user = userRepository.findById(currentUserId).get();
 
-		// TODO 그룹 정보 가져오기
 		StudyGroup invitedStudyGroup = studyGroupRepository.findById(studyGroupId).get();
-
-		List<Goal> goalList = invitedStudyGroup.getGroupDetailGoals();   // 그룹의 목표가 없는 경우?
-		List<Goal> activeGoalList = new ArrayList<>();
-		for (Goal goal : goalList) {
-			log.debug("[goal ID] : {}", goal.getId());
-			if (goal.getGoalStatus().equals(GoalStatus.ACTIVE)) {
-				activeGoalList.add(goal);
-			}
-		}
-		// 현재 활동중인 그룹의 목표가 없는 경우?
-		Collections.sort(activeGoalList, new GoalEndDateComparator());
-		Goal nowLatestGoal = activeGoalList.get(0);
-
-		ActiveGoalResponse activeGoalResponse = ActiveGoalResponse.builder()
-			.goal(nowLatestGoal)
-			.achieveGoalStatus(userService.getAchieveGoalStatus(user, nowLatestGoal))
-			.clearSolveQuestionBookNum(userService.getClearSolveQuestionBookNum(user, nowLatestGoal))
-			.toSolveQuestionBookNum(userService.getToSolveQuestionBookNum(user, nowLatestGoal))
-			.build();
 
 		InvitedStudyGroupResponse invitedStudyGroupResponse = InvitedStudyGroupResponse.builder()
 			.studyGroup(invitedStudyGroup)
-			.activeGoalResponse(activeGoalResponse)
 			.build();
 
 		return invitedStudyGroupResponse;
@@ -257,9 +235,8 @@ public class StudyGroupService implements IStudyGroupService {
 		User user = userRepository.findById(currentUserId).get();
 		StudyGroup invitedStudyGroup = studyGroupRepository.findById(studyGroupId).get();
 
-		// TODO 이미 스터디 그룹에 가입이 되어있는지 확인
+		// TODO 이미 스터디 그룹에 가입되어 있는 경우
 		if (existInStudyGroup(user, invitedStudyGroup)) {
-			// 가입된 그룹임을 안내
 			throw new BaseException(USER_ALREADY_IN_GROUP);
 		}
 		// TODO 가입
