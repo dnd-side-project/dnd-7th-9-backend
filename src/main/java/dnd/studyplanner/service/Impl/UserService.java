@@ -417,7 +417,7 @@ public class UserService implements IUserService {
 
 
     //TODO 사용자가 해당 세부 목표를 달성하였는지 (100%) 여부
-    private boolean getAchieveGoalStatus(User user, Goal goal) {
+    public boolean getAchieveGoalStatus(User user, Goal goal) {
 
         boolean checkAchieveGoalStatus = false;
         Optional<UserGoalRate> userGoalRateOptional = userGoalRateRepository.findByUser_IdAndGoal_Id(user.getId(), goal.getId());
@@ -475,7 +475,7 @@ public class UserService implements IUserService {
 
     //TODO 사용자가 해당 세부 목표 내에서, 풀어야 하는 문제집 개수
     // 풀어야 하는 문제집 개수 = 해당 세부 목표 내에서 출제된 문제집 수 - 본인이 출제한 문제집 수(1)
-    private int getToSolveQuestionBookNum(User user, Goal goal) {
+    public int getToSolveQuestionBookNum(User user, Goal goal) {
 
         List<UserSolveQuestionBook> userSolveQuestionBookList = getToSolveQuestionBookList(user, goal);
         int toSolveQuestionBookNum = userSolveQuestionBookList.size();
@@ -490,7 +490,7 @@ public class UserService implements IUserService {
     }
 
     //TODO 해당 세부 목표 내에서 사용자가 풀기를 완료한(각 문제집 당 최소 정답 개수 조건을 충족한) 문제집 개수
-    private int getClearSolveQuestionBookNum(User user, Goal goal) {
+    public int getClearSolveQuestionBookNum(User user, Goal goal) {
 
         int clearQuestionBookNum = 0;
         // 해당 세부 목표(가장 최근 세부 목표) 에 출제된 문제집 개수 중에서, 사용자 본인이 (최소 정답 개수 조건을) 통과한 문제집 개수
