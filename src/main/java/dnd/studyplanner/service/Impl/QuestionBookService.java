@@ -3,10 +3,12 @@ package dnd.studyplanner.service.Impl;
 import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
 import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
 import dnd.studyplanner.dto.option.request.OptionSaveDto;
+import dnd.studyplanner.dto.option.response.OptionResponseDto;
+import dnd.studyplanner.dto.option.response.OptionSolvedDetailResponseDto;
 import dnd.studyplanner.dto.question.request.QuestionListDto;
 import dnd.studyplanner.dto.question.request.QuestionSolveDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
@@ -168,26 +172,27 @@ public class QuestionBookService implements IQuestionBookService {
 	}
 
 	@Override
-	public List<UserSolveQuestion> getUserSolveDetails(String accessToken, Long questionBookId) {
+	public List<UserSolveQuestionResponse> getUserSolveDetails(String accessToken, Long questionBookId) {
 		Long userId = jwtService.getUserId(accessToken);
-		return userSolveQuestionRepository.findBySolveUserIdAndSolveQuestionBookId(userId, questionBookId);
-	}
+		List<UserSolveQuestion> userSolvedQuestions = userSolveQuestionRepository.findBySolveUserIdAndSolveQuestionBookId(
+			userId, questionBookId);
 
-	private boolean isPassedQuestionBook(Long userId, Long questionBookId, int answerCount) {
-		Optional<QuestionBook> questionBook = questionBookRepository.findById(questionBookId);
-		// Question Book이 포함된 목표의 최소 정답률과 비교
-		Goal goal = questionBook.get().getQuestionBookGoal();
+		List<UserSolveQuestionResponse> userSolveQuestionDetails = new ArrayList<>();
 
-		boolean isPass = false;
-		if (answerCount >= goal.getMinAnswerPerQuestionBook()) {
-			isPass = true;
+		for (UserSolveQuestion userSolvedQuestion : userSolvedQuestions) {
+			Question question = userSolvedQuestion.getSolveQuestion();
+
+			userSolveQuestionDetails.add(
+				UserSolveQuestionResponse.builder()
+					.questionId(question.getId())
+					.questionContent(question.getQuestionContent())
+					.questionImage(question.getQuestionImage())
+					.rightCheck(userSolvedQuestion.isRightCheck())
+					.optionList(getOptionSolveInfos(userSolvedQuestion))
+					.build());
 		}
 
-		UserSolveQuestionBook userSolveQuestionBook = userSolveQuestionBookRepository.findBySolveUserIdAndSolveQuestionBookId(
-			userId, questionBookId).get();
-
-		userSolveQuestionBook.updateAfterSolve(isPass, answerCount);
-		return isPass;
+		return userSolveQuestionDetails;
 	}
 
 	@Override
@@ -217,6 +222,23 @@ public class QuestionBookService implements IQuestionBookService {
 			userId, questionBookId).orElseThrow(() -> new BaseException(UNAUTHORIZED_QUESTION_BOOK));
 
 		return userSolveQuestionBook.isSolved();
+	}
+
+	private boolean isPassedQuestionBook(Long userId, Long questionBookId, int answerCount) {
+		Optional<QuestionBook> questionBook = questionBookRepository.findById(questionBookId);
+		// Question Book이 포함된 목표의 최소 정답률과 비교
+		Goal goal = questionBook.get().getQuestionBookGoal();
+
+		boolean isPass = false;
+		if (answerCount >= goal.getMinAnswerPerQuestionBook()) {
+			isPass = true;
+		}
+
+		UserSolveQuestionBook userSolveQuestionBook = userSolveQuestionBookRepository.findBySolveUserIdAndSolveQuestionBookId(
+			userId, questionBookId).get();
+
+		userSolveQuestionBook.updateAfterSolve(isPass, answerCount);
+		return isPass;
 	}
 
 	private boolean isCorrect(UserSolveQuestion userSolveQuestion) {
@@ -252,5 +274,25 @@ public class QuestionBookService implements IQuestionBookService {
 				.build())
 			.collect(Collectors.toList());
 		userSolveQuestionBookRepository.saveAll(userSolveQuestionBooks);
+	}
+
+	private List<OptionSolvedDetailResponseDto> getOptionSolveInfos(UserSolveQuestion userSolveQuestion) {
+		List<OptionSolvedDetailResponseDto> optionSolveInfoList = new ArrayList<>();
+
+		Set<Option> userCheckOptionSet = userSolveQuestion.getUserCheckOptions().stream()
+			.map(UserCheckOption::getOption)
+			.collect(Collectors.toSet());
+
+		List<Option> options = userSolveQuestion.getSolveQuestion().getOptions();
+
+		for (Option option : options) {
+			optionSolveInfoList.add(
+				OptionSolvedDetailResponseDto.builder()
+					.option(option)
+					.isChecked(userCheckOptionSet.contains(option))
+					.build());
+		}
+
+		return optionSolveInfoList;
 	}
 }

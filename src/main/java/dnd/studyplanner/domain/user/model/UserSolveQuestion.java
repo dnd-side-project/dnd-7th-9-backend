@@ -65,15 +65,4 @@ public class UserSolveQuestion {
 	public void setRightCheck(boolean rightCheck) {
 		this.rightCheck = rightCheck;
 	}
-
-
-	public UserSolveQuestionResponse toResponseDto() {
-		return UserSolveQuestionResponse.builder()
-			.question(this.getSolveQuestion())
-			.answerOption(this.answerOption)
-			.pickOption(this.pickOption)
-			.rightCheck(this.rightCheck)
-			.build();
-	}
-
 }
