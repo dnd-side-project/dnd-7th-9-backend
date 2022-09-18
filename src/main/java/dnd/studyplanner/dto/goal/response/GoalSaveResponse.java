@@ -13,6 +13,7 @@ import lombok.Getter;
 public class GoalSaveResponse {
 
 	private Long studyGroupId;
+	private Long goalId;
 	private String goalContent;
 
 	@JsonFormat(pattern = "yyyy-MM-dd")
@@ -31,6 +32,7 @@ public class GoalSaveResponse {
 	@Builder
 	public GoalSaveResponse(Goal goal) {
 		this.studyGroupId = goal.getStudyGroup().getId();
+		this.goalId = goal.getId();
 		this.goalContent = goal.getGoalContent();
 		this.goalStartDate = goal.getGoalStartDate();
 		this.goalEndDate = goal.getGoalEndDate();
