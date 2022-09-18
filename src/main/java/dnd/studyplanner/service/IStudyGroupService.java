@@ -3,6 +3,7 @@ package dnd.studyplanner.service;
 import java.util.List;
 
 import dnd.studyplanner.domain.studygroup.model.StudyGroupCategory;
+import dnd.studyplanner.dto.studyGroup.request.StudyGroupFinishDto;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupInviteDto;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
 import dnd.studyplanner.dto.studyGroup.response.AgreeInvitedStudyGroupResponse;
@@ -27,4 +28,6 @@ public interface IStudyGroupService {
 	InvitedStudyGroupResponse getInvitedStudyGroup(String accessToken, Long studyGroupId);
 
 	AgreeInvitedStudyGroupResponse agreeInvitedGroup(String accessToken, Long studyGroupId) throws BaseException;
+
+	void finishStudyGroup(String accessToken, StudyGroupFinishDto studyGroupFinishDto) throws BaseException;
 }

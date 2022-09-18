@@ -4,6 +4,7 @@ import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 
 import java.util.List;
 
+import dnd.studyplanner.dto.studyGroup.request.StudyGroupFinishDto;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupInviteDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -137,4 +138,17 @@ public class StudyGroupController {
         }
     }
 
+    @PostMapping("/finish")
+    public ResponseEntity<CustomResponse> finishStudyGroup (
+        @RequestHeader(value = "Access-Token") String accessToken,
+        @RequestBody StudyGroupFinishDto studyGroupFinishDto) {
+
+        try {
+            studyGroupService.finishStudyGroup(accessToken, studyGroupFinishDto);
+            return new CustomResponse<>(FINISH_STUDY_GROUP_SUCCESS).toResponseEntity();
+        } catch (BaseException e) {
+            return new CustomResponse<>(e.getStatus()).toResponseEntity();
+        }
+
+    }
 }

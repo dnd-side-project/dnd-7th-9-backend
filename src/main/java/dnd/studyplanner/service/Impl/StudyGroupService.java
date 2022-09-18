@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +28,7 @@ import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import dnd.studyplanner.dto.goal.response.ActiveGoalResponse;
 import dnd.studyplanner.dto.response.CustomResponse;
+import dnd.studyplanner.dto.studyGroup.request.StudyGroupFinishDto;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupInviteDto;
 import dnd.studyplanner.dto.studyGroup.request.StudyGroupSaveDto;
 import dnd.studyplanner.dto.studyGroup.response.AgreeInvitedStudyGroupResponse;
@@ -249,6 +251,20 @@ public class StudyGroupService implements IStudyGroupService {
 
 		return agreeInvitedStudyGroupResponse;
 
+	}
+
+	@Override
+	public void finishStudyGroup(String accessToken, StudyGroupFinishDto studyGroupFinishDto) throws BaseException {
+		Long userId = getCurrentUserId(accessToken);
+		StudyGroup studyGroup = studyGroupRepository.findById(studyGroupFinishDto.getStudyGroupId()).orElseThrow(
+				() -> new BaseException(NOT_EXIST_DATA)
+			);
+
+		if (!studyGroup.getGroupCreateUser().getId().equals(userId)) {
+			throw new BaseException(UNAUTHORIZED_REQUEST);
+		}
+
+		studyGroup.updateStatus(COMPLETE);
 	}
 
 	private boolean existInStudyGroup(User user, StudyGroup studyGroup) {
