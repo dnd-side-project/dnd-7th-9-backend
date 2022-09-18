@@ -34,9 +34,9 @@ public class ImageUploadController {
 	}
 
 	@DeleteMapping("/file")
-	public ResponseEntity<CustomResponse> remove(String fileName) throws Exception {
+	public ResponseEntity<CustomResponse> remove(String fileUrl) throws Exception {
 
-		imageUploadService.remove(fileName);
+		imageUploadService.remove(fileUrl);
 
 		return new CustomResponse<>(DELETE_IMAGE_SUCCESS).toResponseEntity();
 	}
