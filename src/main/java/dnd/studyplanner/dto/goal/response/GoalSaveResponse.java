@@ -39,7 +39,7 @@ public class GoalSaveResponse {
 		this.goalRegisterUserId = goal.getGoalRegisterUser().getId();
 		this.goalUpdateUserId = goal.getGoalUpdateUser().getId();
 		this.goalStatus = goal.getGoalStatus();
-		this.questionPerQuestionBook = goal.getMinQuestionPerQuestionBook();
+		this.questionPerQuestionBook = goal.getQuestionPerQuestionBook();
 		this.minSolveQuestionBook = goal.getMinSolveQuestionBook();
 		this.minAnswerPerQuestionBook = goal.getMinAnswerPerQuestionBook();
 		this.minPersonPerQuestionBook = goal.getMinPersonPerQuestionBook();

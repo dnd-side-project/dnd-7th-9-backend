@@ -31,11 +31,6 @@ public class QuestionController {
 
 	private final IQuestionService questionService;
 
-	@PostMapping
-	public void addQuestion(QuestionSaveDto saveDto) throws BaseException {
-		questionService.saveQuestion(saveDto);
-	}
-
 	@GetMapping("/{questionBookId}")
 	public ResponseEntity<CustomResponse> getQuestionsByQuestionBookId(
 		@PathVariable Long questionBookId

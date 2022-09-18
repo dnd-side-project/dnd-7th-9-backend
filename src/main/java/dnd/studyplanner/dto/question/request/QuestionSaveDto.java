@@ -11,14 +11,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QuestionSaveDto {
-	private int questionAnswer;
 	private String questionContent;
 	private QuestionOptionType questionOptionType;
 	private Long questionBookId;
 
 	@Builder
 	public QuestionSaveDto(int questionAnswer, String questionContent, QuestionOptionType questionOptionType, Long questionBookId) {
-		this.questionAnswer = questionAnswer;
 		this.questionContent = questionContent;
 		this.questionOptionType = questionOptionType;
 		this.questionBookId = questionBookId;
@@ -27,7 +25,6 @@ public class QuestionSaveDto {
 	public Question toEntity(QuestionBook questionBook) {
 		return Question.builder()
 			.questionContent(this.questionContent)
-			.questionAnswer(this.questionAnswer)
 			.questionBook(questionBook)
 			.questionOptionType(this.questionOptionType)
 			.build();

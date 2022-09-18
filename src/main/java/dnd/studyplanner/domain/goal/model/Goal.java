@@ -1,7 +1,6 @@
 package dnd.studyplanner.domain.goal.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,14 +18,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.user.model.User;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -61,7 +57,7 @@ public class Goal extends BaseEntity {
 	 * 		  minQuestionPerQuestionBook -> questionPerQuestionBook
 	 */
 
-	private int minQuestionPerQuestionBook;   // 문제집 당 최소 문제 수
+	private int questionPerQuestionBook;   // 문제집 당 최소 문제 수
 	private int minSolveQuestionBook;   // 개인별 최소 풀이 문제집 수
 	private int minAnswerPerQuestionBook;   // 한 문제집 당 최소 정답 수
 	private int minPersonPerQuestionBook;   // 문제집 당 최소 팀원 참여 수 ?
@@ -80,7 +76,7 @@ public class Goal extends BaseEntity {
 	@Builder
 	public Goal(StudyGroup studyGroup, String goalContent, LocalDate goalStartDate, LocalDate goalEndDate,
 				User goalRegisterUser, User goalUpdateUser, GoalStatus goalStatus,
-				int minQuestionPerQuestionBook, int minSolveQuestionBook, int minAnswerPerQuestionBook, int minPersonPerQuestionBook) {
+				int questionPerQuestionBook, int minSolveQuestionBook, int minAnswerPerQuestionBook, int minPersonPerQuestionBook) {
 		this.studyGroup = studyGroup;
 		this.goalContent = goalContent;
 		this.goalStartDate = goalStartDate;
@@ -88,7 +84,7 @@ public class Goal extends BaseEntity {
 		this.goalRegisterUser = goalRegisterUser;
 		this.goalUpdateUser = goalUpdateUser;
 		this.goalStatus = goalStatus;
-		this.minQuestionPerQuestionBook = minQuestionPerQuestionBook;
+		this.questionPerQuestionBook = questionPerQuestionBook;
 		this.minSolveQuestionBook = minSolveQuestionBook;
 		this.minAnswerPerQuestionBook = minAnswerPerQuestionBook;
 		this.minPersonPerQuestionBook = minPersonPerQuestionBook;

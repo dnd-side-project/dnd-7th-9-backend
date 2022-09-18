@@ -41,7 +41,6 @@ public class Question extends BaseEntity {
 	private QuestionBook questionBook;
 
 	private String questionContent;
-	private int questionAnswer;
 	private int answerCount = 0;
 	private String questionImage;
 
@@ -55,10 +54,9 @@ public class Question extends BaseEntity {
 	private List<UserSolveQuestion> userSolveQuestions = new ArrayList<>();
 
 	@Builder
-	public Question(QuestionBook questionBook, String questionContent, int questionAnswer, QuestionOptionType questionOptionType, String questionImage) {
+	public Question(QuestionBook questionBook, String questionContent, QuestionOptionType questionOptionType, String questionImage) {
 		this.questionBook = questionBook;
 		this.questionContent = questionContent;
-		this.questionAnswer = questionAnswer;
 		this.questionOptionType = questionOptionType;
 		this.questionImage = questionImage;
 
