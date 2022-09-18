@@ -30,7 +30,7 @@ public class GoalSaveDto {
     @Setter
     private GoalStatus goalStatus;
 
-    private int minQuestionPerQuestionBook;
+    private int questionPerQuestionBook;
     private int minSolveQuestionBook;
     private int minAnswerPerQuestionBook;
     private int minPersonPerQuestionBook;
@@ -44,7 +44,7 @@ public class GoalSaveDto {
                 .goalRegisterUser(user)
                 .goalUpdateUser(user)
                 .goalStatus(this.goalStatus)
-                .minQuestionPerQuestionBook(this.minQuestionPerQuestionBook)
+                .minQuestionPerQuestionBook(this.questionPerQuestionBook)
                 .minSolveQuestionBook(this.minSolveQuestionBook)
                 .minAnswerPerQuestionBook(this.minAnswerPerQuestionBook)
                 .minPersonPerQuestionBook(this.minPersonPerQuestionBook)

@@ -54,6 +54,13 @@ public class Goal extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private GoalStatus goalStatus;
 
+	/**
+	 * TODO : 문제집 당 문제 개수 fixed -> 최소 문제 X,  문제 O
+	 * 		  RequestDto 에 포함되어있는 이름은 변경 완료
+	 * 		  Entity 내 이름도 수정 필요
+	 * 		  minQuestionPerQuestionBook -> questionPerQuestionBook
+	 */
+
 	private int minQuestionPerQuestionBook;   // 문제집 당 최소 문제 수
 	private int minSolveQuestionBook;   // 개인별 최소 풀이 문제집 수
 	private int minAnswerPerQuestionBook;   // 한 문제집 당 최소 정답 수
