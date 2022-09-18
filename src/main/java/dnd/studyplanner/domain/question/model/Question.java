@@ -42,6 +42,9 @@ public class Question extends BaseEntity {
 
 	private String questionContent;
 	private int questionAnswer;
+	private int answerCount = 0;
+	private String questionImage;
+
 	@Enumerated(EnumType.STRING)
 	private QuestionOptionType questionOptionType;
 
@@ -52,18 +55,24 @@ public class Question extends BaseEntity {
 	private List<UserSolveQuestion> userSolveQuestions = new ArrayList<>();
 
 	@Builder
-	public Question(QuestionBook questionBook, String questionContent, int questionAnswer, QuestionOptionType questionOptionType) {
+	public Question(QuestionBook questionBook, String questionContent, int questionAnswer, QuestionOptionType questionOptionType, String questionImage) {
 		this.questionBook = questionBook;
 		this.questionContent = questionContent;
 		this.questionAnswer = questionAnswer;
 		this.questionOptionType = questionOptionType;
+		this.questionImage = questionImage;
 
 		questionBook.getQuestions().add(this);
+	}
+
+	public void countAnswer() {
+		this.answerCount += 1;
 	}
 
 	public QuestionResponseDto toResponseDto() {
 		return QuestionResponseDto.builder()
 			.questionId(this.getId())
+			.questionImage(this.questionImage)
 			.questionContent(this.getQuestionContent())
 			.optionList(this.getOptions().stream()
 				.map(Option::toResponseDto)

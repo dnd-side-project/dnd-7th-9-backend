@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import dnd.studyplanner.domain.option.model.Option;
 import dnd.studyplanner.domain.question.model.Question;
 import dnd.studyplanner.dto.option.response.OptionResponseDto;
+import dnd.studyplanner.dto.option.response.OptionSolvedDetailResponseDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,21 +18,18 @@ public class UserSolveQuestionResponse {
 
 	private Long questionId;
 	private String questionContent;
-	private List<OptionResponseDto> optionList;
+	private String questionImage;
+	private List<OptionSolvedDetailResponseDto> optionList;
 
-	private int pickOption;
-	private int answerOption;
 	private boolean rightCheck;
 
 	@Builder
-	public UserSolveQuestionResponse(Question question, int pickOption, int answerOption, boolean rightCheck) {
-		this.questionId = question.getId();
-		this.questionContent = question.getQuestionContent();
-		this.optionList = question.getOptions().stream()
-			.map(Option::toResponseDto)
-			.collect(Collectors.toList());
-		this.pickOption = pickOption;
-		this.answerOption = answerOption;
+	public UserSolveQuestionResponse(Long questionId, String questionContent, String questionImage,
+		List<OptionSolvedDetailResponseDto> optionList, boolean rightCheck) {
+		this.questionId = questionId;
+		this.questionContent = questionContent;
+		this.questionImage = questionImage;
+		this.optionList = optionList;
 		this.rightCheck = rightCheck;
 	}
 }

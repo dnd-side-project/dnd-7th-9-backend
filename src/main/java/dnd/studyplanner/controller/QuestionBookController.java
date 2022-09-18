@@ -113,9 +113,7 @@ public class QuestionBookController {
 		@PathVariable Long questionBookId
 	) {
 		List<UserSolveQuestionResponse> response = questionBookService.getUserSolveDetails(accessToken,
-				questionBookId).stream()
-			.map(UserSolveQuestion::toResponseDto)
-			.collect(Collectors.toList());
+			questionBookId);
 
 		return new CustomResponse<>(response).toResponseEntity();
 	}

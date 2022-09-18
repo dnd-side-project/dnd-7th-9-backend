@@ -23,6 +23,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		registry.addInterceptor(jwtTokenInterceptor)
 			.addPathPatterns("/token/test/**")
 			.addPathPatterns("/**")
+			.excludePathPatterns("/css/**","/images/**","/js/**","/h2-console/**", "/profile", "/favicon.ico")
 			.excludePathPatterns("oauth2/**", "/auth/token/reissue", "/user/exist");
 	}
 

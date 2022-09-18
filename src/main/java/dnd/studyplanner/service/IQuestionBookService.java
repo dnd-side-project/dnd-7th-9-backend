@@ -17,7 +17,7 @@ public interface IQuestionBookService {
 
 	boolean solveQuestionBook(String accessToken, QuestionBookSolveDto requestDto) throws BaseException;
 
-	List<UserSolveQuestion> getUserSolveDetails(String accessToken, Long questionBookId);
+	List<UserSolveQuestionResponse> getUserSolveDetails(String accessToken, Long questionBookId);
 
 	public int getRecentQuestionBookCount(Long userId, Long goalId);
 

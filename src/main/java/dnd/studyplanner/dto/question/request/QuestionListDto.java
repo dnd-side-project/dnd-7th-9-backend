@@ -16,26 +16,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QuestionListDto {
 
-	private int questionAnswer;
 	private String questionContent;
+	private String questionImage;
 	private QuestionOptionType questionOptionType;
 
 	private List<OptionSaveDto> optionSaveDtoList;
 
 	@Builder
-	public QuestionListDto(int questionAnswer, String questionContent, QuestionOptionType questionOptionType, List<OptionSaveDto> optionSaveDtoList) {
-		this.questionAnswer = questionAnswer;
+	public QuestionListDto(String questionContent, QuestionOptionType questionOptionType, List<OptionSaveDto> optionSaveDtoList, String questionImage) {
 		this.questionContent = questionContent;
 		this.questionOptionType = questionOptionType;
 		this.optionSaveDtoList = optionSaveDtoList;
+		this.questionImage = questionImage;
 	}
 
 	public Question toEntity(QuestionBook questionBook) {
 		return Question.builder()
 			.questionContent(this.questionContent)
-			.questionAnswer(this.questionAnswer)
 			.questionBook(questionBook)
 			.questionOptionType(this.questionOptionType)
+			.questionImage(this.questionImage)
 			.build();
 	}
 }
