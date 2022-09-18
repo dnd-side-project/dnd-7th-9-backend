@@ -24,7 +24,7 @@ public class GoalSaveResponse {
 	private Long goalRegisterUserId;
 	private Long goalUpdateUserId;
 	private GoalStatus goalStatus;
-	private int minQuestionPerQuestionBook;
+	private int questionPerQuestionBook;
 	private int minSolveQuestionBook;
 	private int minAnswerPerQuestionBook;
 	private int minPersonPerQuestionBook;
@@ -39,7 +39,7 @@ public class GoalSaveResponse {
 		this.goalRegisterUserId = goal.getGoalRegisterUser().getId();
 		this.goalUpdateUserId = goal.getGoalUpdateUser().getId();
 		this.goalStatus = goal.getGoalStatus();
-		this.minQuestionPerQuestionBook = goal.getMinQuestionPerQuestionBook();
+		this.questionPerQuestionBook = goal.getMinQuestionPerQuestionBook();
 		this.minSolveQuestionBook = goal.getMinSolveQuestionBook();
 		this.minAnswerPerQuestionBook = goal.getMinAnswerPerQuestionBook();
 		this.minPersonPerQuestionBook = goal.getMinPersonPerQuestionBook();

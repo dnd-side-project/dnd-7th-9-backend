@@ -62,8 +62,7 @@ public class UserController {
     public ResponseEntity<CustomResponse> getUserStudyGroupList(
             @RequestHeader(value = "Access-Token") String accessToken) {
 
-        List<StudyGroupListGetResponse> userGroupList = new ArrayList<>();
-        userGroupList = userService.getUserStudyGroupList(accessToken);
+        List<StudyGroupListGetResponse> userGroupList = userService.getUserStudyGroupList(accessToken);
         return new CustomResponse<>(userGroupList, GET_GROUP_SUCCESS).toResponseEntity();
     }
 

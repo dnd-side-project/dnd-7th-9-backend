@@ -28,9 +28,11 @@ public class ActiveGoalResponse {
 
 	private int toSolveQuestionBookNum;   // 풀어야 하는 문제집 개수
 
+	private int questionPerQuestionBook; // 문제집 출제 시 풀어야하는 문제 개수
+
 	@Builder
 	public ActiveGoalResponse(Goal goal, boolean achieveGoalStatus, boolean checkSubmitQuestionBook, boolean checkSolveQuestionBook,
-							  int clearSolveQuestionBookNum, int toSolveQuestionBookNum) {
+							  int clearSolveQuestionBookNum, int toSolveQuestionBookNum, int questionPerQuestionBook) {
 
 		this.goalContent = goal.getGoalContent();
 		this.goalStartDate = goal.getGoalStartDate();
@@ -41,6 +43,7 @@ public class ActiveGoalResponse {
 		this.checkSolveQuestionBook = checkSolveQuestionBook;
 		this.clearSolveQuestionBookNum = clearSolveQuestionBookNum;
 		this.toSolveQuestionBookNum = toSolveQuestionBookNum;
+		this.questionPerQuestionBook = questionPerQuestionBook;
 	}
 
 }
