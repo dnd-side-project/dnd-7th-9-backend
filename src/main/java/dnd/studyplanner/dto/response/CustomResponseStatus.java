@@ -18,6 +18,7 @@ public enum CustomResponseStatus {
 	GET_GROUP_DETAIL_SUCCESS(true, 1303, "스터디 그룹 상세 정보 조회 성공", HttpStatus.OK),
 	INVITE_USER_SUCCESS(true, 1304, "사용자 그룹 초대 성공", HttpStatus.OK),
 	SAVE_GOAL_SUCCESS(true, 1400, "목표 저장 성공", HttpStatus.OK),
+	FINISH_STUDY_GROUP_SUCCESS(true, 1500, "스터디 그룹이 완료 처리 되었습니다", HttpStatus.OK),
 
 	//4000번 오류 응답코드
 	REQUEST_DATA_NULL(false, 4000, "필수 항목이 입력되지 않았습니다", HttpStatus.BAD_REQUEST),
@@ -30,6 +31,7 @@ public enum CustomResponseStatus {
 	USER_NOT_IN_GROUP(false, 4007, "사용자가 가입한 그룹이 아닙니다", HttpStatus.BAD_REQUEST),
 	USER_ALREADY_IN_GROUP(false, 4008, "이미 가입한 그룹입니다.", HttpStatus.ALREADY_REPORTED),
 	NOT_EXIST_DATA(false, 4100, "존재하지 않는 데이터입니다.", HttpStatus.BAD_REQUEST),
+	UNAUTHORIZED_REQUEST(false, 4101, "권한이 없는 요청입니다.", HttpStatus.UNAUTHORIZED),
 
 	ALREADY_SOLVED_QUESTION_BOOK(false, 4200, "이미 풀이 완료한 문제집 입니다", HttpStatus.BAD_REQUEST),
 	UNAUTHORIZED_QUESTION_BOOK(false, 4201, "풀이 권한이 없는 문제집 입니다", HttpStatus.BAD_REQUEST);
