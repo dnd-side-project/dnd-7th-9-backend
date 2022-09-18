@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import dnd.studyplanner.service.IImageUploadService;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ImageUploadService implements IImageUploadService {
@@ -33,7 +35,7 @@ public class ImageUploadService implements IImageUploadService {
 	@Override
 	public List<String> upload(List<MultipartFile> multipartFile) throws Exception {
 
-		List<String> fileNameList = new ArrayList<>();
+		List<String> fileUrlList = new ArrayList<>();
 
 		multipartFile.forEach(file -> {
 			String fileName = createFileName(file.getOriginalFilename());
@@ -44,14 +46,15 @@ public class ImageUploadService implements IImageUploadService {
 			try (InputStream inputStream = file.getInputStream()) {
 				amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
 					.withCannedAcl(CannedAccessControlList.PublicRead));
+				String fileUrl = amazonS3.getUrl(bucket, fileName).toString();
+				fileUrlList.add(fileUrl);
 			} catch (IOException e) {
 				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드 실패");
 			}
 
-			fileNameList.add(fileName);
 		});
 
-		return fileNameList;
+		return fileUrlList;
 	}
 
 	private String createFileName(String fileName) {
@@ -69,7 +72,8 @@ public class ImageUploadService implements IImageUploadService {
 	}
 
 	@Override
-	public void remove(String fileName) throws Exception {
+	public void remove(String fileUrl) throws Exception {
+		String fileName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
 		amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
 	}
 }
