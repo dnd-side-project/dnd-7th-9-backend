@@ -165,6 +165,7 @@ public class UserService implements IUserService {
                                                 .checkSolveQuestionBook(getCheckCompleteSolveQuestionBook(user, activeGoal))   // 사용자의 해당 세부 목표에서 문제 풀기 (전체?) 완료 여부
                                                 .clearSolveQuestionBookNum(getClearSolveQuestionBookNum(user, activeGoal))   // 풀기를 완료한 문제집 개수
                                                 .toSolveQuestionBookNum(getToSolveQuestionBookNum(user, activeGoal))   // 사용자가 해당 세부 목표에서 풀어야 하는 문제집 개수
+                                                .questionPerQuestionBook(activeGoal.getMinQuestionPerQuestionBook()) // 세부 목표에 대한 문제집 별 출제 문제 개수 (문제 출제 시 필요한 정보)
                                                 .build()
                                 )
                                 .build()
