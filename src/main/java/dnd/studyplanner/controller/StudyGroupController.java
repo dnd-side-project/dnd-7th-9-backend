@@ -86,9 +86,12 @@ public class StudyGroupController {
             @RequestHeader(value = "Access-Token") String accessToken,
             @RequestBody StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto) {
 
-        StudyGroupSaveResponse updateStudyGroup = studyGroupService.saveStudyGroupOnly(studyGroupSaveDto, userJoinGroupSaveDto, accessToken);
-
-        return new CustomResponse<>(updateStudyGroup, SAVE_GROUP_SUCCESS).toResponseEntity();
+        try {
+            StudyGroupSaveResponse updateStudyGroup = studyGroupService.saveStudyGroupOnly(studyGroupSaveDto, userJoinGroupSaveDto, accessToken);
+            return new CustomResponse<>(updateStudyGroup, SAVE_GROUP_SUCCESS).toResponseEntity();
+        } catch (BaseException e) {
+            return new CustomResponse<>(e.getStatus()).toResponseEntity();
+        }
 
     }
 

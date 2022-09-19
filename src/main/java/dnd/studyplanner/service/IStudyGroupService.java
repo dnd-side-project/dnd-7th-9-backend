@@ -21,7 +21,7 @@ public interface IStudyGroupService {
 
 	List<StudyGroupCategory> getCategoryList(String accessToken);
 
-	StudyGroupSaveResponse saveStudyGroupOnly(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto,String accessToken);
+	StudyGroupSaveResponse saveStudyGroupOnly(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto,String accessToken) throws BaseException;
 
 	StudyGroupSaveResponse groupInvite(StudyGroupInviteDto studyGroupInviteDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken);
 
