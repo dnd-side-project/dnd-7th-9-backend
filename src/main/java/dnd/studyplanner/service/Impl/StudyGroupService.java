@@ -270,6 +270,12 @@ public class StudyGroupService implements IStudyGroupService {
 		}
 
 		studyGroup.updateStatus(COMPLETE);
+
+		// 스터디 그룹 내 세부 목표들 완료 처리
+		List<Goal> groupGoalList = studyGroup.getGroupDetailGoals();
+		for (Goal goal : groupGoalList) {
+			goal.updateStatus(GoalStatus.COMPLETE);
+		}
 	}
 
 	private boolean existInStudyGroup(User user, StudyGroup studyGroup) {
