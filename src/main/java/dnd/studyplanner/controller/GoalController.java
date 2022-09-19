@@ -4,6 +4,7 @@ import dnd.studyplanner.domain.goal.model.Goal;
 import dnd.studyplanner.dto.goal.request.GoalSaveDto;
 import dnd.studyplanner.dto.goal.response.GoalSaveResponse;
 import dnd.studyplanner.dto.response.CustomResponse;
+import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.service.IGoalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +26,11 @@ public class GoalController {
             @RequestHeader(value = "Access-Token") String accessToken,
             @RequestBody GoalSaveDto goalSaveDto) {
 
-        GoalSaveResponse updateGoal = goalService.addDetailGoal(accessToken, goalSaveDto);
-
-        return new CustomResponse<>(updateGoal, SAVE_GOAL_SUCCESS).toResponseEntity();
+        try {
+            GoalSaveResponse updateGoal = goalService.addDetailGoal(accessToken, goalSaveDto);
+            return new CustomResponse<>(updateGoal, SAVE_GOAL_SUCCESS).toResponseEntity();
+        } catch (BaseException e) {
+            return new CustomResponse<>(e.getStatus()).toResponseEntity();
+        }
     }
 }

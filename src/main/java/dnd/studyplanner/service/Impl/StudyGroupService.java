@@ -137,7 +137,7 @@ public class StudyGroupService implements IStudyGroupService {
 
 	// TODO 스터디 그룹 생성과 초대 API 분리 - 스터디 그룹 생성
 	@Override
-	public StudyGroupSaveResponse saveStudyGroupOnly(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken) {
+	public StudyGroupSaveResponse saveStudyGroupOnly(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken) throws BaseException {
 
 		Long currentUserId = getCurrentUserId(accessToken);
 		User hostUser = userRepository.findById(currentUserId).get();   // host
@@ -145,6 +145,11 @@ public class StudyGroupService implements IStudyGroupService {
 		LocalDate today = LocalDate.now();
 		LocalDate groupStartDate = studyGroupSaveDto.getGroupStartDate();
 		LocalDate groupEndDate = studyGroupSaveDto.getGroupEndDate();
+		// 입력받은 시작 날짜 < 종료 날짜 체크
+		if (groupStartDate.isAfter(groupEndDate)) {
+			throw new BaseException(START_AFTER_END);
+		}
+		
 		int compareStatus = groupStartDate.compareTo(today);
 
 		if (groupEndDate.isBefore(today)) {  // COMPLETE 상태
@@ -265,6 +270,12 @@ public class StudyGroupService implements IStudyGroupService {
 		}
 
 		studyGroup.updateStatus(COMPLETE);
+
+		// 스터디 그룹 내 세부 목표들 완료 처리
+		List<Goal> groupGoalList = studyGroup.getGroupDetailGoals();
+		for (Goal goal : groupGoalList) {
+			goal.updateStatus(GoalStatus.COMPLETE);
+		}
 	}
 
 	private boolean existInStudyGroup(User user, StudyGroup studyGroup) {
