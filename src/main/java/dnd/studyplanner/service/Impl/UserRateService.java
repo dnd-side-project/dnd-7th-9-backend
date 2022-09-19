@@ -57,7 +57,8 @@ public class UserRateService implements IUserRateService {
 		Goal goal = goalRepository.findById(goalId).get();
 		UserGoalRate userGoalRate = getUserGoalRate(accessToken, goal);
 		userGoalRate.updatePostQuestionBook();
-
+		userGoalRateRepository.save(userGoalRate);
+		
 		return userGoalRate;
 	}
 

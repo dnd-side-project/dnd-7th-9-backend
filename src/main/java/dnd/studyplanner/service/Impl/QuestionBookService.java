@@ -63,7 +63,7 @@ public class QuestionBookService implements IQuestionBookService {
 	private final UserSolveQuestionRepository userSolveQuestionRepository;
 	private final UserSolveQuestionBookRepository userSolveQuestionBookRepository;
 
-	public List<String> saveQuestionBook(String accessToken, QuestionBookDto saveDto) {
+	public List<String> saveQuestionBook(String accessToken, QuestionBookDto saveDto) throws BaseException {
 		Long userId = jwtService.getUserId(accessToken);
 
 		User user = userRepository.findById(userId).get();
@@ -77,6 +77,10 @@ public class QuestionBookService implements IQuestionBookService {
 
 		List<Option> options = new LinkedList<>();
 		List<Question> questions = new LinkedList<>();
+
+		if (goal.getQuestionPerQuestionBook() != (saveDto.getQuestionDtoList().size())) {
+			throw new BaseException(QUESTION_AMOUNT_UNMATCHED);
+		}
 
 		for (QuestionListDto listDto : saveDto.getQuestionDtoList()) {
 			Question question = listDto.toEntity(questionBook);

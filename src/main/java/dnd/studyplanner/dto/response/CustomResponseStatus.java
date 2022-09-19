@@ -34,7 +34,8 @@ public enum CustomResponseStatus {
 	UNAUTHORIZED_REQUEST(false, 4101, "권한이 없는 요청입니다.", HttpStatus.UNAUTHORIZED),
 
 	ALREADY_SOLVED_QUESTION_BOOK(false, 4200, "이미 풀이 완료한 문제집 입니다", HttpStatus.BAD_REQUEST),
-	UNAUTHORIZED_QUESTION_BOOK(false, 4201, "풀이 권한이 없는 문제집 입니다", HttpStatus.BAD_REQUEST);
+	UNAUTHORIZED_QUESTION_BOOK(false, 4201, "풀이 권한이 없는 문제집 입니다", HttpStatus.BAD_REQUEST),
+	QUESTION_AMOUNT_UNMATCHED(false, 4202, "현재 세부 목표의 문제 출제 개수와 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
 
 	private final boolean isSuccess;
 	private final int responseCode;

@@ -102,7 +102,7 @@ class QuestionBookServiceTest {
 
 	@DisplayName(value = "Service 로직 사용")
 	@Test
-	void saveAsListTest() {
+	void saveAsListTest() throws BaseException {
 		//given
 		QuestionBookDto questionBookDto = dataUtil.getQuestionBookDto();
 
@@ -116,31 +116,4 @@ class QuestionBookServiceTest {
 		assertThat(allQuestions.size()).isEqualTo(4);
 		assertThat(allOptions.size()).isEqualTo(10);
 	}
-
-
-	@DisplayName(value = "문제집 풀이 완료 테스트")
-	@Transactional
-	@Test
-	void solveQuestion() throws BaseException {
-	    //given
-		List<QuestionSolveDto> questionSolveList = new ArrayList<>();
-
-		questionSolveList.add(QuestionSolveDto.builder().questionId(13L).checkAnswer(3).build());
-		questionSolveList.add(QuestionSolveDto.builder().questionId(14L).checkAnswer(1).build());
-		questionSolveList.add(QuestionSolveDto.builder().questionId(15L).checkAnswer(3).build());
-
-		QuestionBookSolveDto requestDto = QuestionBookSolveDto.builder().
-			questionBookId(5L).solveDtoList(questionSolveList).build();
-
-		//when
-		boolean passQuestionBook = questionBookService.solveQuestionBook(
-			"accessToken", // 임시 입력
-			requestDto);
-
-		List<UserSolveQuestion> allBySolveUserId = userSolveQuestionRepository.findAllBySolveUserId(1L);
-		//then
-		assertThat(passQuestionBook).isTrue();
-		assertThat(allBySolveUserId.size()).isEqualTo(3);
-	}
-
 }

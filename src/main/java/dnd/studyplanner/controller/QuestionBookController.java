@@ -44,16 +44,20 @@ public class QuestionBookController {
 		@RequestBody QuestionBookDto saveDto
 	) {
 
-		questionBookService.saveQuestionBook(accessToken, saveDto);
-		UserGoalRate userGoalRate = userGoalRateService.updatePostQuestionBook(accessToken, saveDto.getGoalId());
-		QuestionBookSaveResponse response = QuestionBookSaveResponse.builder()
-			.addedRate(50)
-			.questionBookPostRate(userGoalRate.getPostRate())
-			.questionBookSolveRate(userGoalRate.getSolveRate())
-			.userTotalRate(userGoalRate.getAchieveRate())
-			.build();
+		try {
+			questionBookService.saveQuestionBook(accessToken, saveDto);
+			UserGoalRate userGoalRate = userGoalRateService.updatePostQuestionBook(accessToken, saveDto.getGoalId());
+			QuestionBookSaveResponse response = QuestionBookSaveResponse.builder()
+				.addedRate(50)
+				.questionBookPostRate(userGoalRate.getPostRate())
+				.questionBookSolveRate(userGoalRate.getSolveRate())
+				.userTotalRate(userGoalRate.getAchieveRate())
+				.build();
+			return new CustomResponse<>(response, SAVE_QUESTION_BOOK_SUCCESS).toResponseEntity();
+		} catch (BaseException e) {
+			return new CustomResponse<>(e.getStatus()).toResponseEntity();
+		}
 
-		return new CustomResponse<>(response, SAVE_QUESTION_BOOK_SUCCESS).toResponseEntity();
 	}
 
 	@GetMapping("/list/live")
