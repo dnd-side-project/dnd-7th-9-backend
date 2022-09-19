@@ -44,9 +44,6 @@ public class UserSolveQuestion {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "question_id")
 	private Question solveQuestion;
-
-	private int pickOption; //deprecate
-	private int answerOption;
 	private boolean rightCheck; // 정답 유무
 
 	@OneToMany(mappedBy = "userSolveQuestion", cascade = CascadeType.ALL)
@@ -57,7 +54,6 @@ public class UserSolveQuestion {
 		this.solveUser = solveUser;
 		this.solveQuestion = solveQuestion;
 		this.solveQuestionBook = solveQuestion.getQuestionBook();
-		this.answerOption = solveQuestion.getQuestionAnswer();
 
 		solveQuestion.getUserSolveQuestions().add(this);
 	}
