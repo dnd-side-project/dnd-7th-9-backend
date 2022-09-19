@@ -11,7 +11,7 @@ import dnd.studyplanner.exception.BaseException;
 
 public interface IQuestionBookService {
 
-	List<String> saveQuestionBook(String accessToken, QuestionBookDto saveDto);
+	List<String> saveQuestionBook(String accessToken, QuestionBookDto saveDto) throws BaseException;
 
 	List<UserQuestionBookResponse> getAllUserQuestionBooks(String accessToken);
 
