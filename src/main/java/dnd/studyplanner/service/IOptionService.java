@@ -9,4 +9,6 @@ public interface IOptionService {
 	void saveAllOptions(List<Option> options);
 
 	List<Option> findByAllByQuestionList(List<Question> questionList);
+
+	void deleteByQuestion(Question question);
 }

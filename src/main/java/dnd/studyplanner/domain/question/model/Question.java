@@ -21,6 +21,8 @@ import dnd.studyplanner.domain.base.BaseEntity;
 import dnd.studyplanner.domain.option.model.Option;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
+import dnd.studyplanner.dto.option.request.OptionSaveDto;
+import dnd.studyplanner.dto.question.request.QuestionListDto;
 import dnd.studyplanner.dto.question.response.QuestionResponseDto;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -76,6 +78,17 @@ public class Question extends BaseEntity {
 				.map(Option::toResponseDto)
 				.collect(Collectors.toList()))
 			.build();
+	}
+
+	public void updateByEditDto(QuestionListDto editQuestionDto) {
+		this.questionContent = editQuestionDto.getQuestionContent();
+		this.questionImage = editQuestionDto.getQuestionImage();
+		this.questionOptionType = editQuestionDto.getQuestionOptionType();
+	}
+
+	public void clearOptions() {
+		this.answerCount = 0;
+		this.options.clear();
 	}
 
 }

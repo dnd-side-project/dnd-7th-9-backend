@@ -47,4 +47,9 @@ public class OptionService implements IOptionService {
 			questionList.stream().map(Question::getId).collect(Collectors.toList()));
 	}
 
+	@Override
+	public void deleteByQuestion(Question question) {
+		optionRepository.deleteByQuestionId(question.getId());
+	}
+
 }
