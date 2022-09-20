@@ -14,5 +14,5 @@ public interface UserSolveQuestionBookRepository extends JpaRepository<UserSolve
 
 	Optional<UserSolveQuestionBook> findBySolveUserIdAndSolveQuestionBookId(Long userId, Long questionBookId);
 
-	List<UserSolveQuestionBook> findBySolveQuestionBookId(Long questionBookId);
+	boolean existsBySolveQuestionBookIdAndIsSolved(Long questionBookId, boolean solved);
 }

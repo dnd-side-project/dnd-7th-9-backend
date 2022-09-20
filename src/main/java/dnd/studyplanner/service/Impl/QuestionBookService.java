@@ -238,15 +238,13 @@ public class QuestionBookService implements IQuestionBookService {
 			throw new BaseException(QUESTION_AMOUNT_UNMATCHED);
 		}
 
+		questionBook.updateByEditDto(saveDto);
+
 		List<Question> questions = questionBook.getQuestions();
 		List<QuestionListDto> questionDtoList = saveDto.getQuestionDtoList();
 
 		// 풀이 정보가 변경되었는지 체크
-		int solvedUserCount = (int) userSolveQuestionBookRepository.findBySolveQuestionBookId(questionBookId).stream()
-			.filter(UserSolveQuestionBook::isSolved)
-			.count();
-
-		if (solvedUserCount > 0) {
+		if (userSolveQuestionBookRepository.existsBySolveQuestionBookIdAndIsSolved(questionBookId, true)) {
 			throw new BaseException(QUESTION_BOOK_ALREADY_SOLVED);
 		}
 
