@@ -194,7 +194,11 @@ public class StudyGroupService implements IStudyGroupService {
 		List<UserJoinGroup> userJoinGroupList = inviteStudyGroup.getUserJoinGroups();
 		List<String> userEmailList = new ArrayList<>();
 		for (UserJoinGroup userJoinGroup : userJoinGroupList) {
-			userEmailList.add(userJoinGroup.getUser().getUserEmail());
+			String userEmail = userJoinGroup.getUser().getUserEmail();
+			// 방장 이메일 제외
+			if (!hostUser.getUserEmail().equals(userEmail)) {
+				userEmailList.add(userJoinGroup.getUser().getUserEmail());
+			}
 		}
 
 		String inviteUserEmail = studyGroupInviteDto.getUserEmail();
@@ -208,18 +212,8 @@ public class StudyGroupService implements IStudyGroupService {
 				UserJoinGroup updateInvitedPeople = userJoinGroupSaveDto.toEntity(inviteUser, inviteStudyGroup);
 
 				userJoinGroupRepository.save(updateInvitedPeople);
+				userEmailList.add(inviteUserEmail);
 			}
-		}
-
-		List<String> groupUserList = new ArrayList<>();
-		userJoinGroupList = inviteStudyGroup.getUserJoinGroups();
-		for (UserJoinGroup userJoinGroup : userJoinGroupList) {
-			// 방장 이메일 제외
-			String userEmail = userJoinGroup.getUser().getUserEmail();
-			if (userEmail.equals(userJoinGroup.getStudyGroup().getGroupCreateUser().getUserEmail())) {
-				continue;
-			}
-			groupUserList.add(userEmail);
 		}
 
 		String newGroupId = String.valueOf(studyGroupInviteDto.getStudyGroupId());   // 바로 직전에 생성한 그룹의 ID
@@ -227,7 +221,7 @@ public class StudyGroupService implements IStudyGroupService {
 		// TODO 초대 링크(초대 수락 페이지) 함께 리턴
 		StudyGroupSaveResponse studyGroupSaveResponse = StudyGroupSaveResponse.builder()
 				.studyGroup(inviteStudyGroup)
-				.studyGroupMember(groupUserList)
+				.studyGroupMember(userEmailList)
 				.invitedUrl(invitedStudyGroupUrl)
 				.build();
 
