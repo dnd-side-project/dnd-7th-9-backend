@@ -184,15 +184,26 @@ public class StudyGroupService implements IStudyGroupService {
 
 	// TODO 스터디 그룹 생성과 초대 API 분리 - 사용자 초대
 	@Override
-	public StudyGroupSaveResponse groupInvite(StudyGroupInviteDto studyGroupInviteDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken) {
+	public StudyGroupSaveResponse groupInvite(StudyGroupInviteDto studyGroupInviteDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken) throws BaseException {
 
 		Long currentUserId = getCurrentUserId(accessToken);
 		User hostUser = userRepository.findById(currentUserId).get();
 		StudyGroup inviteStudyGroup = studyGroupRepository.findById(studyGroupInviteDto.getStudyGroupId()).get();
 
+		// 현재 스터디 그룹의 사용자 정보
+		List<UserJoinGroup> userJoinGroupList = inviteStudyGroup.getUserJoinGroups();
+		List<String> userEmailList = new ArrayList<>();
+		for (UserJoinGroup userJoinGroup : userJoinGroupList) {
+			userEmailList.add(userJoinGroup.getUser().getUserEmail());
+		}
+
 		String inviteUserEmail = studyGroupInviteDto.getUserEmail();
 		if (isValidEmail(inviteUserEmail) && checkExistUser(inviteUserEmail)) {
 			if (!hostUser.getUserEmail().equals(inviteUserEmail)) {
+				// 이미 가입된 사용자가 아닌 경우에만 가입시키도록
+				if (userEmailList.contains(inviteUserEmail)) {
+					throw new BaseException(USER_ALREADY_IN_GROUP);
+				}
 				User inviteUser = userRepository.findByUserEmail(inviteUserEmail).get();
 				UserJoinGroup updateInvitedPeople = userJoinGroupSaveDto.toEntity(inviteUser, inviteStudyGroup);
 
@@ -201,9 +212,14 @@ public class StudyGroupService implements IStudyGroupService {
 		}
 
 		List<String> groupUserList = new ArrayList<>();
-		List<UserJoinGroup> userJoinGroupList = inviteStudyGroup.getUserJoinGroups();
+		userJoinGroupList = inviteStudyGroup.getUserJoinGroups();
 		for (UserJoinGroup userJoinGroup : userJoinGroupList) {
-			groupUserList.add(userJoinGroup.getUser().getUserEmail());
+			// 방장 이메일 제외
+			String userEmail = userJoinGroup.getUser().getUserEmail();
+			if (userEmail.equals(userJoinGroup.getStudyGroup().getGroupCreateUser().getUserEmail())) {
+				continue;
+			}
+			groupUserList.add(userEmail);
 		}
 
 		String newGroupId = String.valueOf(studyGroupInviteDto.getStudyGroupId());   // 바로 직전에 생성한 그룹의 ID
