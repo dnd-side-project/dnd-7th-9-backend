@@ -32,6 +32,7 @@ public enum CustomResponseStatus {
 	USER_ALREADY_IN_GROUP(false, 4008, "이미 가입한 그룹입니다", HttpStatus.ALREADY_REPORTED),
 	START_AFTER_END(false, 4009, "시작 날짜는 종료 날짜보다 이후일 수 없습니다", HttpStatus.BAD_REQUEST),
 	GOAL_EXCEED_GROUP(false, 4010, "기간별 목표는 그룹의 활동일을 벗어날 수 없습니다", HttpStatus.BAD_REQUEST),
+	REFRESH_TOKEN_EXPIRED(false, 4011, "만료된 리프레시 토큰입니다", HttpStatus.NOT_ACCEPTABLE),
 	NOT_EXIST_DATA(false, 4100, "존재하지 않는 데이터입니다.", HttpStatus.BAD_REQUEST),
 	UNAUTHORIZED_REQUEST(false, 4101, "권한이 없는 요청입니다.", HttpStatus.UNAUTHORIZED),
 
