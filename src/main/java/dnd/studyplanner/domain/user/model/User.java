@@ -47,6 +47,8 @@ public class User extends BaseEntity {
 	private String userRegion;
 	private String userProfileImageUrl;
 
+	private boolean isNewUser = true;
+
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<UserJoinGroup> userJoinGroups = new ArrayList<>();
 
