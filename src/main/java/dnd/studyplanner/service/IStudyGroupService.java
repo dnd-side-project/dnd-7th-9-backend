@@ -17,7 +17,7 @@ public interface IStudyGroupService {
 
 	StudyGroupSaveResponse saveGroupAndInvite(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken);
 
-	MyStudyGroupPageResponse getUserStudyGroups(String accessToken, String status);
+	MyStudyGroupPageResponse getUserStudyGroups(String accessToken);
 
 	List<StudyGroupCategory> getCategoryList(String accessToken);
 

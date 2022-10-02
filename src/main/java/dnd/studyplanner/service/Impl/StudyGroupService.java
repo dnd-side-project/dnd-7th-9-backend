@@ -96,26 +96,37 @@ public class StudyGroupService implements IStudyGroupService {
 	}
 
 	@Override
-	public MyStudyGroupPageResponse getUserStudyGroups(String accessToken, String status) {
+	public MyStudyGroupPageResponse getUserStudyGroups(String accessToken) {
 		Long currentUserId = getCurrentUserId(accessToken);
-		StudyGroupStatus studyGroupStatus = StudyGroupStatus.valueOf(status.toUpperCase());
 
+		List<UserJoinGroup> userJoinGroups = userJoinGroupRepository.findByUserId(currentUserId);
+		List<MyStudyGroupResponse> completeStudyGroupList = new ArrayList<>();
+		List<MyStudyGroupResponse> activeStudyGroupList = new ArrayList<>();
 
-		List<MyStudyGroupResponse> studyGroupList = userJoinGroupRepository.findByUserId(currentUserId).stream()
-				.map(UserJoinGroup::getStudyGroup)
-				.filter(studyGroup -> studyGroup.getGroupStatus().equals(studyGroupStatus))
-				.map(userGroup -> MyStudyGroupResponse.builder()
-						.groupId(userGroup.getId())
-						.groupName(userGroup.getGroupName())
-						.groupStartDate(userGroup.getGroupStartDate())
-						.groupEndDate(userGroup.getGroupEndDate())
-						.groupGoal(userGroup.getGroupGoal())
-						.groupImageUrl(userGroup.getGroupImageUrl())
-						.groupCategory(userGroup.getGroupCategory())
-						.groupStatus(userGroup.getGroupStatus())
-						.studyGroupRate(userRateService.getUserStudyGroupRate(accessToken, userGroup.getId()))
-						.build())
-				.collect(Collectors.toList());
+		userJoinGroups.stream()
+			.map(UserJoinGroup::getStudyGroup)
+			.map(
+				userGroup -> MyStudyGroupResponse.builder()
+					.groupId(userGroup.getId())
+					.groupName(userGroup.getGroupName())
+					.groupStartDate(userGroup.getGroupStartDate())
+					.groupEndDate(userGroup.getGroupEndDate())
+					.groupGoal(userGroup.getGroupGoal())
+					.groupImageUrl(userGroup.getGroupImageUrl())
+					.groupCategory(userGroup.getGroupCategory())
+					.groupStatus(userGroup.getGroupStatus())
+					.studyGroupRate(userRateService.getUserStudyGroupRate(accessToken, userGroup.getId()))
+					.build()
+			)
+			.forEach(
+				group -> {
+					if (group.getGroupStatus() == ACTIVE) {
+						activeStudyGroupList.add(group);
+					} else {
+						completeStudyGroupList.add(group);
+					}
+				}
+			);
 
 		User user = userRepository.findById(currentUserId).get();
 		String profileImageUrl = user.getUserProfileImageUrl();
@@ -124,7 +135,10 @@ public class StudyGroupService implements IStudyGroupService {
 		return MyStudyGroupPageResponse.builder()
 			.profileImageUrl(profileImageUrl)
 			.nickname(userNickName)
-			.studyGroupResponses(studyGroupList)
+			.activeStudyGroupCount(activeStudyGroupList.size())
+			.completeStudyGroupCount(completeStudyGroupList.size())
+			.activeStudyGroupResponses(activeStudyGroupList)
+			.completeStudyGroupResponses(completeStudyGroupList)
 			.build();
 	}
 

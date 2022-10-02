@@ -15,14 +15,22 @@ import lombok.NoArgsConstructor;
 public class MyStudyGroupPageResponse {
     private String profileImageUrl;
     private String nickname;
+    private Integer activeStudyGroupCount;
+    private Integer completeStudyGroupCount;
 
-    private List<MyStudyGroupResponse> studyGroupResponses;
+    private List<MyStudyGroupResponse> activeStudyGroupResponses;
+    private List<MyStudyGroupResponse> completeStudyGroupResponses;
 
     @Builder
-    public MyStudyGroupPageResponse(String profileImageUrl, String nickname,
-        List<MyStudyGroupResponse> studyGroupResponses) {
+    public MyStudyGroupPageResponse(String profileImageUrl, String nickname, Integer activeStudyGroupCount,
+        Integer completeStudyGroupCount,
+        List<MyStudyGroupResponse> activeStudyGroupResponses,
+        List<MyStudyGroupResponse> completeStudyGroupResponses) {
         this.profileImageUrl = profileImageUrl;
         this.nickname = nickname;
-        this.studyGroupResponses = studyGroupResponses;
+        this.activeStudyGroupCount = activeStudyGroupCount;
+        this.completeStudyGroupCount = completeStudyGroupCount;
+        this.activeStudyGroupResponses = activeStudyGroupResponses;
+        this.completeStudyGroupResponses = completeStudyGroupResponses;
     }
 }
