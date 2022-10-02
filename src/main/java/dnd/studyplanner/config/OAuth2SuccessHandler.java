@@ -66,6 +66,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		if (user.isNewUser()) {
 			user.updateNewUser();
+			userRepository.save(user);
 		}
 
 		String targetUrl = getTargetUrlByRequestURI(request.getRequestURI());
