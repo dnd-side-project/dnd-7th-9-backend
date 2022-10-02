@@ -62,16 +62,16 @@ public class UserService implements IUserService {
 
         Optional<User> user = userRepository.findById(currentUserId);
         user.ifPresent(
-            selectUser -> {
-                selectUser.update(
-                    userInfoSaveDto.getUserName(),
-                    userInfoSaveDto.getUserAge(),
-                    userInfoSaveDto.getUserGender(),
-                    userInfoSaveDto.getUserRegion(),
-                    userInfoSaveDto.getUserProfileImageUrl()
-                );
-                userRepository.save(selectUser);
-            }
+                selectUser -> {
+                    selectUser.update(
+                            userInfoSaveDto.getUserName(),
+                            userInfoSaveDto.getUserAge(),
+                            userInfoSaveDto.getUserGender(),
+                            userInfoSaveDto.getUserRegion(),
+                            userInfoSaveDto.getUserProfileImageUrl()
+                    );
+                    userRepository.save(selectUser);
+                }
         );
         return user.get();
     }
@@ -124,10 +124,10 @@ public class UserService implements IUserService {
 
         List<StudyGroup> myActiveStudyGroupList = getActiveStudyGroupList(user);   // 현재 활동중인 스터디 그룹
 
-        List<Goal> userLatestGoalListPerStudyGroup = new ArrayList<>();
+//        List<Goal> userLatestGoalListPerStudyGroup = new ArrayList<>();
+        List<Goal> userActiveGoalListPerStudyGroup = new ArrayList<>();   // 각 그룹 당 현재 진행중인 목표들의 리스트
         for (StudyGroup studyGroup : myActiveStudyGroupList) {
             List<Goal> groupGoalList = studyGroup.getGroupDetailGoals();
-            List<Goal> userActiveGoalListPerStudyGroup = new ArrayList<>();   // 각 그룹 당 현재 진행중인 목표들의 리스트
 
             for (Goal detailGoal : groupGoalList) {
                 if (detailGoal.getGoalStatus().equals(GoalStatus.ACTIVE)) {
@@ -135,54 +135,38 @@ public class UserService implements IUserService {
                 }
             }
 
-            // TODO 각 그룹 내에서 세부 목표 리스트마다 정렬 수행
+            // 각 그룹 내에서 세부 목표 리스트마다 정렬 수행
             Collections.sort(userActiveGoalListPerStudyGroup, new GoalEndDateComparator());
 
-            // TODO 종료 날짜가 가장 임박한 한 개의 목표만 리스트에 추가
-            if (!userActiveGoalListPerStudyGroup.isEmpty()) {
-                userLatestGoalListPerStudyGroup.add(userActiveGoalListPerStudyGroup.get(0));
-            }
+            // 종료 날짜가 가장 임박한 한 개의 목표만 리스트에 추가 -> 수정 후 : 여러 개 유지
+//            if (!userActiveGoalListPerStudyGroup.isEmpty()) {
+//                userLatestGoalListPerStudyGroup.add(userActiveGoalListPerStudyGroup.get(0));
+//            }
         }
 
-        for (StudyGroup myActiveStudyGroup : myActiveStudyGroupList) {
-            Goal activeGoal = getActiveGoalInStudyGroup(myActiveStudyGroup);
-            if (activeGoal != null) {
-                studyGroupListGetResponseList.add(
-                        StudyGroupListGetResponse.builder()
-                                // 그룹 정보
-                                .studyGroupListResponse(
-                                        StudyGroupListResponse.builder()
-                                                .studyGroup(myActiveStudyGroup)
-                                                .build()
-                                )
-                                // 세부 목표 정보
-                                .activeGoalResponse(
-                                        ActiveGoalResponse.builder()
-                                                .goal(activeGoal)
-                                                .achieveGoalStatus(getAchieveGoalStatus(user, activeGoal))   // 사용자의 해당 세부 목표 달성 여부
-                                                .checkSubmitQuestionBook(getCheckSubmitQuestionBook(user, activeGoal))   // 사용자의 해당 세부 목표에 문제집 제출 여부
-                                                .checkSolveQuestionBook(getCheckCompleteSolveQuestionBook(user, activeGoal))   // 사용자의 해당 세부 목표에서 문제 풀기 (전체?) 완료 여부
-                                                .clearSolveQuestionBookNum(getClearSolveQuestionBookNum(user, activeGoal))   // 풀기를 완료한 문제집 개수
-                                                .toSolveQuestionBookNum(getToSolveQuestionBookNum(user, activeGoal))   // 사용자가 해당 세부 목표에서 풀어야 하는 문제집 개수
-                                                .questionPerQuestionBook(activeGoal.getQuestionPerQuestionBook()) // 세부 목표에 대한 문제집 별 출제 문제 개수 (문제 출제 시 필요한 정보)
-                                                .build()
-                                )
-                                .build()
+        for (Goal activeGoal : userActiveGoalListPerStudyGroup) {
+            StudyGroup myActiveStudyGroup = activeGoal.getStudyGroup();
+            studyGroupListGetResponseList.add(
+                    StudyGroupListGetResponse.builder()
+                            .studyGroupListResponse(
+                                    StudyGroupListResponse.builder()
+                                            .studyGroup(myActiveStudyGroup)
+                                            .build()
+                            )
+                            .activeGoalResponse(
+                                    ActiveGoalResponse.builder()
+                                            .goal(activeGoal)
+                                            .achieveGoalStatus(getAchieveGoalStatus(user, activeGoal))   // 사용자의 해당 세부 목표 달성 여부
+                                            .checkSubmitQuestionBook(getCheckSubmitQuestionBook(user, activeGoal))   // 사용자의 해당 세부 목표에 문제집 제출 여부
+                                            .checkSolveQuestionBook(getCheckCompleteSolveQuestionBook(user, activeGoal))   // 사용자의 해당 세부 목표에서 문제 풀기 (전체?) 완료 여부
+                                            .clearSolveQuestionBookNum(getClearSolveQuestionBookNum(user, activeGoal))   // 풀기를 완료한 문제집 개수
+                                            .toSolveQuestionBookNum(getToSolveQuestionBookNum(user, activeGoal))   // 사용자가 해당 세부 목표에서 풀어야 하는 문제집 개수
+                                            .questionPerQuestionBook(activeGoal.getQuestionPerQuestionBook()) // 세부 목표에 대한 문제집 별 출제 문제 개수 (문제 출제 시 필요한 정보)
+                                            .build()
+                            )
+                            .build()
 
-                );
-            } else {
-                studyGroupListGetResponseList.add(
-                        StudyGroupListGetResponse.builder()
-                                // 그룹 정보
-                                .studyGroupListResponse(
-                                        StudyGroupListResponse.builder()
-                                                .studyGroup(myActiveStudyGroup)
-                                                .build()
-                                )
-                                // 세부 목표 정보 - 현재 진행 중인 목표가 없는 경우 null
-                                .build()
-                );
-            }
+            );
         }
 
         return studyGroupListGetResponseList;
@@ -234,18 +218,18 @@ public class UserService implements IUserService {
         }
 
         List<StudyGroupGoalResponse> studyGroupGoalResponseList = detailGoalList.stream()
-            .map(tmpGoal -> StudyGroupGoalResponse.builder()
-                .goal(tmpGoal)
-                .achieveRate(getGoalAchieveRate(user, tmpGoal))
-                .build())
-            .collect(Collectors.toList());
+                .map(tmpGoal -> StudyGroupGoalResponse.builder()
+                        .goal(tmpGoal)
+                        .achieveRate(getGoalAchieveRate(user, tmpGoal))
+                        .build())
+                .collect(Collectors.toList());
 
         // 스터디 그룹 및 세부 목표
         StudyGroupDetailResponse studyGroupDetailResponse = StudyGroupDetailResponse.builder()
-            .studyGroup(studyGroup)
-            .invitedUserNameList(invitedUserNameList)
-            .studyGroupGoalResponseList(studyGroupGoalResponseList)
-            .build();
+                .studyGroup(studyGroup)
+                .invitedUserNameList(invitedUserNameList)
+                .studyGroupGoalResponseList(studyGroupGoalResponseList)
+                .build();
 
         // 세부 목표 ID 하나에 존재하는 문제집 리스트들에 대한 각 정보
         List<StudyGroupAndGoalDetailPersonalVerResponse> studyGroupAndGoalDetailPersonalVerResponseList = new ArrayList<>();
@@ -255,15 +239,15 @@ public class UserService implements IUserService {
         if (goalId == null) {
             for (QuestionBook questionBook : defaultQuestionBookList) {
                 StudyGroupAndGoalDetailPersonalVerResponse studyGroupAndGoalDetailPersonalVerResponse = StudyGroupAndGoalDetailPersonalVerResponse
-                    .builder()
-                    .goal(defaultGoal)
-                    .myQuestionBook(getCheckMyQuestionBook(user, questionBook))
-                    .checkEditEnabled(getCheckEditEnabled(user, questionBook))   // getCheckEditEnabled()
-                    .questionBook(questionBook)
-                    .questionNumPerQuestionBook(questionBook.getQuestionBookQuestionNum())   // 각 문제집 당 문제 수
-                    .answerNumPerQuestionBook(getAnswerNumPerQuestionBook(user, questionBook))   // 사용자의 각 문제집 풀이에 따른 정답 개수 -> 푼 경우에만
-                    .checkCompleteToSolve(getCheckCompleteSolveQuestionBook(user, defaultGoal))   // 풀었는지 여부
-                    .build();
+                        .builder()
+                        .goal(defaultGoal)
+                        .myQuestionBook(getCheckMyQuestionBook(user, questionBook))
+                        .checkEditEnabled(getCheckEditEnabled(user, questionBook))   // getCheckEditEnabled()
+                        .questionBook(questionBook)
+                        .questionNumPerQuestionBook(questionBook.getQuestionBookQuestionNum())   // 각 문제집 당 문제 수
+                        .answerNumPerQuestionBook(getAnswerNumPerQuestionBook(user, questionBook))   // 사용자의 각 문제집 풀이에 따른 정답 개수 -> 푼 경우에만
+                        .checkCompleteToSolve(getCheckCompleteSolveQuestionBook(user, defaultGoal))   // 풀었는지 여부
+                        .build();
 
                 studyGroupAndGoalDetailPersonalVerResponseList.add(studyGroupAndGoalDetailPersonalVerResponse);
             }
@@ -272,15 +256,15 @@ public class UserService implements IUserService {
             // 세부 목표 ID 별로 존제하는 문제집 하나의 정보 -> 리스트로 만들어 세부 목표에 대한 문제집 리스트로 처리
             for (QuestionBook questionBook : targetQuestionBookList) {
                 StudyGroupAndGoalDetailPersonalVerResponse studyGroupAndGoalDetailPersonalVerResponse = StudyGroupAndGoalDetailPersonalVerResponse
-                    .builder()
-                    .goal(targetGoal)
-                    .myQuestionBook(getCheckMyQuestionBook(user, questionBook))
-                    .checkEditEnabled(getCheckEditEnabled(user, questionBook))   // getCheckEditEnabled()
-                    .questionBook(questionBook)
-                    .questionNumPerQuestionBook(questionBook.getQuestionBookQuestionNum())   // 각 문제집 당 문제 수
-                    .answerNumPerQuestionBook(getAnswerNumPerQuestionBook(user, questionBook))   // 사용자의 각 문제집 풀이에 따른 정답 개수 -> 푼 경우에만
-                    .checkCompleteToSolve(getCheckCompleteSolveQuestionBook(user, targetGoal))
-                    .build();
+                        .builder()
+                        .goal(targetGoal)
+                        .myQuestionBook(getCheckMyQuestionBook(user, questionBook))
+                        .checkEditEnabled(getCheckEditEnabled(user, questionBook))   // getCheckEditEnabled()
+                        .questionBook(questionBook)
+                        .questionNumPerQuestionBook(questionBook.getQuestionBookQuestionNum())   // 각 문제집 당 문제 수
+                        .answerNumPerQuestionBook(getAnswerNumPerQuestionBook(user, questionBook))   // 사용자의 각 문제집 풀이에 따른 정답 개수 -> 푼 경우에만
+                        .checkCompleteToSolve(getCheckCompleteSolveQuestionBook(user, targetGoal))
+                        .build();
 
                 studyGroupAndGoalDetailPersonalVerResponseList.add(studyGroupAndGoalDetailPersonalVerResponse);
             }
@@ -291,26 +275,26 @@ public class UserService implements IUserService {
         for (QuestionBook questionBook : targetQuestionBookList) {
             List<String> peopleNameToSolveList = getPersonNameListToSolveQuestionBook(questionBook);
             StudyGroupAndGoalDetailTeamVerResponse studyGroupAndGoalDetailTeamVerResponse = StudyGroupAndGoalDetailTeamVerResponse
-                .builder()
-                .goal(targetGoal)
-                .questionBook(questionBook)
-                .personListOfCompleteToSolvePerQuestionBook(peopleNameToSolveList)   // 어떤 사람들이 각 문제집을 풀었는지
-                .personNumOfCompleteToSolvePerQuestionBook(peopleNameToSolveList.size())   // 몇 명의 사람들이 각 문제집을 풀었는지
-                .build();
+                    .builder()
+                    .goal(targetGoal)
+                    .questionBook(questionBook)
+                    .personListOfCompleteToSolvePerQuestionBook(peopleNameToSolveList)   // 어떤 사람들이 각 문제집을 풀었는지
+                    .personNumOfCompleteToSolvePerQuestionBook(peopleNameToSolveList.size())   // 몇 명의 사람들이 각 문제집을 풀었는지
+                    .build();
 
             studyGroupAndGoalDetailTeamVerResponseList.add(studyGroupAndGoalDetailTeamVerResponse);
         }
 
         if ("PERSONAL".equals(studyGroupDetailVersion.toString())) {
             return UserStudyGroupListDetailResponse.builder()
-                .studyGroupDetailResponse(studyGroupDetailResponse)
-                .studyGroupAndGoalDetailPersonalVerResponseList(studyGroupAndGoalDetailPersonalVerResponseList)
-                .build();
+                    .studyGroupDetailResponse(studyGroupDetailResponse)
+                    .studyGroupAndGoalDetailPersonalVerResponseList(studyGroupAndGoalDetailPersonalVerResponseList)
+                    .build();
         } else {
             return UserStudyGroupListDetailResponse.builder()
-                .studyGroupDetailResponse(studyGroupDetailResponse)
-                .studyGroupAndGoalDetailTeamVerResponseList(studyGroupAndGoalDetailTeamVerResponseList)
-                .build();
+                    .studyGroupDetailResponse(studyGroupDetailResponse)
+                    .studyGroupAndGoalDetailTeamVerResponseList(studyGroupAndGoalDetailTeamVerResponseList)
+                    .build();
         }
     }
 

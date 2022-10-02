@@ -23,7 +23,7 @@ public interface IStudyGroupService {
 
 	StudyGroupSaveResponse saveStudyGroupOnly(StudyGroupSaveDto studyGroupSaveDto, UserJoinGroupSaveDto userJoinGroupSaveDto,String accessToken) throws BaseException;
 
-	StudyGroupSaveResponse groupInvite(StudyGroupInviteDto studyGroupInviteDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken);
+	StudyGroupSaveResponse groupInvite(StudyGroupInviteDto studyGroupInviteDto, UserJoinGroupSaveDto userJoinGroupSaveDto, String accessToken) throws BaseException;
 
 	InvitedStudyGroupResponse getInvitedStudyGroup(String accessToken, Long studyGroupId);
 
