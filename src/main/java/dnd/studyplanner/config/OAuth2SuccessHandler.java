@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import dnd.studyplanner.auth.dto.AuthProvider;
 import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.repository.UserRepository;
 
@@ -65,12 +66,26 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		if (user.isNewUser()) {
 			user.updateNewUser();
+			userRepository.save(user);
 		}
 
-		String targetUrl = UriComponentsBuilder.fromUriString(CLIENT_DOMAIN + "/login")
-			.build().toUriString();
+		String targetUrl = getTargetUrlByRequestURI(request.getRequestURI());
 
 		getRedirectStrategy().sendRedirect(request, response, targetUrl);
+	}
+
+	// FIXME : 테스트 종료 후 없어질 Method
+	private String getTargetUrlByRequestURI(String requestURI) {
+		String[] directories = requestURI.split("/");
+		String providerInfo = directories[directories.length - 1];
+		String redirectUrl = CLIENT_DOMAIN + "/login";
+
+		if (AuthProvider.valueOf(providerInfo) == AuthProvider.kakao) {
+			redirectUrl = TEST_CLIENT_DOMAIN + "/login";
+		}
+
+		return UriComponentsBuilder.fromUriString(redirectUrl)
+			.build().toUriString();
 	}
 
 	// 정규표현식을 통한 이메일 추출 메서드
