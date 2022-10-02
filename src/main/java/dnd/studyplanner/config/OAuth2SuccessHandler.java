@@ -77,12 +77,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	private String getTargetUrlByRequestURI(String requestURI) {
 		String[] directories = requestURI.split("/");
 		String providerInfo = directories[directories.length - 1];
+		String redirectUrl = CLIENT_DOMAIN + "/login";
+
 		if (AuthProvider.valueOf(providerInfo) == AuthProvider.kakao) {
-			return UriComponentsBuilder.fromUriString(TEST_CLIENT_DOMAIN + "/login")
-				.build().toUriString();
+			redirectUrl = TEST_CLIENT_DOMAIN + "/login";
 		}
 
-		return UriComponentsBuilder.fromUriString(CLIENT_DOMAIN + "/login")
+		return UriComponentsBuilder.fromUriString(redirectUrl)
 			.build().toUriString();
 	}
 
