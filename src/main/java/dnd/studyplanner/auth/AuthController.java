@@ -41,7 +41,7 @@ public class AuthController {
 		if (jwtService.isExpiredRefreshToken(refreshToken)) { // Refresh Token 이 만료된 경우
 			log.debug("[REFRESH TOKEN EXPIRED] : {} is expired. Please login again", refreshToken);
 			httpHeaders.set("msg", "Refresh Token is expired. Please login again");
-			return new CustomResponse<>(TOKEN_EXPIRED).toResponseEntity(httpHeaders);
+			return new CustomResponse<>(REFRESH_TOKEN_EXPIRED).toResponseEntity(httpHeaders);
 		}
 
 		TokenResponseDto tokenResponseDto = authService.reissueAccessToken(refreshToken);
