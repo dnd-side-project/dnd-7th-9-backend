@@ -44,7 +44,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
 
 		// Social Service
-		// ex) Google, kakao, naver, ...
+		// ex) Google, Kakao, Naver
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		String userNameAttributeName = userRequest.getClientRegistration()
 			.getProviderDetails()
