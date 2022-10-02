@@ -11,6 +11,7 @@ public class Constant {
 	public static String REFRESH_SECRET_KEY;
 
 	public static String CLIENT_DOMAIN;
+	public static String TEST_CLIENT_DOMAIN;
 
 	public static final int JWT_EXPIRATION = 1000 * 60 * 60 * 24 * 7; //2시간 -> 1주
 	public static final int REFRESH_EXPIRATION = 1000 * 60 * 60 * 24 * 7 * 2; //14일 (2주)
@@ -19,10 +20,12 @@ public class Constant {
 	public Constant(
 		@Value("${jwt.secret}") String jwtSecretKey,
 		@Value("${jwt.refresh-secret}") String refreshSecretKey,
-		@Value("${front-client.domain}") String clientDomain
+		@Value("${front-client.domain}") String clientDomain,
+		@Value("${front-client.test-domain}") String testClientDomain
 	) {
 		JWT_SECRET_KEY = jwtSecretKey;
 		REFRESH_SECRET_KEY = refreshSecretKey;
 		CLIENT_DOMAIN = clientDomain;
+		TEST_CLIENT_DOMAIN = testClientDomain;
 	}
 }
