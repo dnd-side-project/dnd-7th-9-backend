@@ -63,16 +63,10 @@ public class StudyGroupController {
 
     @GetMapping("/my")
     public ResponseEntity<CustomResponse> getMyStudyGroups(
-        @RequestHeader(value = "Access-Token") String accessToken,
-        @RequestParam(required = false) String status
+        @RequestHeader(value = "Access-Token") String accessToken
     ) {
         try {
-            if (status == null) {
-                status = "complete";
-            }
-
-            log.debug("[STUDY GROUP STATUS] : {}", status);
-            MyStudyGroupPageResponse response = studyGroupService.getUserStudyGroups(accessToken, status);
+            MyStudyGroupPageResponse response = studyGroupService.getUserStudyGroups(accessToken);
 
             return new CustomResponse<>(response, GET_MY_GROUP_SUCCESS).toResponseEntity();
         } catch (IllegalArgumentException e) {
