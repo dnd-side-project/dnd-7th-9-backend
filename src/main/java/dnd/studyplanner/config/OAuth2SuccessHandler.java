@@ -59,33 +59,36 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		log.debug("[TOKEN] : {}", accessToken);
 		log.debug("[REFRESH_TOKEN] : {}", refreshToken);
 
-		response.setHeader("X-ACCESS-TOKEN", accessToken);
-		response.setHeader("X-REFRESH-TOKEN", refreshToken);
-		response.setHeader("X-USER-EMAIL", user.getUserEmail());
-		response.setHeader("X-NEW-USER", String.valueOf(user.isNewUser()));
+
+
+		String redirectDomain = getRedirectDomainByRequestURI(request.getRequestURI());
+
+		String targetUrl = UriComponentsBuilder.fromUriString(redirectDomain + "/login")
+			.queryParam("success", true)
+			.queryParam("token", accessToken)
+			.queryParam("refresh", refreshToken)
+			.queryParam("email", user.getUserEmail())
+			.queryParam("new-user", user.isNewUser())
+			.build().toUriString();
 
 		if (user.isNewUser()) {
 			user.updateNewUser();
 			userRepository.save(user);
 		}
 
-		String targetUrl = getTargetUrlByRequestURI(request.getRequestURI());
 
 		getRedirectStrategy().sendRedirect(request, response, targetUrl);
 	}
 
 	// FIXME : 테스트 종료 후 없어질 Method
-	private String getTargetUrlByRequestURI(String requestURI) {
+	private String getRedirectDomainByRequestURI(String requestURI) {
 		String[] directories = requestURI.split("/");
 		String providerInfo = directories[directories.length - 1];
-		String redirectUrl = CLIENT_DOMAIN + "/login";
-
 		if (AuthProvider.valueOf(providerInfo) == AuthProvider.kakao) {
-			redirectUrl = TEST_CLIENT_DOMAIN + "/login";
+			return TEST_CLIENT_DOMAIN;
 		}
 
-		return UriComponentsBuilder.fromUriString(redirectUrl)
-			.build().toUriString();
+		return CLIENT_DOMAIN;
 	}
 
 	// 정규표현식을 통한 이메일 추출 메서드
