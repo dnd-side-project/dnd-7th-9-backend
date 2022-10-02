@@ -11,7 +11,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import dnd.studyplanner.domain.user.model.User;
 import dnd.studyplanner.repository.UserRepository;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -45,7 +47,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		// registrationId 추출이 어려워 정규표현식으로 email 파싱 -> 서비스마다 email이 담겨있는 형식이 달라서..
 		String email = findEmailByRegex(attributes.toString());
 
-		Long userId = userRepository.findByUserEmail(email).get().getId();
+		User user = userRepository.findByUserEmail(email).get();
+		Long userId = user.getId();
 
 		AuthEntity authEntity = authRepository.findById(userId).get();
 		String accessToken = authEntity.getJwt();
@@ -55,11 +58,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		log.debug("[TOKEN] : {}", accessToken);
 		log.debug("[REFRESH_TOKEN] : {}", refreshToken);
 
+		response.setHeader("X-ACCESS-TOKEN", accessToken);
+		response.setHeader("X-REFRESH-TOKEN", refreshToken);
+		response.setHeader("X-USER-EMAIL", user.getUserEmail());
+		response.setHeader("X-NEW-USER", String.valueOf(user.isNewUser()));
 
 		String targetUrl = UriComponentsBuilder.fromUriString(CLIENT_DOMAIN + "/login")
-			.queryParam("success", true)
-			.queryParam("token", accessToken)
-			.queryParam("refresh", refreshToken)
 			.build().toUriString();
 
 		getRedirectStrategy().sendRedirect(request, response, targetUrl);
