@@ -81,4 +81,8 @@ public class User extends BaseEntity {
 		this.userProfileImageUrl = userProfileImageUrl;
 	}
 
+	public void updateNewUser() {
+		this.isNewUser = false;
+	}
+
 }

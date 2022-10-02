@@ -63,6 +63,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		response.setHeader("X-USER-EMAIL", user.getUserEmail());
 		response.setHeader("X-NEW-USER", String.valueOf(user.isNewUser()));
 
+		if (user.isNewUser()) {
+			user.updateNewUser();
+		}
+
 		String targetUrl = UriComponentsBuilder.fromUriString(CLIENT_DOMAIN + "/login")
 			.build().toUriString();
 
