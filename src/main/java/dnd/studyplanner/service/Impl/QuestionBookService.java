@@ -3,7 +3,6 @@ package dnd.studyplanner.service.Impl;
 import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,6 @@ import dnd.studyplanner.domain.user.model.UserJoinGroup;
 import dnd.studyplanner.domain.user.model.UserSolveQuestion;
 import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
 import dnd.studyplanner.dto.option.request.OptionSaveDto;
-import dnd.studyplanner.dto.option.response.OptionResponseDto;
 import dnd.studyplanner.dto.option.response.OptionSolvedDetailResponseDto;
 import dnd.studyplanner.dto.question.request.QuestionListDto;
 import dnd.studyplanner.dto.question.request.QuestionSolveDto;
@@ -226,6 +224,46 @@ public class QuestionBookService implements IQuestionBookService {
 			userId, questionBookId).orElseThrow(() -> new BaseException(UNAUTHORIZED_QUESTION_BOOK));
 
 		return userSolveQuestionBook.isSolved();
+	}
+
+	@Override
+	public void editQuestionBook(String accessToken, Long questionBookId, QuestionBookDto saveDto) throws BaseException {
+		Long userId = jwtService.getUserId(accessToken);
+		QuestionBook questionBook = questionBookRepository.findById(questionBookId)
+			.orElseThrow(() -> new BaseException(NOT_EXIST_DATA));
+
+		if (!questionBook.getQuestionBookCreateUser().getId().equals(userId)) {
+			throw new BaseException(UNAUTHORIZED_REQUEST);
+		} else if (questionBook.getQuestionBookQuestionNum() != (saveDto.getQuestionDtoList().size())) {
+			throw new BaseException(QUESTION_AMOUNT_UNMATCHED);
+		}
+
+		questionBook.updateByEditDto(saveDto);
+
+		List<Question> questions = questionBook.getQuestions();
+		List<QuestionListDto> questionDtoList = saveDto.getQuestionDtoList();
+
+		// 풀이 정보가 변경되었는지 체크
+		if (userSolveQuestionBookRepository.existsBySolveQuestionBookIdAndIsSolved(questionBookId, true)) {
+			throw new BaseException(QUESTION_BOOK_ALREADY_SOLVED);
+		}
+
+		// 기존 문제의 개수와 수정 dto내 문제 개수가 동일함이 보장되어 있음
+		for (int i = 0; i < questions.size(); i++) {
+			Question question = questions.get(i);
+			QuestionListDto editQuestionDto = questionDtoList.get(i);
+			question.updateByEditDto(editQuestionDto);
+
+			// option의 개수는 달라 질 수 있어서 remove -> create로 동작
+			question.clearOptions();
+			optionService.deleteByQuestion(question);
+			for (OptionSaveDto optionSaveDto : editQuestionDto.getOptionSaveDtoList()) {
+				optionSaveDto.toEntity(question);
+			}
+
+		}
+
+		questionBookRepository.save(questionBook);
 	}
 
 	private boolean isPassedQuestionBook(Long userId, Long questionBookId, int answerCount) {

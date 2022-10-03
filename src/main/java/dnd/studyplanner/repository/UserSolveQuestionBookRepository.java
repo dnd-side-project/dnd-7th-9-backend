@@ -13,4 +13,6 @@ public interface UserSolveQuestionBookRepository extends JpaRepository<UserSolve
 	List<UserSolveQuestionBook> findAllBySolveUser_IdOrderByCreatedDateDesc(Long id);
 
 	Optional<UserSolveQuestionBook> findBySolveUserIdAndSolveQuestionBookId(Long userId, Long questionBookId);
+
+	boolean existsBySolveQuestionBookIdAndIsSolved(Long questionBookId, boolean solved);
 }

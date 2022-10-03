@@ -22,4 +22,6 @@ public interface IQuestionBookService {
 	public int getRecentQuestionBookCount(Long userId, Long goalId);
 
 	boolean isSolvedQuestionBook(String accessToken, Long questionBookId) throws BaseException;
+
+	void editQuestionBook(String accessToken, Long questionBookId, QuestionBookDto saveDto) throws BaseException;
 }

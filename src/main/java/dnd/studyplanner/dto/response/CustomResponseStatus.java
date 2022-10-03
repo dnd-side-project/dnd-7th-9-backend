@@ -18,6 +18,7 @@ public enum CustomResponseStatus {
 	GET_GROUP_DETAIL_SUCCESS(true, 1303, "스터디 그룹 상세 정보 조회 성공", HttpStatus.OK),
 	INVITE_USER_SUCCESS(true, 1304, "사용자 그룹 초대 성공", HttpStatus.OK),
 	SAVE_GOAL_SUCCESS(true, 1400, "목표 저장 성공", HttpStatus.OK),
+	EDIT_QUESTION_BOOK_SUCCESS(true, 1450, "문제집 정보가 변경 되었습니다", HttpStatus.OK),
 	FINISH_STUDY_GROUP_SUCCESS(true, 1500, "스터디 그룹이 완료 처리 되었습니다", HttpStatus.OK),
 
 	//4000번 오류 응답코드
@@ -37,8 +38,9 @@ public enum CustomResponseStatus {
 	UNAUTHORIZED_REQUEST(false, 4101, "권한이 없는 요청입니다.", HttpStatus.UNAUTHORIZED),
 
 	ALREADY_SOLVED_QUESTION_BOOK(false, 4200, "이미 풀이 완료한 문제집 입니다", HttpStatus.BAD_REQUEST),
-	UNAUTHORIZED_QUESTION_BOOK(false, 4201, "풀이 권한이 없는 문제집 입니다", HttpStatus.BAD_REQUEST),
-	QUESTION_AMOUNT_UNMATCHED(false, 4202, "현재 세부 목표의 문제 출제 개수와 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+	UNAUTHORIZED_QUESTION_BOOK(false, 4201, "풀이 권한이 없는 문제집 입니다", HttpStatus.UNAUTHORIZED),
+	QUESTION_AMOUNT_UNMATCHED(false, 4202, "현재 세부 목표의 문제 출제 개수와 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+	QUESTION_BOOK_ALREADY_SOLVED(false, 4203, "다른 사용자가 푼 기록이 있는 문제집은 수정할 수 없습니다", HttpStatus.NOT_ACCEPTABLE);
 
 	private final boolean isSuccess;
 	private final int responseCode;

@@ -3,19 +3,18 @@ package dnd.studyplanner.controller;
 import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dnd.studyplanner.domain.user.model.UserGoalRate;
-import dnd.studyplanner.domain.user.model.UserSolveQuestion;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookDto;
 import dnd.studyplanner.dto.questionbook.request.QuestionBookSolveDto;
 import dnd.studyplanner.dto.questionbook.response.QuestionBookSaveResponse;
@@ -120,6 +119,21 @@ public class QuestionBookController {
 			questionBookId);
 
 		return new CustomResponse<>(response).toResponseEntity();
+	}
+
+	@PutMapping("/{questionBookId}/edit")
+	public ResponseEntity<CustomResponse> editQuestionBook(
+		@RequestHeader("Access-Token") String accessToken,
+		@PathVariable Long questionBookId,
+		@RequestBody QuestionBookDto saveDto
+	) {
+		try {
+			questionBookService.editQuestionBook(accessToken, questionBookId, saveDto);
+			return new CustomResponse<>(EDIT_QUESTION_BOOK_SUCCESS).toResponseEntity();
+		} catch (BaseException e) {
+			return new CustomResponse<>(e.getStatus()).toResponseEntity();
+		}
+
 	}
 
 }
