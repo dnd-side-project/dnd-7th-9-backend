@@ -89,7 +89,7 @@ public class DataUtil {
 			QuestionListDto.builder()
 				.questionContent("Test Question A")
 				.questionOptionType(QuestionOptionType.TEXT)
-				.questionAnswer(3)
+				// .questionAnswer(3)
 				.optionSaveDtoList(optionsA)
 				.build()
 		);
@@ -98,7 +98,7 @@ public class DataUtil {
 			QuestionListDto.builder()
 				.questionContent("Test Question B")
 				.questionOptionType(QuestionOptionType.IMAGE)
-				.questionAnswer(3)
+				// .questionAnswer(3)
 				.optionSaveDtoList(optionsB)
 				.build()
 		);
@@ -107,7 +107,7 @@ public class DataUtil {
 			QuestionListDto.builder()
 				.questionContent("Test Question C")
 				.questionOptionType(QuestionOptionType.IMAGE)
-				.questionAnswer(5)
+				// .questionAnswer(5)
 				.optionSaveDtoList(optionsC)
 				.build()
 		);
@@ -116,7 +116,7 @@ public class DataUtil {
 			QuestionListDto.builder()
 				.questionContent("Test Question D")
 				.questionOptionType(QuestionOptionType.IMAGE)
-				.questionAnswer(1)
+				// .questionAnswer(1)
 				.optionSaveDtoList(optionsD)
 				.build()
 		);
