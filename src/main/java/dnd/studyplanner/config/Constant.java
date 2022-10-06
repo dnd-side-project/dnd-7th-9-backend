@@ -18,6 +18,7 @@ public class Constant {
 	public static final int WEEKS = 1000 * 60 * 60 * 24 * 7; // 7일
 
 	public static final String KAKAO_ACCESS_TOKEN_REQUEST_URL = "https://kauth.kakao.com/oauth/token";
+	public static final String KAKAO_USER_INFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
 
 	//TODO : URL 반영
 	public static final String GOOGLE_ACCESS_TOKEN_REQUEST_URL = "https://";

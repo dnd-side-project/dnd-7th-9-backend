@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class KakaoAccessTokenDto {
+public class OAuthAccessTokenResponseDto {
 
 	private String tokenType;
 	private String accessToken;
