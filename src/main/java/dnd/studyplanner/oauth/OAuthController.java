@@ -13,6 +13,7 @@ import dnd.studyplanner.auth.dto.AuthProvider;
 import dnd.studyplanner.dto.oauth.request.OAuthAuthorizeCodeDto;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.exception.BaseException;
+import dnd.studyplanner.oauth.service.OAuthLoginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class OAuthController {
 
-	private final OAuthServiceV2 oAuthService;
+	private final OAuthLoginService kakaoOAuthLoginService;
+	private final OAuthLoginService naverOAuthLoginService;
+	private final OAuthLoginService googleOAuthLoginService;
 
 	@PostMapping("/login/{provider}")
 	public ResponseEntity<CustomResponse> socialLogin(
@@ -32,12 +35,26 @@ public class OAuthController {
 		@PathVariable String provider
 	) {
 		try {
-			AuthProvider authProvider = AuthProvider.valueOf(provider);
+			AuthProvider authProvider = AuthProvider.valueOf(provider.toLowerCase());
 			log.info("[SOCIAL LOGIN] : Provider {}", authProvider);
 
-			String email = oAuthService.oAuthLogin(requestDto.getAuthorizeCode(),
-				authProvider);
-			log.info(email);
+			OAuthLoginService oAuthLoginService = null;
+			switch (authProvider) {
+				case kakao:
+					oAuthLoginService = kakaoOAuthLoginService;
+					break;
+				case naver:
+					oAuthLoginService = naverOAuthLoginService;
+					break;
+				// default:
+					// return GOOGLE_ACCESS_TOKEN_REQUEST_URL;
+			}
+
+			String accessToken = oAuthLoginService.requestAccessToken(requestDto.getAuthorizeCode());
+			String userEmail = oAuthLoginService.getUserEmail(accessToken);
+			// String email = oAuthService.oAuthLogin(requestDto.getAuthorizeCode(),
+			// 	authProvider);
+			log.info(userEmail);
 
 			//TODO : 사용자 email을 통한 가입여부 확인
 			//TODO : ResponseDto로 응답
