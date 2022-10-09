@@ -13,7 +13,6 @@ import dnd.studyplanner.auth.dto.AuthProvider;
 import dnd.studyplanner.dto.oauth.request.OAuthAuthorizeCodeDto;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.exception.BaseException;
-import dnd.studyplanner.oauth.dto.response.LoginSuccessResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

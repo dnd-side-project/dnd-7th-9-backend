@@ -19,40 +19,25 @@ public class OAuthProperties {
 
 	@Getter
 	public static final class KakaoOAuth extends OAuthProvider {
-		public KakaoOAuth(
-			String clientId,
-			String redirectUri,
-			String authorizationGrantType,
-			String clientAuthenticationMethod,
-			List<String> scope
-		) {
-			super(clientId, redirectUri, authorizationGrantType, clientAuthenticationMethod, scope);
+		public KakaoOAuth(String clientId, String clientSecret, String redirectUri, String authorizationGrantType,
+			String clientAuthenticationMethod, List<String> scope) {
+			super(clientId, clientSecret, redirectUri, authorizationGrantType, clientAuthenticationMethod, scope);
 		}
 	}
 
 	@Getter
 	public static final class NaverOAuth extends OAuthProvider {
-		public NaverOAuth(
-			String clientId,
-			String redirectUri,
-			String authorizationGrantType,
-			String clientAuthenticationMethod,
-			List<String> scope
-		) {
-			super(clientId, redirectUri, authorizationGrantType, clientAuthenticationMethod, scope);
+		public NaverOAuth(String clientId, String clientSecret, String redirectUri, String authorizationGrantType,
+			String clientAuthenticationMethod, List<String> scope) {
+			super(clientId, clientSecret, redirectUri, authorizationGrantType, clientAuthenticationMethod, scope);
 		}
 	}
 
 	@Getter
 	public static final class GoogleOAuth extends OAuthProvider {
-		public GoogleOAuth(
-			String clientId,
-			String redirectUri,
-			String authorizationGrantType,
-			String clientAuthenticationMethod,
-			List<String> scope
-		) {
-			super(clientId, redirectUri, authorizationGrantType, clientAuthenticationMethod, scope);
+		public GoogleOAuth(String clientId, String clientSecret, String redirectUri, String authorizationGrantType,
+			String clientAuthenticationMethod, List<String> scope) {
+			super(clientId, clientSecret, redirectUri, authorizationGrantType, clientAuthenticationMethod, scope);
 		}
 	}
 }

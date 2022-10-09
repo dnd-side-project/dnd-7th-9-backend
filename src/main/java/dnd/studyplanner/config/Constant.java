@@ -22,7 +22,8 @@ public class Constant {
 
 	//TODO : URL 반영
 	public static final String GOOGLE_ACCESS_TOKEN_REQUEST_URL = "https://";
-	public static final String NAVER_ACCESS_TOKEN_REQUEST_URL = "https://";
+	public static final String NAVER_ACCESS_TOKEN_REQUEST_URL = "https://nid.naver.com/oauth2.0/token";
+	public static final String NAVER_USER_INFO_REQUEST_URL = "https://openapi.naver.com/v1/nid/me";
 
 	public Constant(
 		@Value("${jwt.secret}") String jwtSecretKey,
