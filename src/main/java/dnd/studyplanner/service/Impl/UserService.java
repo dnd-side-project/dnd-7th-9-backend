@@ -1,43 +1,57 @@
 package dnd.studyplanner.service.Impl;
 
-import dnd.studyplanner.domain.goal.model.GoalEndDateComparator;
-import dnd.studyplanner.domain.user.model.User;
-import dnd.studyplanner.dto.user.request.UserInfoExistDto;
-import dnd.studyplanner.dto.user.request.UserInfoSaveDto;
+import static dnd.studyplanner.dto.response.CustomResponseStatus.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dnd.studyplanner.domain.goal.model.Goal;
+import dnd.studyplanner.domain.goal.model.GoalEndDateComparator;
 import dnd.studyplanner.domain.goal.model.GoalStatus;
 import dnd.studyplanner.domain.questionbook.model.QuestionBook;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 import dnd.studyplanner.domain.studygroup.model.StudyGroupStatus;
-import dnd.studyplanner.domain.user.model.*;
+import dnd.studyplanner.domain.user.model.User;
+import dnd.studyplanner.domain.user.model.UserGoalRate;
+import dnd.studyplanner.domain.user.model.UserJoinGroup;
+import dnd.studyplanner.domain.user.model.UserSolveQuestionBook;
 import dnd.studyplanner.dto.goal.response.ActiveGoalResponse;
 import dnd.studyplanner.dto.user.request.StudyGroupDetailVersion;
+import dnd.studyplanner.dto.user.request.UserInfoExistDto;
+import dnd.studyplanner.dto.user.request.UserInfoSaveDto;
 import dnd.studyplanner.dto.user.response.UserEmailListResponse;
 import dnd.studyplanner.dto.user.response.UserStudyGroupListDetailResponse;
 import dnd.studyplanner.dto.user.response.groupAndGoalDetail.StudyGroupDetailResponse;
 import dnd.studyplanner.dto.user.response.groupAndGoalDetail.StudyGroupGoalResponse;
 import dnd.studyplanner.dto.user.response.groupList.StudyGroupListGetResponse;
 import dnd.studyplanner.dto.user.response.groupList.StudyGroupListResponse;
+import dnd.studyplanner.dto.user.response.usergoal.StudyGroupResponse;
+import dnd.studyplanner.dto.user.response.usergoal.UserGoalListResponse;
+import dnd.studyplanner.dto.user.response.usergoal.UserGoalResponse;
 import dnd.studyplanner.dto.user.response.versionDetail.StudyGroupAndGoalDetailPersonalVerResponse;
 import dnd.studyplanner.dto.user.response.versionDetail.StudyGroupAndGoalDetailTeamVerResponse;
 import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.jwt.JwtService;
-import dnd.studyplanner.repository.*;
+import dnd.studyplanner.repository.GoalRepository;
+import dnd.studyplanner.repository.QuestionBookRepository;
+import dnd.studyplanner.repository.StudyGroupRepository;
+import dnd.studyplanner.repository.UserGoalRateRepository;
+import dnd.studyplanner.repository.UserJoinGroupRepository;
+import dnd.studyplanner.repository.UserRepository;
+import dnd.studyplanner.repository.UserSolveQuestionBookRepository;
 import dnd.studyplanner.service.IUserRateService;
 import dnd.studyplanner.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static dnd.studyplanner.dto.response.CustomResponseStatus.USER_NOT_IN_GROUP;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,6 +65,7 @@ public class UserService implements IUserService {
     private final GoalRepository goalRepository;
     private final UserSolveQuestionBookRepository userSolveQuestionBookRepository;
     private final UserGoalRateRepository userGoalRateRepository;
+    private final QuestionBookRepository questionBookRepository;
 
     private final IUserRateService userRateService;
 
@@ -170,6 +185,71 @@ public class UserService implements IUserService {
         }
 
         return studyGroupListGetResponseList;
+    }
+
+    /**
+     *
+     */
+    @Override
+    public UserGoalListResponse getUserStudyGroupListV2(String accessToken) throws BaseException {
+
+        Long currentUserId = getCurrentUserId(accessToken);
+        User user = userRepository.findById(currentUserId).orElseThrow(
+            () -> new BaseException(NOT_VALID_USER)
+        );
+
+        List<StudyGroup> studyGroups = userJoinGroupRepository.findByUserId(currentUserId)
+            .stream()
+            .map(UserJoinGroup::getStudyGroup)
+            .filter(s -> s.getGroupStatus() != StudyGroupStatus.COMPLETE)
+            .collect(Collectors.toList());
+
+        List<StudyGroupResponse> emptyGoalStudyGroup = new ArrayList<>();
+        List<Long> activeStudyGroups = new ArrayList<>();
+
+        for (StudyGroup studyGroup : studyGroups) {
+            if (studyGroup.getGroupDetailGoals().isEmpty()) {
+                emptyGoalStudyGroup.add(
+                    StudyGroupResponse.builder()
+                        .studyGroupCategory(studyGroup.getGroupCategory())
+                        .studyGroupStatus(studyGroup.getGroupStatus())
+                        .studyGroupContent(studyGroup.getGroupName())
+                        .studyGroupEndDate(studyGroup.getGroupEndDate())
+                        .build()
+                );
+                continue;
+            }
+
+            activeStudyGroups.add(studyGroup.getId());
+        }
+
+        List<Goal> goals = goalRepository.findAllByStudyGroupIdInOrderByGoalEndDateDesc(
+            activeStudyGroups);
+
+        List<UserGoalResponse> userGoalResponseList = goals.stream()
+            .filter(g -> g.getGoalStatus() != GoalStatus.COMPLETE)
+            .map(g -> UserGoalResponse.builder()
+                .studyGroupCategory(g.getStudyGroup().getGroupCategory())
+                .studyGroupId(g.getStudyGroup().getId())
+                .goalId(g.getId())
+                .studyGroupStatus(g.getStudyGroup().getGroupStatus())
+                .goalStatus(g.getGoalStatus())
+                .goalContent(g.getGoalContent())
+                .studyGroupContent(g.getStudyGroup().getGroupName())
+                .questionBookSubmitted(userSubmittedQuestionBook(user, g))
+                .groupEndDate(g.getGoalEndDate())
+                .build()
+            ).collect(Collectors.toList());
+
+        return UserGoalListResponse.builder()
+            .userNickname(user.getUserNickName())
+            .userGoalResponseList(userGoalResponseList)
+            .emptyGoalStudyGroup(emptyGoalStudyGroup)
+            .build();
+    }
+
+    private boolean userSubmittedQuestionBook(User user, Goal goal) {
+        return questionBookRepository.existsByQuestionBookCreateUserAndQuestionBookGoal(user, goal);
     }
 
     @Override
