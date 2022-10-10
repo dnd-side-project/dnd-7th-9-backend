@@ -17,21 +17,27 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dnd.studyplanner.auth.model.AuthRepository;
 import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.oauth.dto.kakao.OAuthAccessTokenResponseDto;
 import dnd.studyplanner.oauth.model.OAuthProperties;
 import dnd.studyplanner.oauth.model.OAuthProvider;
-import lombok.RequiredArgsConstructor;
+import dnd.studyplanner.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class NaverOAuthLoginService extends OAuthLoginService {
 
-	private final ObjectMapper objectMapper;
-	private final OAuthProperties oAuthProperties;
+	public NaverOAuthLoginService(
+		ObjectMapper objectMapper,
+		OAuthProperties oAuthProperties,
+		UserRepository userRepository,
+		AuthRepository authRepository
+	) {
+		super(objectMapper, oAuthProperties, userRepository, authRepository);
+	}
 
 	@Override
 	public String requestAccessToken(String code) throws BaseException {

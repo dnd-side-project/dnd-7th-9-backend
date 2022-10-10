@@ -17,21 +17,28 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dnd.studyplanner.auth.model.AuthRepository;
 import dnd.studyplanner.exception.BaseException;
 import dnd.studyplanner.oauth.dto.kakao.OAuthAccessTokenResponseDto;
 import dnd.studyplanner.oauth.model.OAuthProperties;
 import dnd.studyplanner.oauth.model.OAuthProvider;
+import dnd.studyplanner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class KakaoOAuthLoginService extends OAuthLoginService {
 
-	private final ObjectMapper objectMapper;
-	private final OAuthProperties oAuthProperties;
+	public KakaoOAuthLoginService(
+		ObjectMapper objectMapper,
+		OAuthProperties oAuthProperties,
+		UserRepository userRepository,
+		AuthRepository authRepository
+	) {
+		super(objectMapper, oAuthProperties, userRepository, authRepository);
+	}
 
 	@Override
 	public String requestAccessToken(String code) throws BaseException {

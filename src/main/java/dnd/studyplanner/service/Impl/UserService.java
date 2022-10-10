@@ -189,7 +189,9 @@ public class UserService implements IUserService {
 
         // 선택한 StudyGroup 에 존재하는 세부 목표 최근 순서에 따른 리스트
         List<Goal> detailGoalList = goalRepository.findAllByStudyGroupOrderByCreatedDateDesc(studyGroup);
-        // 선택한 StudyGroup 의 가장 최근 세ㅕ부 목표
+
+        // 선택한 StudyGroup 의 가장 최근 세부 목표
+        // TODO detailGoalList null 체크
         Goal defaultGoal = detailGoalList.get(0);
         Goal targetGoal = null;
         if (goalId == null) {

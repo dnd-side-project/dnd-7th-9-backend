@@ -46,14 +46,15 @@ public class OAuthController {
 				case naver:
 					oAuthLoginService = naverOAuthLoginService;
 					break;
-				// default:
-					// return GOOGLE_ACCESS_TOKEN_REQUEST_URL;
+				case google:
+					oAuthLoginService = googleOAuthLoginService;
+					break;
+				default:
+					return new CustomResponse<>(INVALID_PROVIDER).toResponseEntity();
 			}
 
 			String accessToken = oAuthLoginService.requestAccessToken(requestDto.getAuthorizeCode());
 			String userEmail = oAuthLoginService.getUserEmail(accessToken);
-			// String email = oAuthService.oAuthLogin(requestDto.getAuthorizeCode(),
-			// 	authProvider);
 			log.info(userEmail);
 
 			//TODO : 사용자 email을 통한 가입여부 확인
