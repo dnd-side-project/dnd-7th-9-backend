@@ -223,7 +223,7 @@ public class UserService implements IUserService {
             activeStudyGroups.add(studyGroup.getId());
         }
 
-        List<Goal> goals = goalRepository.findAllByStudyGroupIdInOrderByGoalEndDateDesc(
+        List<Goal> goals = goalRepository.findAllByStudyGroupIdInOrderByGoalEndDate(
             activeStudyGroups);
 
         List<UserGoalResponse> userGoalResponseList = goals.stream()
