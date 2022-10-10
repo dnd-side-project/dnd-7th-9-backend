@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import dnd.studyplanner.domain.goal.model.Goal;
 import dnd.studyplanner.domain.goal.model.GoalStatus;
+import dnd.studyplanner.domain.option.model.Option;
 import dnd.studyplanner.domain.studygroup.model.StudyGroup;
 
 public interface GoalRepository extends JpaRepository<Goal, Long> {
@@ -18,4 +19,6 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
 	Goal findFirstByStudyGroupOrderByGoalStartDateDesc(StudyGroup studyGroup);
 
 	List<Goal> findAllByStudyGroupOrderByCreatedDateDesc(StudyGroup studyGroup);
+
+	List<Goal> findAllByStudyGroupIdInOrderByGoalEndDateDesc(List<Long> studyGroupIdList);
 }
