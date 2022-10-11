@@ -34,11 +34,14 @@ public enum CustomResponseStatus {
 	GOAL_EXCEED_GROUP(false, 4010, "기간별 목표는 그룹의 활동일을 벗어날 수 없습니다", HttpStatus.BAD_REQUEST),
 	REFRESH_TOKEN_EXPIRED(false, 4011, "만료된 리프레시 토큰입니다", HttpStatus.NOT_ACCEPTABLE),
 	NOT_EXIST_DATA(false, 4100, "존재하지 않는 데이터입니다.", HttpStatus.BAD_REQUEST),
-	UNAUTHORIZED_REQUEST(false, 4101, "권한이 없는 요청입니다.", HttpStatus.UNAUTHORIZED),
+	UNAUTHORIZED_REQUEST(false, 4101, "권한이 없는 요청입니다.", HttpStatus.UNAUTHORIZED),//FIXME : UNAUTHORIZED 사용 X
+	INVALID_PROVIDER(false, 4102, "존재하지 않는 소셜 로그인 요청입니다.", HttpStatus.BAD_REQUEST),
+	INVALID_AUTHORIZATION_CODE(false, 4103, "유효하지 않은 인가코드입니다.", HttpStatus.BAD_REQUEST),
 
 	ALREADY_SOLVED_QUESTION_BOOK(false, 4200, "이미 풀이 완료한 문제집 입니다", HttpStatus.BAD_REQUEST),
 	UNAUTHORIZED_QUESTION_BOOK(false, 4201, "풀이 권한이 없는 문제집 입니다", HttpStatus.BAD_REQUEST),
-	QUESTION_AMOUNT_UNMATCHED(false, 4202, "현재 세부 목표의 문제 출제 개수와 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+	QUESTION_AMOUNT_UNMATCHED(false, 4202, "현재 세부 목표의 문제 출제 개수와 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+	INTERNAL_SERVER_ERROR(false, 5000, "알수없는 에러가 발생하였습니다. 다시 시도 해주세요.", HttpStatus.INTERNAL_SERVER_ERROR);
 
 	private final boolean isSuccess;
 	private final int responseCode;

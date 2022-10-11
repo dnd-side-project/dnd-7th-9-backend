@@ -84,5 +84,8 @@ public class User extends BaseEntity {
 	public void updateNewUser() {
 		this.isNewUser = false;
 	}
+	public void saveUserNameAsDefaultValue() {
+		this.userName = "사용자" + (100 + this.id);
+	}
 
 }
