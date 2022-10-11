@@ -13,6 +13,7 @@ import dnd.studyplanner.auth.dto.AuthProvider;
 import dnd.studyplanner.dto.oauth.request.OAuthAuthorizeCodeDto;
 import dnd.studyplanner.dto.response.CustomResponse;
 import dnd.studyplanner.exception.BaseException;
+import dnd.studyplanner.oauth.dto.response.LoginSuccessResponseDto;
 import dnd.studyplanner.oauth.service.OAuthLoginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,10 +58,9 @@ public class OAuthController {
 			String userEmail = oAuthLoginService.getUserEmail(accessToken);
 			log.info(userEmail);
 
-			//TODO : 사용자 email을 통한 가입여부 확인
-			//TODO : ResponseDto로 응답
+			LoginSuccessResponseDto response = oAuthLoginService.logInByEmail(userEmail);
 
-			return null;
+			return new CustomResponse<>(response).toResponseEntity();
 		} catch (IllegalArgumentException valueOfException) {
 			return new CustomResponse<>(INVALID_PROVIDER).toResponseEntity();
 		} catch (BaseException e) {
