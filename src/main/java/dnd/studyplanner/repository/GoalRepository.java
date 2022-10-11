@@ -18,4 +18,6 @@ public interface GoalRepository extends JpaRepository<Goal, Long> {
 	Goal findFirstByStudyGroupOrderByGoalStartDateDesc(StudyGroup studyGroup);
 
 	List<Goal> findAllByStudyGroupOrderByCreatedDateDesc(StudyGroup studyGroup);
+
+	List<Goal> findAllByStudyGroupIdInOrderByGoalEndDate(List<Long> studyGroupIdList);
 }
