@@ -19,15 +19,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dnd.studyplanner.auth.model.AuthRepository;
 import dnd.studyplanner.exception.BaseException;
+import dnd.studyplanner.jwt.JwtService;
 import dnd.studyplanner.oauth.dto.kakao.OAuthAccessTokenResponseDto;
 import dnd.studyplanner.oauth.model.OAuthProperties;
 import dnd.studyplanner.oauth.model.OAuthProvider;
 import dnd.studyplanner.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional
 @Service
 public class KakaoOAuthLoginService extends OAuthLoginService {
 
@@ -35,9 +35,9 @@ public class KakaoOAuthLoginService extends OAuthLoginService {
 		ObjectMapper objectMapper,
 		OAuthProperties oAuthProperties,
 		UserRepository userRepository,
-		AuthRepository authRepository
-	) {
-		super(objectMapper, oAuthProperties, userRepository, authRepository);
+		AuthRepository authRepository,
+		JwtService jwtService) {
+		super(objectMapper, oAuthProperties, userRepository, authRepository, jwtService);
 	}
 
 	@Override

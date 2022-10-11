@@ -80,9 +80,9 @@ public abstract class OAuthLoginService {
 				.role(Role.USER)
 				.build());
 
-		if (user.getUserName().isEmpty()) {
+		userRepository.save(user);
+		if (user.getUserNickName() == null) {
 			user.saveUserNameAsDefaultValue();
-			userRepository.save(user);
 		}
 
 		return user;

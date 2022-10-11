@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import dnd.studyplanner.auth.dto.AuthProvider;
 import dnd.studyplanner.dto.oauth.request.OAuthAuthorizeCodeDto;
@@ -65,6 +66,8 @@ public class OAuthController {
 			return new CustomResponse<>(INVALID_PROVIDER).toResponseEntity();
 		} catch (BaseException e) {
 			return new CustomResponse<>(e.getStatus()).toResponseEntity();
+		} catch (HttpClientErrorException httpClientErrorException) {
+			return new CustomResponse<>(INVALID_AUTHORIZATION_CODE).toResponseEntity();
 		}
 
 	}
